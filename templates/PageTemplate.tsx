@@ -1,12 +1,17 @@
-import React from 'react'
+import React, { ReactNode } from 'react'
 import NavbarTemplate from './NavbarTemplate'
 
-const PageTemplate = () => {
+type PageTemplateProps = {
+  children: ReactNode
+}
+
+const PageTemplate = ({children}:PageTemplateProps) => {
   return (
-    <>
+    <div className='flex flex-col'>
     <NavbarTemplate/>
-    <main>nd</main>
-    </>
+    <main>{children}</main>
+    {/* <FooterTemplate/> */}
+    </div>
   )
 }
 
