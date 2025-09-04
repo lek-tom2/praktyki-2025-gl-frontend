@@ -1,12 +1,17 @@
-import React from 'react'
+import React, { ReactNode } from 'react'
 import NavbarTemplate from './NavbarTemplate'
 
-const PageTemplate = () => {
+type PageTemplateProps = {
+  children: ReactNode
+}
+
+const PageTemplate = ({children}:PageTemplateProps) => {
   return (
-    <>
+    <div className='bg-primary w-screen h-screen'>
     <NavbarTemplate/>
-    <main>nd</main>
-    </>
+    <main>{children}</main>
+    {/* <FooterTemplate/> */}
+    </div>
   )
 }
 
