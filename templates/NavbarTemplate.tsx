@@ -1,5 +1,7 @@
 import React from "react";
 
+// based on users context display diffrent stuff
+
 const NavbarTemplate = () => {
   return (
     <div className="navbar bg-base-100 shadow-sm">
