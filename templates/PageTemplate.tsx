@@ -1,5 +1,6 @@
 import React, { ReactNode } from 'react'
 import NavbarTemplate from './NavbarTemplate'
+import FooterTemplate from './FooterTemplate'
 
 type PageTemplateProps = {
   children: ReactNode
@@ -10,7 +11,7 @@ const PageTemplate = ({children}:PageTemplateProps) => {
     <div className='flex flex-col'>
     <NavbarTemplate/>
     <main>{children}</main>
-    {/* <FooterTemplate/> */}
+    <FooterTemplate/>
     </div>
   )
 }
