@@ -7,7 +7,7 @@ type PageTemplateProps = {
 
 const PageTemplate = ({children}:PageTemplateProps) => {
   return (
-    <div className='bg-primary w-screen h-screen'>
+    <div className='flex flex-col'>
     <NavbarTemplate/>
     <main>{children}</main>
     {/* <FooterTemplate/> */}
