@@ -42,7 +42,7 @@ const NavbarTemplate = () => {
 
   // unlogged user
   return (
-    <nav className="bg-primary h-12 w-full flex flex-row items-center justify-start text-neutral px-6">
+    <nav className="bg-secondary h-12 w-full flex flex-row items-center justify-start text-neutral px-6">
       {/* Logo */}
       <div className="relative w-20 h-6 ml-30 mr-auto">
         <Image src={"/logo.png"} fill alt="GlobalPark" />
@@ -51,13 +51,13 @@ const NavbarTemplate = () => {
       <div className="flex flex-row items-center justify-between w-[10vw] mr-30 ml-auto ">
         <Link
           href="/auth/login"
-          className="btn rounded-4xl w-[50%] text-center h-8 bg-accent ml-[-1rem] min-w-6"
+          className="flex items-center justify-center rounded-4xl w-[50%] text-center h-8 bg-primary ml-[-1rem] min-w-6 hover:scale-105 duration-300"
         >
           Login
         </Link>
         <Link
           href="/auth/register"
-          className="btn rounded-4xl w-[50%] text-center h-8 bg-accent min-w-6 "
+          className="flex items-center justify-center rounded-4xl w-[50%] text-center h-8 bg-primary min-w-6 hover:scale-105 duration-300"
         >
           Register
         </Link>
