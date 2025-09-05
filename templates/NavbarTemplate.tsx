@@ -50,13 +50,13 @@ const NavbarTemplate = () => {
 
       <div className="flex flex-row items-center justify-between w-[8vw] mr-30 ml-auto text-[12px] ">
         <Link
-          href="/auth/login"
+          href="login-register"
           className="flex items-center font-semibold justify-center rounded-4xl w-[50%] text-center h-8 bg-base-300 ml-[-1rem] min-w-6 hover:scale-105 duration-300"
         >
           Login
         </Link>
         <Link
-          href="/auth/register"
+          href="login-register"
           className="flex items-center font-semibold justify-center rounded-4xl w-[50%] text-center h-8 bg-base-300 min-w-6 hover:scale-105 duration-300"
         >
           Sign Up
