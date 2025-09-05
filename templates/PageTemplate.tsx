@@ -1,5 +1,6 @@
 import React, { ReactNode } from 'react'
 import NavbarTemplate from './NavbarTemplate'
+import FooterTemplate from './FooterTemplate'
 
 type PageTemplateProps = {
   children: ReactNode
