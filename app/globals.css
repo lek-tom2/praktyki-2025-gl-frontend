@@ -1,3 +1,5 @@
+@import url("https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,100..900;1,100..900&display=swap");
+
 @import "tailwindcss";
 @plugin "daisyui";
 
@@ -23,14 +25,14 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: "Public Sans", sans-serif;
 }
 
 @plugin "daisyui/theme" {
   name: "gl-light";
   default: true;
-  prefersdark: true;
-  color-scheme: dark;
+  prefersdark: false;
+  color-scheme: light;
 
   /* Base */
   --color-base-100: #eaefef; /* background */
@@ -38,30 +40,34 @@ body {
   --color-base-300: #7f8caa;
   --color-base-content: #333446; /* text */
 
-  /* Primary brand color */
-  --color-primary: #7f8caa;
+  /* Brand colors */
+  /* --color-primary: #333446;
+  --color-primary-content: #eaefef; */
+  --color-primary: #374151;
   --color-primary-content: #eaefef;
+  /* --color-primary: #7f8caa;
+  --color-primary-content: #eaefef; */
 
-  /* Secondary accent */
-  --color-secondary: #b8cfce;
-  --color-secondary-content: #333446;
+  /* --color-secondary: #7f8caa;
+  --color-secondary-content: #eaefef; */
 
-  /* Accent (optional, same family for consistency) */
-  --color-accent: #333446;
-  --color-accent-content: #eaefef;
+  --color-secondary: #333446;
+  --color-secondary-content: #eaefef;
 
-  /* Neutral */
-  --color-neutral: #333446;
-  --color-neutral-content: #eaefef;
+  --color-accent: #b8cfce;
+  --color-accent-content: #333446;
 
-  /* Status colors (generated shades from palette) */
-  --color-info: #7f8caa;
+  --color-neutral: #eaefef;
+  --color-neutral-content: #333446;
+
+  /* Status colors (harmonized with your palette) */
+  --color-info: #7f8caa; /* muted blue */
   --color-info-content: #eaefef;
-  --color-success: #b8cfce;
+  --color-success: #b8cfce; /* calm greenish tone */
   --color-success-content: #333446;
-  --color-warning: #ffd580; /* warm yellow for alerts */
+  --color-warning: #ffd580; /* warm subtle yellow */
   --color-warning-content: #333446;
-  --color-error: #e57373; /* red for errors */
+  --color-error: #e57373; /* soft red */
   --color-error-content: #eaefef;
 
   /* border radius */
