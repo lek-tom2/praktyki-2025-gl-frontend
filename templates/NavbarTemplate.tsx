@@ -6,7 +6,7 @@ const NavbarTemplate = () => {
   // logged user
   if (false) {
     return (
-      <nav className="bg-primary h-12 w-full flex flex-row items-center justify-start text-neutral px-6">
+      <nav className="bg-secondary h-16 w-full flex flex-row items-center justify-start text-neutral px-6">
         {/* Logo */}
         <div className="relative w-20 h-6 ml-20">
           <Image src={"/logo.png"} fill alt="GlobalPark" />
@@ -42,24 +42,24 @@ const NavbarTemplate = () => {
 
   // unlogged user
   return (
-    <nav className="bg-secondary h-12 w-full flex flex-row items-center justify-start text-neutral px-6">
+    <nav className="bg-secondary h-16 w-full flex flex-row items-center justify-start text-neutral px-6">
       {/* Logo */}
       <div className="relative w-20 h-6 ml-30 mr-auto">
         <Image src={"/logo.png"} fill alt="GlobalPark" />
       </div>
 
-      <div className="flex flex-row items-center justify-between w-[10vw] mr-30 ml-auto ">
+      <div className="flex flex-row items-center justify-between w-[8vw] mr-30 ml-auto text-[12px] ">
         <Link
           href="/auth/login"
-          className="flex items-center justify-center rounded-4xl w-[50%] text-center h-8 bg-primary ml-[-1rem] min-w-6 hover:scale-105 duration-300"
+          className="flex items-center font-semibold justify-center rounded-4xl w-[50%] text-center h-8 bg-base-300 ml-[-1rem] min-w-6 hover:scale-105 duration-300"
         >
           Login
         </Link>
         <Link
           href="/auth/register"
-          className="flex items-center justify-center rounded-4xl w-[50%] text-center h-8 bg-primary min-w-6 hover:scale-105 duration-300"
+          className="flex items-center font-semibold justify-center rounded-4xl w-[50%] text-center h-8 bg-base-300 min-w-6 hover:scale-105 duration-300"
         >
-          Register
+          Sign Up
         </Link>
       </div>
     </nav>

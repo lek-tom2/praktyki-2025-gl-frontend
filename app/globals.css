@@ -1,3 +1,5 @@
+@import url("https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,100..900;1,100..900&display=swap");
+
 @import "tailwindcss";
 @plugin "daisyui";
 
@@ -23,7 +25,7 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: "Public Sans", sans-serif;
 }
 
 @plugin "daisyui/theme" {
@@ -41,8 +43,10 @@ body {
   /* Brand colors */
   /* --color-primary: #333446;
   --color-primary-content: #eaefef; */
-  --color-primary: #7f8caa;
+  --color-primary: #374151;
   --color-primary-content: #eaefef;
+  /* --color-primary: #7f8caa;
+  --color-primary-content: #eaefef; */
 
   /* --color-secondary: #7f8caa;
   --color-secondary-content: #eaefef; */
