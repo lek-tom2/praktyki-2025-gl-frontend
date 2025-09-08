@@ -35,10 +35,14 @@ body {
   color-scheme: light;
 
   /* Base */
-  --color-base-100: #eaefef; /* background */
-  --color-base-200: #b8cfce;
-  --color-base-300: #7f8caa;
-  --color-base-content: #333446; /* text */
+  --color-base-content: #eaefef;
+  /* text */
+
+  --color-base-100: #374151;
+  /* background */
+  --color-base-200: #333446;
+  --color-base-300: #b8cfce;
+  --color-base-400: #7f8caa;
 
   /* Brand colors */
   /* --color-primary: #333446;
@@ -54,20 +58,24 @@ body {
   --color-secondary: #333446;
   --color-secondary-content: #eaefef;
 
-  --color-accent: #b8cfce;
+  --color-accent: #595c8b;
   --color-accent-content: #333446;
 
   --color-neutral: #eaefef;
   --color-neutral-content: #333446;
 
   /* Status colors (harmonized with your palette) */
-  --color-info: #7f8caa; /* muted blue */
+  --color-info: #7f8caa;
+  /* muted blue */
   --color-info-content: #eaefef;
-  --color-success: #b8cfce; /* calm greenish tone */
+  --color-success: #b8cfce;
+  /* calm greenish tone */
   --color-success-content: #333446;
-  --color-warning: #ffd580; /* warm subtle yellow */
+  --color-warning: #ffd580;
+  /* warm subtle yellow */
   --color-warning-content: #333446;
-  --color-error: #e57373; /* soft red */
+  --color-error: #e57373;
+  /* soft red */
   --color-error-content: #eaefef;
 
   /* border radius */

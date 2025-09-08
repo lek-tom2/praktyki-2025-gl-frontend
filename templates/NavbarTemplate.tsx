@@ -28,6 +28,7 @@ const NavbarTemplate = () => {
 
         <div className="rounded-4xl">
           <label className="input flex items-center gap-2 h-8 rounded-4xl">
+            {/*future searchbox*/}
             <input type="text" placeholder="Search..." className="grow" />
           </label>
         </div>
@@ -48,21 +49,32 @@ const NavbarTemplate = () => {
         <Image src={"/logo.png"} fill alt="GlobalPark" />
       </div>
 
-      <div className="flex flex-row items-center justify-between w-[8vw] mr-30 ml-auto text-[12px] ">
+<<<<<<< HEAD
+  <div className="flex flex-row items-center justify-between w-[8vw] mr-30 ml-auto text-[12px] ">
+    <Link
+      href="/auth/login"
+      className="flex items-center font-semibold justify-center rounded-4xl w-[50%] text-center h-8 bg-base-300 ml-[-1rem] min-w-6 hover:scale-105 duration-300"
+=======
+      <div className="flex flex-row items-center justify-between w-[9vw] mr-30 ml-auto text-[12px] ">
         <Link
           href="/auth/login"
-          className="flex items-center font-semibold justify-center rounded-4xl w-[50%] text-center h-8 bg-base-300 ml-[-1rem] min-w-6 hover:scale-105 duration-300"
-        >
-          Login
-        </Link>
-        <Link
-          href="/auth/register"
-          className="flex items-center font-semibold justify-center rounded-4xl w-[50%] text-center h-8 bg-base-300 min-w-6 hover:scale-105 duration-300"
-        >
-          Sign Up
-        </Link>
-      </div>
-    </nav>
+          className="flex items-center font-semibold justify-center rounded-4xl w-[50%] text-center h-8 bg-info ml-[-1rem] min-w-6 hover:scale-105 duration-300"
+>>>>>>> 720b31262382905cf86426ea66d660eeb0b8009e
+    >
+      Login
+    </Link>
+    <Link
+      href="/auth/register"
+<<<<<<< HEAD
+      className="flex items-center font-semibold justify-center rounded-4xl w-[50%] text-center h-8 bg-base-300 min-w-6 hover:scale-105 duration-300"
+=======
+          className="flex items-center font-semibold justify-center rounded-4xl w-[50%] text-center h-8 bg-info min-w-6 hover:scale-105 duration-300"
+>>>>>>> 720b31262382905cf86426ea66d660eeb0b8009e
+    >
+      Sign Up
+    </Link>
+  </div>
+    </nav >
   );
 };
 
