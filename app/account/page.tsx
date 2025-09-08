@@ -68,10 +68,22 @@ export default function Home() {
  <h2 className="text-3xl font-bold text-base-content mb-6 mt-20">Registered Vehicles</h2>
  <form>
 <section className="grid grid-cols-2 gap-x-8 gap-y-4">
-    <div className="flex flex-col col-span-2 gap-y-2">
+  
+    <div className="flex flex-col col-span-2 gap-y-2 text-base-content bg-primary rounded-[0.25rem] h-20 ">
 
-      <input type="text" className="text-base-content bg-primary rounded-[0.25rem] h-20 "   />
-    </div>
+  <div className="flex flex-col col-span-2 gap-y-2 text-base-content bg-primary rounded-[0.25rem] h-20 relative">
+   <div
+    className="absolute"
+    style={{
+      width: "24px",
+      height: "24px",
+      left: "493px", 
+            top: "26px",
+      background: "url('/bin.jpg') no-repeat center/contain" 
+    }}
+  />
+</div>   </div>
+
     <div className="flex flex-col col-span-2 gap-y-2">
   <button
   type="button"
@@ -117,12 +129,32 @@ export default function Home() {
  <form>
 <section className="grid grid-cols-2 gap-x-8 gap-y-4">
     
-       <div className="flex flex-col col-span-2 gap-y-2">
+       <div className="flex flex-col col-span-2 gap-y-2 text-base-content bg-primary rounded-[0.25rem] h-20">
     
-      <input type="text" className="text-base-content bg-primary rounded-[0.25rem] h-20 "   />
+
+    </div>
+     <div className="flex flex-col col-span-2 gap-y-2 text-base-content bg-primary rounded-[0.25rem] h-20">
+    
+
+    </div>
+     <div className="flex flex-col col-span-2 gap-y-2 text-base-content bg-primary rounded-[0.25rem] h-20">
+    
+
+    </div>
+     <div className="flex flex-col col-span-2 gap-y-2 text-base-content bg-primary rounded-[0.25rem] h-20">
+    
+
+    </div>
+     <div className="flex flex-col col-span-2 gap-y-2 text-base-content bg-primary rounded-[0.25rem] h-20">
+    
+
+    </div>
+     <div className="flex flex-col col-span-2 gap-y-2 text-base-content bg-primary rounded-[0.25rem] h-20">
+    
+
     </div>
     <div className="flex justify-end col-span-2">
-        <input type="submit" className="text-base-content bg-accent rounded-sm h-10 w-50" value="Update Information" />
+        <input type="submit" className="text-base-content bg-accent rounded-sm h-10 w-50" value="View all History" />
  </div> 
 
  
