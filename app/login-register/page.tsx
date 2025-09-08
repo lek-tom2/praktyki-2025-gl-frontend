@@ -3,6 +3,8 @@
 import React from 'react'
 import { useState } from 'react';
 import PageTemplate from '../../templates/PageTemplate'
+import Input from '@/components/input/input';
+import Button from '@/components/button';
 
 export default function LoginRegister() {
   const [active, setActive] = useState("login");
@@ -38,18 +40,20 @@ export default function LoginRegister() {
     <>
       <div>
         <p>Username</p>
-        <input
-          className="rounded-md bg-[#374151] w-full p-2 text-white"
-          type="text"
-        />
+        <Input
+        className="rounded-md bg-[#374151] w-full p-2 text-white"
+         type="text"
+          name="username">
+        </Input>
       </div>
 
       <div>
         <p>Password</p>
-        <input
+        <Input
           className="rounded-md bg-[#374151] w-full p-2 text-white"
           type="password"
-        />
+          name='password'
+        ></Input>
       </div>
 
       <section className="flex flex-row items-center justify-between">
@@ -62,46 +66,57 @@ export default function LoginRegister() {
         </a>
       </section>
 
-      <button className="mx-auto rounded-md flex justify-center w-[80%] text-[#ffffff] bg-[#595C8B] hover:text-white p-2 transition-transform duration-200 hover:scale-105">
-        Login
-      </button>
+      <Button
+       value='login'
+       type='button'
+       customWidth='60%'
+       hoverEffect={true}
+       />
     </>
   ) : (
     <>
       <div>
         <p>Username</p>
-        <input
+        <Input
           className="rounded-md bg-[#374151] w-full p-2 text-white"
           type="text"
-        />
+          name='username'
+
+        ></Input>
       </div>
 
       <div>
         <p>Full name</p>
-        <input
+        <Input
           className="rounded-md bg-[#374151] w-full p-2 text-white"
           type="text"
-        />
+          name='name'
+        ></Input>
       </div>
 
       <div>
         <p>Password</p>
-        <input
+        <Input
           className="rounded-md bg-[#374151] w-full p-2 text-white"
           type="password"
-        />
+          name='password'
+        ></Input>
       </div>
 
       <div>
         <p>Repeat password</p>
-        <input
+        <Input
           className="rounded-md bg-[#374151] w-full p-2 text-white"
           type="password"
-        />
+          name='repeat'
+        ></Input>
         </div><br />
-        <button className="mx-auto rounded-md flex justify-center w-[80%] text-[#ffffff] bg-[#595C8B] hover:text-white p-2 transition-transform duration-200 hover:scale-105">
-        Login
-      </button>
+        <Button 
+        value='login'
+       type='button'
+       customWidth='60%'
+       hoverEffect={true}
+        />
       </>
     )}
   </div>
