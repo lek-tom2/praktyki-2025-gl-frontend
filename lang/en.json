@@ -1,0 +1,100 @@
+{
+  "unloggedNavbar": {
+    "signUp": "Sign Up",
+    "login": "Login"
+  },
+  "loggedNavbar": {
+    "findParking": "Find Parking",
+    "contact": "Contact",
+    "search": "Search",
+    "accountManagement": "Account Management",
+    "switchAccounts": "Switch Accounts",
+    "changeTheme": "Change Theme",
+    "myReservations": "My Reservations"
+  },
+  "login": {
+    "signinToYourAccount": "Sign in to your account",
+    "login": "Login",
+    "register": "Register",
+    "emailAddress": "Email Address",
+    "password": "Password",
+    "rememberMe": "Remember Me",
+    "forgotPassword": "Forgot password?"
+  },
+  "register": {
+    "createAccount": "Create Account",
+    "register": "Register",
+    "emailAddress": "Email Address",
+    "password": "Password",
+    "fullName": "Full Name",
+    "phoneNumber": "Phone Number",
+    "rememberMe": "Remember Me",
+    "forgotPassword": "Forgot password?"
+  },
+  "addACar": {
+    "brand": "Brand",
+    "model": "Model",
+    "year": "Year",
+    "color": "Color",
+    "licensePlateNumber": "License Plate Number",
+    "uploadCarPhoto": "Upload Car Photo",
+    "dragAndDrop": "Drag and drop or click to upload",
+    "supportedFormats": "Supported Formats",
+    "uploadPhoto": "Upload Photo",
+    "addCar": "Add Car"
+  },
+  "landing": {
+    "title": "Find Parking",
+    "simplified": "Simplified",
+    "subTitle": "Reserve your spot in advance and save time and money. Your seamless parking experience starts here",
+    "searchBar": "Enter a location, landmark, or address",
+    "search": "Search"
+  },
+  "parkingDisplay": {
+    "destination": "Destination",
+    "checkin": "Check-in",
+    "checkout": "Check-out",
+    "found": "Found",
+    "nearYou": "Near You",
+    "list": "List",
+    "map": "Map",
+    "availableOn": "Available on"
+  },
+  "reservation": {
+    "title": "Your Parking Spot Reservation",
+    "subtitle": "Selected Spot:",
+    "selectedDate": "Selected Date",
+    "selectedTime": "Selected Time",
+    "from": "From",
+    "to": "To",
+    "selectedVehicle": "Selected Vehicle",
+    "reservationDuration": "Reservation Duration",
+    "totalTime": "Total Time",
+    "reportIssue": "Report an Issue",
+    "changeReservation": "Change Your Reservation",
+    "reservationHistory": "Reservation History",
+    "spot": "Spot",
+    "viewFullHistory": "View Full History"
+  },
+  "account": {
+    "personalInformation": "Personal Information",
+    "emailAddress": "Email Address",
+    "password": "Password",
+    "fullName": "Full Name",
+    "phoneNumber": "Phone Number",
+    "updateInformation": "Update Information",
+    "changePassword": "Change Password",
+    "newPassword": "New Password",
+    "confirmNewPassword": "Confirm New Password",
+    "registeredVehicles": "Registered Vehicles",
+    "addNewVehicle": "Add New Vehicle",
+    "manageAccount": "Manage Account",
+    "deleteAccount": "Delete Account",
+    "bewareActionIsPermanent": "Be aware that this action is permanent",
+    "logout": "Logout"
+  },
+  "footer": {
+    "allrights": "All rights reserved"
+  },
+  "adminPanel": {}
+}

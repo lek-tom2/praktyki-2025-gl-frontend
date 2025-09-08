@@ -28,6 +28,10 @@ type UserAction =
   | {
       type: "setId";
       value: string | null;
+    }
+  | {
+      type: "setLanguageIso2";
+      value: string;
     };
 
 const UserReducer = (
@@ -45,6 +49,8 @@ const UserReducer = (
       return { ...state, email: action.value };
     case "setId":
       return { ...state, userId: action.value };
+    case "setLanguageIso2":
+      return { ...state, languageIso2: action.value };
     default:
       return state;
   }
@@ -67,6 +73,7 @@ export const UserContextProvider = ({ children }: UserContextProviderProps) => {
     accountVerified: null,
     passwordLength: null,
     authorities: null,
+    languageIso2: "en",
   } as UserEntityType);
 
   return (
