@@ -11,7 +11,6 @@ export default function LoginRegister() {
           <PageTemplate>
       <div className="flex items-center justify-center min-h-[calc(100vh-64px-80px)]">
         <section className="w-[25%] h-[50%] bg-[#333446] rounded-xl shadow-lg p-6 flex flex-col justify-center">
-          {/* Zakładki */}
           <div className="flex justify-center gap-14 mb-6">
             <button
               onClick={() => setActive("login")}
@@ -34,13 +33,79 @@ export default function LoginRegister() {
               Register
             </button>
           </div>
-          <div className="text-center text-[#5D657E] text-left">
-            {active === "login" ? (
-              <><p>username</p><input className='rounded-md bg-[#374151]' type='text'></input><br /><br /><p>password</p><input className='rounded-md bg-[#374151]' type='text'></input></>
-            ) : (
-              <p>reg</p>
-            )}
-          </div>
+          <div className="text-left text-[#5D657E] flex flex-col gap-4">
+  {active === "login" ? (
+    <>
+      <div>
+        <p>Username</p>
+        <input
+          className="rounded-md bg-[#374151] w-full p-2 text-white"
+          type="text"
+        />
+      </div>
+
+      <div>
+        <p>Password</p>
+        <input
+          className="rounded-md bg-[#374151] w-full p-2 text-white"
+          type="password"
+        />
+      </div>
+
+      <section className="flex flex-row items-center justify-between">
+        <div className="flex items-center gap-2">
+          <input type="checkbox" className='relative -top-0.5'/>
+          <p>Remember me</p>
+        </div>
+        <a href="#" className="hover:underline text-white p-2 transition-transform duration-200 hover:scale-105">
+          Forgot your password?
+        </a>
+      </section>
+
+      <button className="mx-auto rounded-md flex justify-center w-[80%] text-[#ffffff] bg-[#595C8B] hover:text-white p-2 transition-transform duration-200 hover:scale-105">
+        Login
+      </button>
+    </>
+  ) : (
+    <>
+      <div>
+        <p>Username</p>
+        <input
+          className="rounded-md bg-[#374151] w-full p-2 text-white"
+          type="text"
+        />
+      </div>
+
+      <div>
+        <p>Full name</p>
+        <input
+          className="rounded-md bg-[#374151] w-full p-2 text-white"
+          type="text"
+        />
+      </div>
+
+      <div>
+        <p>Password</p>
+        <input
+          className="rounded-md bg-[#374151] w-full p-2 text-white"
+          type="password"
+        />
+      </div>
+
+      <div>
+        <p>Repeat password</p>
+        <input
+          className="rounded-md bg-[#374151] w-full p-2 text-white"
+          type="password"
+        />
+        </div><br />
+        <button className="mx-auto rounded-md flex justify-center w-[80%] text-[#ffffff] bg-[#595C8B] hover:text-white p-2 transition-transform duration-200 hover:scale-105">
+        Login
+      </button>
+      </>
+    )}
+  </div>
+
         </section>
       </div>
     </PageTemplate>
