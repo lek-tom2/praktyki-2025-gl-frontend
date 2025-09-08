@@ -1,10 +1,10 @@
-import React, { Children, ReactNode } from "react";
+import React, { ReactNode, useState } from "react";
 
 type InputProps = {
   type: string;
   name: string;
-  value: string;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  value?: string;
+  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   required?: boolean;
   placeholder?: string;
   disabled?: boolean;
@@ -13,6 +13,7 @@ type InputProps = {
   width?: string;
   height?: string;
   fontColor?: string;
+  id?: string;
 };
 
 const Input = ({
@@ -21,26 +22,33 @@ const Input = ({
   value,
   onChange,
   disabled,
-  required = undefined,
-  placeholder = undefined,
-  className = undefined,
-  children = undefined,
-  width = undefined,
-  height = undefined,
-  fontColor = undefined,
+  required,
+  placeholder,
+  className,
+  children,
+  width,
+  height,
+  fontColor,
+  id = "default",
   ...props
 }: InputProps) => {
+  // fallback state only if uncontrolled
+  const [internalValue, setInternalValue] = useState<string>("");
+
+  const isControlled = value !== undefined && onChange !== undefined;
+
   return (
     <label
       className={
         className
-          ? className + `input ${fontColor ?? "text-neutral"}`
+          ? `${className} input ${fontColor ?? "text-neutral"}`
           : `input bg-primary text-neutral ${height ?? "h-9"} ${
               width ?? "w-60"
             } ${fontColor ?? "text-neutral"}`
       }
+      htmlFor={id}
     >
-      {type === "search" ? (
+      {type === "search" && (
         <svg
           className="h-[1em] opacity-50"
           xmlns="http://www.w3.org/2000/svg"
@@ -57,18 +65,23 @@ const Input = ({
             <path d="m21 21-4.3-4.3"></path>
           </g>
         </svg>
-      ) : null}
+      )}
+
       <input
         {...props}
         type={type}
+        id={id}
         placeholder={placeholder}
         name={name}
-        value={value}
-        onChange={onChange}
+        value={isControlled ? value : internalValue}
+        onChange={
+          isControlled ? onChange : (e) => setInternalValue(e.target.value)
+        }
         disabled={disabled ?? false}
         required={required ?? true}
         className="grow"
       />
+
       {children}
     </label>
   );
