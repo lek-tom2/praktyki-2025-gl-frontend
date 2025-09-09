@@ -11,7 +11,7 @@ export default function ParkingSpaces() {
 
     return(
 <PageTemplate>
-  {/* Górna część - pełna szerokość */}
+
   <div className='w-[85%] ml-[10%] mr-[10%] h-[15%] mt-4 flex flex-row gap-4'>
     <div className="flex flex-col w-[60%]">
       <p className='text-left text-[#ffffff] text-xs mb-1'>Destination</p>
@@ -41,23 +41,23 @@ export default function ParkingSpaces() {
     </div>
   </div>
 
-  {/* Dolna część - lewa = 2 inputy + button, prawa = obraz */}
-  <div className="flex flex-row w-[85%] ml-[10%] mt-4 gap-4">
-    {/* Lewa kolumna */}
-    <div className="flex flex-col justify-center w-[50%] text-left text-white gap-4">
-      <Input 
-        className="w-[100%] h-[15%] bg-[#333446] rounded-xl shadow-lg"
-        type='text'
-        name='chosenSpace'
-        value='Chosen space:'
-        disabled
-      />
-      <Input 
-        className="w-[100%] h-[50%] bg-[#333446] rounded-xl shadow-lg"
-        type='text'
-        name='details'
-        disabled
-      />
+
+  <div className="flex flex-row w-[85%] ml-[10%] gap-4  mb-10">
+
+<div className="flex flex-col justify-center w-[35%] text-left text-white gap-4">
+  <input
+    type="text"
+    value="Chosen space:"
+    disabled
+    className="w-[100%] h-[15%] pt-1 bg-[#333446] rounded-xl shadow-lg text-white text-left px-3"
+  />
+  <input
+    type="text"
+    value="Details:"
+    disabled
+    className="w-[100%] h-[50%] pt-1 bg-[#333446] rounded-xl shadow-lg text-white text-left px-3"
+  />
+
       <Button
         customWidth='100%'
         type='button'
@@ -66,14 +66,14 @@ export default function ParkingSpaces() {
       />
     </div>
 
-    {/* Prawa kolumna - obraz */}
-    <div className="flex flex-col justify-center w-[50%]">
+
+    <div className="flex flex-col justify-center w-[65%]">
       <Image
         src="/2floor.png"
         alt="2nd floor"
         width={600}  
         height={600} 
-        style={{ width: '100%', height: 'auto' }}
+        style={{ width: '83%', height: '83%', borderRadius: '0.75rem'}}
       />
     </div>
   </div>
