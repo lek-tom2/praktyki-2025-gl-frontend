@@ -9,4 +9,5 @@ export type User = {
   authorities: string | string[] | null;
   accountNonLocked: boolean | null;
   token: string | null;
+  languageIso2: string;
 };
