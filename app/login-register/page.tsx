@@ -12,6 +12,7 @@ import useUserContext from "@/gl-context/UserContextProvider";
 import { useRouter } from "next/navigation";
 import { User } from "@/gl-types/user-types";
 import LoginComponent from "@/components/login/loginComponent";
+import RegisterComponent from "@/components/register/registerComponent";
 
 export default function LoginRegister() {
   const [active, setActive] = useState<"login" | "register">("login");
@@ -43,54 +44,7 @@ export default function LoginRegister() {
             </button>
           </div>
           <div className="text-left text-[#5D657E] flex flex-col gap-4">
-            {active === "login" ? (
-              <LoginComponent />
-            ) : (
-              <>
-                <div>
-                  <p>Username</p>
-                  <Input
-                    className="rounded-md bg-[#374151] w-full p-2 text-white"
-                    type="text"
-                    name="username"
-                  ></Input>
-                </div>
-
-                <div>
-                  <p>Full name</p>
-                  <Input
-                    className="rounded-md bg-[#374151] w-full p-2 text-white"
-                    type="text"
-                    name="name"
-                  ></Input>
-                </div>
-
-                <div>
-                  <p>Password</p>
-                  <Input
-                    className="rounded-md bg-[#374151] w-full p-2 text-white"
-                    type="password"
-                    name="password"
-                  ></Input>
-                </div>
-
-                <div>
-                  <p>Repeat password</p>
-                  <Input
-                    className="rounded-md bg-[#374151] w-full p-2 text-white"
-                    type="password"
-                    name="repeat"
-                  ></Input>
-                </div>
-                <br />
-                <Button
-                  value="login"
-                  type="button"
-                  customWidth="60%"
-                  hoverEffect={true}
-                />
-              </>
-            )}
+            {active === "login" ? <LoginComponent /> : <RegisterComponent />}
           </div>
         </section>
       </div>
