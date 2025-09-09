@@ -1,4 +1,5 @@
 import React, { ReactNode, useState } from "react";
+import { UseFormRegister, UseFormRegisterReturn } from "react-hook-form";
 
 type InputProps = {
   type: string;
@@ -14,6 +15,7 @@ type InputProps = {
   height?: string;
   fontColor?: string;
   id?: string;
+  register?: UseFormRegisterReturn;
 };
 
 const Input = ({
@@ -30,6 +32,7 @@ const Input = ({
   height,
   fontColor,
   id = "default",
+  register,
   ...props
 }: InputProps) => {
   // fallback state only if uncontrolled
@@ -69,6 +72,7 @@ const Input = ({
 
       <input
         {...props}
+        {...register}
         type={type}
         id={id}
         placeholder={placeholder}
