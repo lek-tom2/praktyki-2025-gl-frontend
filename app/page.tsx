@@ -6,5 +6,5 @@ import Input from "@/components/input/input";
 import Button from "@/components/button";
 
 export default function Home() {
-  return <PageTemplate>Main page</PageTemplate>;
+  return <Welcome></Welcome>
 }
