@@ -8,8 +8,8 @@ import Button from '@/components/button';
 
 export default function LoginRegister() {
   const [active, setActive] = useState("login");
-
     return (
+      
           <PageTemplate>
       <div className="flex items-center justify-center min-h-[calc(100vh-64px-80px)]">
         <section className="w-[25%] h-[50%] bg-[#333446] rounded-xl shadow-lg p-6 flex flex-col justify-center">
