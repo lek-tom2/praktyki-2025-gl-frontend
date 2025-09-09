@@ -40,6 +40,7 @@ const LoginComponent = () => {
         login: getValues().login,
         password: getValues().password,
       }),
+      credentials: "include",
     });
     if (!response.ok) {
       const status = response.status;

@@ -40,6 +40,7 @@ const RegisterComponent = () => {
         fullName: getValues().fullName,
         password: getValues().password,
       }),
+      credentials: "include",
     });
     if (!response.ok) {
       const status = response.status;
