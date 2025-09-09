@@ -34,7 +34,7 @@ const Button = ({
       type={type}
       value={value}
       onClick={onClick}
-      src={type === "image" ? src : ""}
+      src={type === "image" ? src : undefined}
       className={
         className
           ? className + "btn"
