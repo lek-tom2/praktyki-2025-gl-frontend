@@ -2,6 +2,7 @@
 
 import React from "react";
 
+
 type ButtonProps = {
   type: "submit" | "button" | "image";
   value?: string;
