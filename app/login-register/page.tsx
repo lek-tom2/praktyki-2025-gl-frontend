@@ -8,6 +8,18 @@ import Button from '@/components/button';
 
 export default function LoginRegister() {
   const [active, setActive] = useState("login");
+  const [username, setUsername] = useState("")
+  const [password, setPassword] = useState("")
+  const [errors, setErrors] = useState<{ username?: string; password?: string}>({})
+
+  const validate = () => {
+    const err: {username?: string; password?: string} = {};
+    if(!username.trim()) err.username = "Username cannot be empty";
+    if(!password.trim()) err.password = "Password cannot be empty";
+    if(password.length < 8) err.password = "Password needs at least 8 characters";
+    setErrors(err);
+    return Object.keys(err).length===0;
+  };
 
     return (
           <PageTemplate>
@@ -41,10 +53,14 @@ export default function LoginRegister() {
       <div>
         <p>Username</p>
         <Input
-        className="rounded-md bg-[#374151] w-full p-2 text-white"
-         type="text"
-          name="username">
+          className="rounded-md bg-[#374151] w-full p-2 text-white"
+          type="text"
+          name="username"
+          value={username}
+          onChange={(event) => setUsername(event.target.value)}
+          >
         </Input>
+        {errors.username && <p className='text-red-600'>{errors.username}</p>}
       </div>
 
       <div>
@@ -53,7 +69,10 @@ export default function LoginRegister() {
           className="rounded-md bg-[#374151] w-full p-2 text-white"
           type="password"
           name='password'
+          value={password}
+          onChange={(event) => setPassword(event.target.value)}
         ></Input>
+        {errors.password && <p className='text-red-600'>{errors.password}</p>}
       </div>
 
       <section className="flex flex-row items-center justify-between">
@@ -71,6 +90,7 @@ export default function LoginRegister() {
        type='button'
        customWidth='60%'
        hoverEffect={true}
+       onClick={() => validate() && console.log('login correct')}
        />
     </>
   ) : (
