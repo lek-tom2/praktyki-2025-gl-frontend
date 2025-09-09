@@ -14,7 +14,7 @@ export default function Home() {
 </header>
 <div className="flex flex-row items-start">
 
-<article className="text-base-content p-8 rounded-[0.5rem] bg-base-200 w-full max-w-4xl mx-auto"> {/* all form div*/}
+<article className="text-base-content p-8 rounded-[0.5rem] bg-base-200 w-[757px] h-[1297px]"> {/* all form div*/}
 
 
 
@@ -38,11 +38,10 @@ export default function Home() {
     </div>
       
     <div className="flex justify-end col-span-2">
-        <input type="submit" className="text-base-content bg-accent rounded-sm h-10 w-50" value="Update Information" />
- </div>
-
- 
- </section>
+      <Button type="submit" className="text-base-content bg-accent rounded-sm h-10 w-50 " value="Update Information" />
+  
+    </div>
+  </section>
  </form>
 
   <h2 className="text-3xl font-bold text-base-content mb-6 mt-20" >Change Password</h2>
@@ -50,20 +49,20 @@ export default function Home() {
 <section className="grid grid-cols-2 gap-x-8 gap-y-4">
     <div className="flex flex-col gap-y-2">
       <h4 className="text-sm  text-base-content">Current Password</h4>
-      <input type="text" className="text-base-content bg-primary rounded-[0.25rem] h-10"  placeholder="Enter current password" />
+      <Input name="currentPassword" value="currentPassword" type="text" className="text-base-content bg-primary rounded-[0.25rem] h-10" placeholder="Enter current password" />
     </div>
     <div className="flex flex-col gap-y-2">
       <h4 className="text-sm  text-base-content">New Password</h4>
-      <input type="text" className="text-base-content bg-primary rounded-[0.25rem] h-10" placeholder="Enter new password" />
+      <Input name="newPassword" value="newPassword" type="text" className="text-base-content bg-primary rounded-[0.25rem] h-10" placeholder="Enter new password" />
     </div>
      <div className="flex flex-col col-span-2 gap-y-2">
       <h4 className="text-sm  text-base-content">Confirm New Password</h4>
-      <input type="text" className="text-base-content bg-primary rounded-[0.25rem] h-10" placeholder="Confirm new password" />
+      <Input name="confirmNewPassword" value="confirmNewPassword" type="text" className="text-base-content bg-primary rounded-[0.25rem] h-10" placeholder="Confirm new password" />
     </div>
      
     <div className="flex justify-end col-span-2">
-        <input type="submit" className="text-base-content bg-accent rounded-sm h-10 w-50 " value="Change Password" />
- </div> 
+        <Button type="submit" className="text-base-content bg-accent rounded-sm h-10 w-50 " value="Change Password" />
+ </div>
 
  
  </section>
@@ -75,17 +74,13 @@ export default function Home() {
     <div className="flex flex-col col-span-2 gap-y-2 text-base-content bg-primary rounded-[0.25rem] h-20 ">
 
   <div className="flex flex-col col-span-2 gap-y-2 text-base-content bg-primary rounded-[0.25rem] h-20 relative">
-   <div
-    className="absolute"
-    style={{
-      width: "24px",
-      height: "24px",
-      left: "493px", 
-            top: "26px",
-      background: "url('/bin.jpg') no-repeat center/contain" 
-    }}
-  />
-</div>   </div>
+   <div className="flex flex-row items-center justify-end h-20 w-full bg-primary rounded-[0.25rem] col-span-2">
+  
+  <img src="/pencil.png" alt="edit" className="w-6 h-6 mr-2" />
+  <img src="/bin.png" alt="delete" className="w-6 h-6 mr-6" />
+</div>
+  </div>
+</div>
 
     <div className="flex flex-col col-span-2 gap-y-2">
   <button
@@ -123,7 +118,7 @@ export default function Home() {
 
 </article>
 <nav className="flex items-center justify-between  ml-5">
-<article className="text-base-content p-8 rounded-[0.5rem] bg-secondary w-full max-w-4xl mx-auto"> {/* all nav div*/}
+<article className="text-base-content p-8 rounded-[0.5rem] bg-secondary w-[362px] h-[800px]"> {/* all nav div*/}
 
 
 
@@ -132,33 +127,31 @@ export default function Home() {
  <form>
 <section className="grid grid-cols-2 gap-x-8 gap-y-4">
     
-       <div className="flex flex-col col-span-2 gap-y-2 text-base-content bg-primary rounded-[0.25rem] h-20">
+       
+     <div className="flex flex-col col-span-2 gap-y-2 text-base-content bg-primary rounded-[0.25rem] w-[306px] h-[92px]">
+
+    </div>
+     <div className="flex flex-col col-span-2 gap-y-2 text-base-content bg-primary rounded-[0.25rem] w-[306px] h-[92px]">
     
 
     </div>
-     <div className="flex flex-col col-span-2 gap-y-2 text-base-content bg-primary rounded-[0.25rem] h-20">
+     <div className="flex flex-col col-span-2 gap-y-2 text-base-content bg-primary rounded-[0.25rem] w-[306px] h-[92px]">
     
 
     </div>
-     <div className="flex flex-col col-span-2 gap-y-2 text-base-content bg-primary rounded-[0.25rem] h-20">
-    
+     <div className="flex flex-col col-span-2 gap-y-2 text-base-content bg-primary rounded-[0.25rem] w-[306px] h-[92px]">
 
     </div>
-     <div className="flex flex-col col-span-2 gap-y-2 text-base-content bg-primary rounded-[0.25rem] h-20">
-    
+     <div className="flex flex-col col-span-2 gap-y-2 text-base-content bg-primary rounded-[0.25rem] w-[306px] h-[92px]">
 
     </div>
-     <div className="flex flex-col col-span-2 gap-y-2 text-base-content bg-primary rounded-[0.25rem] h-20">
-    
+     <div className="flex flex-col col-span-2 gap-y-2 text-base-content bg-primary rounded-[0.25rem] w-[306px] h-[92px]">
 
     </div>
-     <div className="flex flex-col col-span-2 gap-y-2 text-base-content bg-primary rounded-[0.25rem] h-20">
-    
-
-    </div>
+     
     <div className="flex justify-end col-span-2">
-        <input type="submit" className="text-base-content bg-accent rounded-sm h-10 w-50" value="View all History" />
- </div> 
+        <Button type="submit" className=" text-base-content bg-accent rounded-sm h-10 w-50 " value="View all History" />
+ </div>
 
  
  </section>
