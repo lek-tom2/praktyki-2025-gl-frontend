@@ -8,13 +8,13 @@ export default function Home() {
   return (
     <PageTemplate>
         <main className="flex flex-col items-center mb-4   ">  {/* all page div*/}
-<header className = "w-full max-w-4xl mx-auto p-8"  > {/* all account management div*/}
-    <h1 className="text-4xl font-bold mt-12 text-base-content justify-start">Account Management</h1>
-    <p className="text-gray-400">View and manage your personal information, vehicles, and reservation history.</p>
+<header className=" ml-[-34rem] mx-0 p-0 mb-0">
+  <h1 className="text-4xl font-bold mt-12 text-base-content">Account Management</h1>
+  <p className="text-gray-400">View and manage your personal information, vehicles, and reservation history.</p>
 </header>
 <div className="flex flex-row items-start">
 
-<article className="text-base-content p-8 rounded-[0.5rem] bg-base-200 w-[757px] h-[1297px]"> {/* all form div*/}
+<article className="text-base-content p-8 rounded-[0.5rem] bg-base-200 w-[757px] "> {/* all form div*/}
 
 
 
@@ -26,25 +26,25 @@ export default function Home() {
   
     <div className="flex flex-col gap-y-2">
       <h4 className="text-sm  text-base-content">Full name</h4>
-      <Input name="fullName" value="fullName" type="text" className="text-base-content bg-primary rounded-[0.25rem] h-10"  />
+      <Input name="fullName" value="fullName" type="text" className="text-base-content bg-primary rounded-[0.25rem] "  />
     </div>
     <div className="flex flex-col gap-y-2">
       <h4 className="text-sm  text-base-content">Email Address</h4>
-      <Input name="email" value="email" type="text" className="text-base-content bg-primary rounded-[0.25rem] h-10" />
+      <Input name="email" value="email" type="text" className="text-base-content bg-primary rounded-[0.25rem] " />
     </div>
      <div className="flex flex-col col-span-2 gap-y-2">
       <h4 className="text-sm  text-base-content">Phone Number</h4>
-      <Input name="phone" value="phone" type="text" className="w-full text-base-content bg-primary rounded-[0.25rem] h-10" />
+      <Input name="phone" value="phone" type="text" className="w-full text-base-content bg-primary rounded-[0.25rem] " />
     </div>
       
     <div className="flex justify-end col-span-2">
-      <Button type="submit" className="text-base-content bg-accent rounded-sm h-10 w-50 " value="Update Information" />
+      <Button type="submit" className="text-base-content bg-accent rounded-sm  w-50 " value="Update Information" />
   
     </div>
   </section>
  </form>
 
-  <h2 className="text-3xl font-bold text-base-content mb-6 mt-20" >Change Password</h2>
+  <h2 className="text-3xl font-bold text-base-content " >Change Password</h2>
  <form>
 <section className="grid grid-cols-2 gap-x-8 gap-y-4">
     <div className="flex flex-col gap-y-2">
@@ -67,7 +67,7 @@ export default function Home() {
  
  </section>
  </form>
- <h2 className="text-3xl font-bold text-base-content mb-6 mt-20">Registered Vehicles</h2>
+ <h2 className="text-3xl font-bold text-base-content ">Registered Vehicles</h2>
  <form>
 <section className="grid grid-cols-2 gap-x-8 gap-y-4">
   
