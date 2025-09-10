@@ -8,8 +8,8 @@ export default function Home() {
   return (
     <PageTemplate>
         <main className="flex flex-col items-center mb-4   "> 
-<header className=" ml-[-34rem] mx-0 p-0 mb-0">
-  <h1 className="text-4xl font-bold mt-12 text-base-content">Account Management</h1>
+<header className=" ml-[-34rem] mx-0 p-0 mb-4 mt-4">
+  <h1 className="text-4xl font-bold  text-base-content">Account Management</h1>
   <p className="text-gray-400">View and manage your personal information, vehicles, and reservation history.</p>
 </header>
 <div className="flex flex-row items-start">
@@ -19,7 +19,7 @@ export default function Home() {
 
 
 
- <h2 className="text-3xl font-bold text-base-content mb-6">Personal Information</h2>
+ <h2 className="text-3xl font-bold text-base-content mb-4">Personal Information</h2>
 
  <form>
 <section className="grid grid-cols-2 gap-x-8 gap-y-4">
@@ -44,7 +44,7 @@ export default function Home() {
   </section>
  </form>
 
-  <h2 className="text-3xl font-bold text-base-content " >Change Password</h2>
+  <h2 className="text-3xl font-bold text-base-content  mb-4" >Change Password</h2>
  <form>
 <section className="grid grid-cols-2 gap-x-8 gap-y-4">
     <div className="flex flex-col gap-y-2">
@@ -67,7 +67,7 @@ export default function Home() {
  
  </section>
  </form>
- <h2 className="text-3xl font-bold text-base-content ">Registered Vehicles</h2>
+ <h2 className="text-3xl font-bold text-base-content mb-4 ">Registered Vehicles</h2>
  <form>
 <section className="grid grid-cols-2 gap-x-8 gap-y-4">
   
@@ -94,7 +94,7 @@ export default function Home() {
  
  </section>
  </form>
-  <h2 className="text-3xl font-bold  mb-6 mt-6 text-base-content">Manage Account</h2>
+  <h2 className="text-3xl font-bold  mb-4 mt-6 text-base-content">Manage Account</h2>
  <form>
 <section className="grid grid-cols-2 gap-x-8 gap-y-4">
     <div className="flex flex-col col-span-2 gap-y-2 text-base-content bg-primary rounded-[0.25rem] h-20">
