@@ -1,7 +1,7 @@
 "use client";
 
 import Themes from "@/gl-const/themes";
-import { User as UserEntityType } from "@/gl-types/user-types";
+import { User as UserEntityType, Vechicle } from "@/gl-types/user-types";
 import React, { ReactNode, createContext, useContext, useReducer } from "react";
 
 type UserContextProviderProps = {
@@ -32,6 +32,14 @@ type UserAction =
   | {
       type: "setLanguageIso2";
       value: string;
+    }
+  | {
+      type: "setVechicles";
+      value: Vechicle[] | null;
+    }
+  | {
+      type: "setUser";
+      value: UserEntityType;
     };
 
 const UserReducer = (
@@ -51,6 +59,10 @@ const UserReducer = (
       return { ...state, userId: action.value };
     case "setLanguageIso2":
       return { ...state, languageIso2: action.value };
+    case "setVechicles":
+      return { ...state, vechicles: action.value };
+    case "setUser":
+      return { ...action.value };
     default:
       return state;
   }
@@ -64,7 +76,7 @@ type UserContextType = {
 export const UserContext = createContext<UserContextType | null>(null);
 
 export const UserContextProvider = ({ children }: UserContextProviderProps) => {
-  const [User, UserDispatch] = useReducer(UserReducer, {
+  const initialUser: UserEntityType = {
     username: null,
     email: null,
     profilePicture: null,
@@ -73,8 +85,12 @@ export const UserContextProvider = ({ children }: UserContextProviderProps) => {
     accountVerified: null,
     passwordLength: null,
     authorities: null,
+    accountNonLocked: null,
+    token: null,
     languageIso2: "en",
-  } as UserEntityType);
+    vechicles: null,
+  };
+  const [User, UserDispatch] = useReducer(UserReducer, initialUser);
 
   return (
     <UserContext.Provider value={{ User, UserDispatch }}>
