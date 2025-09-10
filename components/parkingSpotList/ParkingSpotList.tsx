@@ -1,6 +1,7 @@
 import { ParkingSpot } from "@/gl-types/parkingSpot";
 import Image from "next/image";
-import React from "react";
+import React, { useState } from "react";
+import Input from "../input/input";
 
 type parkingSpotListProps = {
   parkingSpots: ParkingSpot[];
@@ -20,7 +21,7 @@ const ParkingSpotEntry = ({ parkingSpot }: parkingSpotProps) => {
 
   return (
     <div
-      className={`flex flex-row items-center gap-6 bg-secondary  min-h-15 text-primary-content w-full rounded-2xl drop-shadow-md border hover:scale-101 duration-300 ${
+      className={`flex flex-row items-center gap-6 bg-secondary min-h-20 text-primary-content w-full rounded-2xl drop-shadow-md shadow-xl border-l-2 border-r-2 hover:scale-101 duration-300 ${
         parkingSpot.aviability === 0
           ? "border-rose-800"
           : parkingSpot.aviability === 1
@@ -49,18 +50,63 @@ const ParkingSpotEntry = ({ parkingSpot }: parkingSpotProps) => {
         {aviability}
       </div>
       {parkingSpot.pricePerHour && (
-        <div className="ml-auto mr-4">{parkingSpot.pricePerHour} PLN /hr</div>
+        <div className="ml-auto mr-4">{parkingSpot.pricePerHour} PLN/hr</div>
       )}
     </div>
   );
 };
 
 const ParkingSpotList = ({ parkingSpots }: parkingSpotListProps) => {
+  const [search, setSearch] = useState("");
+  const [filter, setFilter] = useState("all");
+  const filteredSpots = parkingSpots.filter((spot) => {
+    const matchesSearch = spot.name
+      .toLowerCase()
+      .includes(search.toLowerCase());
+
+    const matchesFilter =
+      filter === "all" ||
+      (filter === "available" && spot.aviability === 1) ||
+      (filter === "unavailable" && spot.aviability === 0) ||
+      (filter === "reserved" && spot.aviability === 2);
+
+    return matchesSearch && matchesFilter;
+  });
+
   return (
-    <div className="w-3/4 h-full max-h-[80vh] flex flex-col gap-2 overflow-y-auto p-2">
-      {parkingSpots.map((spot, i) => (
-        <ParkingSpotEntry parkingSpot={spot} key={i} />
-      ))}
+    <div className="w-3/4 h-full max-h-[80vh] flex flex-col gap-4 overflow-y-auto p-2">
+      <div className="flex gap-2 items-center">
+        <div className="hover:scale-105 duration-300 mr-auto ml-4">
+          <Input
+            type="search"
+            name="searchSpot"
+            onChange={(e) => setSearch(e.target.value)}
+            value={search}
+            placeholder="Search by name..."
+            background="bg-secondary"
+          />
+        </div>
+        <select
+          value={filter}
+          onChange={(e) => setFilter(e.target.value)}
+          className="select bg-secondary border-0 h-9 text-primary-content hover:scale-105 focus:scale-105 duration-300 ml-auto mr-4"
+        >
+          <option value="all">All</option>
+          <option value="available">Available</option>
+          <option value="unavailable">Unavailable</option>
+          <option value="reserved">Reserved</option>
+        </select>
+      </div>
+
+      {filteredSpots.length > 0 ? (
+        filteredSpots.map((spot, i) => (
+          <ParkingSpotEntry parkingSpot={spot} key={i} />
+        ))
+      ) : (
+        <div className="text-center text-primary-content mt-4">
+          No matching parking spots
+        </div>
+      )}
     </div>
   );
 };
