@@ -14,7 +14,7 @@ const MyReservedParkingSpacePage = () => {
             </h1>
             <h4 className="text-gray-400">
               Selected Spot{" "}
-              <span className="text-base-content">P-103, North Garage</span>
+              <span className="text-base-content">P-103, Parking -2 </span>
             </h4>
 
             <section>
