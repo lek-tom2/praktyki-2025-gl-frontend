@@ -6,8 +6,23 @@ import PageTemplate from '../../templates/PageTemplate'
 import Input from '@/components/input/input';
 import Button from '@/components/button';
 import Image from "next/image";
+import PopupOverlay from "@/components/popup/popup"; 
+
 
 export default function ParkingSpaces() {
+const [open, setOpen] = useState(false);
+  const [form, setForm] = useState({ date: "", time: "", timeEnd: "", vehicle: "" });
+
+const inputChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  const submitRes = (e: React.FormEvent) => {
+    e.preventDefault();
+    alert("Reservation sent");
+    setOpen(false);
+    setForm({ date: "", time: "", timeEnd: "", vehicle: "" });
+  };
 
     return(
 <PageTemplate>
@@ -63,6 +78,7 @@ export default function ParkingSpaces() {
         type='button'
         value='Create Reservation'
         hoverEffect={true}
+          onClick={() => setOpen(true)}
       />
     </div>
 
@@ -77,6 +93,80 @@ export default function ParkingSpaces() {
       />
     </div>
   </div>
+    <PopupOverlay
+        open={open}
+        onOpenChange={setOpen}
+        title="Parking Spot Reservation Details"
+        description="Selected Spot: P-103, Szczecin"
+        actions={null}
+        boxClassName="bg-base-200"
+      >
+        <form onSubmit={submitRes} className="space-y-3 ">
+          <h4 className="text-base-content font-bold text-[1rem] mt-7 mb-3">Select Date</h4>
+          <Input
+            name="date"
+            type="date"
+            placeholder="date"
+            value={form.date}
+            onChange={inputChange}
+            className=" w-full bg-base-100"
+            required
+          />
+          <h4 className="text-base-content font-bold text-[1rem] mt-7 mb-3">Select Time</h4>
+          <div className="flex row gap-6">
+            <Input
+              name="time"
+              type="time"
+              placeholder="Start Time"
+              value={form.time}
+              onChange={inputChange}
+              className=" w-full bg-base-100"
+              required
+            />
+            <Input
+              name="timeEnd"
+              type="time"
+              placeholder="End Time"
+              value={form.timeEnd}
+              onChange={inputChange}
+              className=" w-full bg-base-100"
+              required
+            />
+          </div>
+          <h4 className="text-base-content font-bold text-[1rem] mt-7 mb-3">Select Vehicle</h4>
+          <select
+            name="vehicle"
+            value={form.vehicle}
+            onChange={inputChange}
+            className="w-full bg-base-100 input input-bordered"
+            required
+          >
+            <option value="">Select vehicle</option>
+            <option value="car">audi</option>
+            <option value="motorcycle">mercedes</option>
+            <option value="van">ford</option>
+          </select>
+<h4 className="text-base-content font-bold text-[1rem] mt-7 mb-3">
+                Reservation Duration
+              </h4>
+              <div className="p-5 flex items-center justify-between bg-base-100  rounded-[0.5rem]">
+                <p className="text-base-content">Total time :</p>
+                <span className="text-green-500 text-2xl font-bold">10h</span>
+              </div>
+          <div className='flex justify-end gap-40'>
+             <input type='button' value='Cancel'  className='w-30 flex justify-start border-[2px] border-green-800 rounded-[1rem] h-9 ' onClick={() => setOpen(false)} />
+
+         <Button
+     className=''
+        type='button'
+        value='Create Reservation'
+        hoverEffect={true}
+          onClick={() => setOpen(true)}
+      />
+    </div>
+
+        </form>
+      </PopupOverlay>
 </PageTemplate>
 
     );
