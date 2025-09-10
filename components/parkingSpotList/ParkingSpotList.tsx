@@ -1,3 +1,5 @@
+"use client";
+
 import { ParkingSpot } from "@/gl-types/parkingSpot";
 import Image from "next/image";
 import React, { useState } from "react";
@@ -49,9 +51,6 @@ const ParkingSpotEntry = ({ parkingSpot }: parkingSpotProps) => {
       >
         {aviability}
       </div>
-      {parkingSpot.pricePerHour && (
-        <div className="ml-auto mr-4">{parkingSpot.pricePerHour} PLN/hr</div>
-      )}
     </div>
   );
 };
