@@ -4,7 +4,7 @@ import Button from "@/components/button";
 const MyReservedParkingSpacePage = () => {
   return (
     <PageTemplate>
-      <div className="flex items-start justify-center mt-30 bg-base-100">
+      <div className="flex items-start justify-center mt-10 bg-base-100">
       
         <div className="flex gap-10">
      
@@ -61,7 +61,7 @@ const MyReservedParkingSpacePage = () => {
 
        
           <nav>
-            <article className="text-base-content p-8 rounded-[0.5rem] bg-secondary w-[362px] h-[800px]">
+            <article className="text-base-content p-8 rounded-[0.5rem] bg-secondary w-[362px] max-h-[723px] overflow-y-auto">
               <h2 className="text-3xl font-bold mb-6">Reservation History</h2>
               <form>
                 <section className="grid grid-cols-2 gap-x-8 gap-y-4">
