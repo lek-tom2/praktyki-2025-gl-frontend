@@ -6,9 +6,9 @@ import { useState } from "react";
 
 const PopupReservationPage = () => {
   const [open, setOpen] = useState(false);
-  const [form, setForm] = useState({ date: "" , time: "", timeEnd: ""});
+  const [form, setForm] = useState({ date: "" , time: "", timeEnd: "", vehicle: ""});
 
-  const inputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const inputChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
@@ -16,7 +16,7 @@ const PopupReservationPage = () => {
     e.preventDefault();
     alert("Reservation sent");
     setOpen(false);
-    setForm({ date: "", time: "", timeEnd: "" });
+    setForm({ date: "", time: "", timeEnd: "", vehicle: "" });
   };
 
   return (
@@ -70,6 +70,21 @@ const PopupReservationPage = () => {
           />
          </div>
           
+ <h4  className="text-base-content font-bold text-[1rem] mt-7 mb-3">Select Date</h4>
+          <select
+  name="vehicle"
+  value={form.vehicle}
+  onChange={inputChange}
+  className="w-full bg-base-100 input input-bordered"
+  required
+>
+  
+  <option value="car">audi</option>
+  <option value="motorcycle">mercedes</option>
+  <option value="van">ford</option>
+</select>
+
+
           <button type="submit" className="btn btn-primary w-full">
             Confirm Reservation
           </button>
