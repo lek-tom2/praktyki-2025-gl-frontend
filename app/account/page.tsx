@@ -7,14 +7,14 @@ import Button from "@/components/button";
 export default function Home() {
   return (
     <PageTemplate>
-        <main className="flex flex-col items-center mb-4   ">  {/* all page div*/}
+        <main className="flex flex-col items-center mb-4   "> 
 <header className=" ml-[-34rem] mx-0 p-0 mb-0">
   <h1 className="text-4xl font-bold mt-12 text-base-content">Account Management</h1>
   <p className="text-gray-400">View and manage your personal information, vehicles, and reservation history.</p>
 </header>
 <div className="flex flex-row items-start">
 
-<article className="text-base-content p-8 rounded-[0.5rem] bg-base-200 w-[757px] "> {/* all form div*/}
+<article className="text-base-content p-8 rounded-[0.5rem] bg-base-200 w-[757px] "> 
 
 
 
@@ -118,7 +118,7 @@ export default function Home() {
 
 </article>
 <nav className="flex items-center justify-between  ml-5">
-<article className="text-base-content p-8 rounded-[0.5rem] bg-secondary w-[362px] h-[800px]"> {/* all nav div*/}
+<article className="text-base-content p-8 rounded-[0.5rem] bg-secondary w-[362px] h-[800px]"> 
 
 
 
