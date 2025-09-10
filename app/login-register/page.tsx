@@ -19,7 +19,6 @@ export default function LoginRegister() {
 
   const [active, setActive] = useState<"login" | "register">("login");
 
-
   return (
     <PageTemplate>
       <div className="flex items-center justify-center min-h-[calc(100vh-64px-80px)]">
