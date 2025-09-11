@@ -7,6 +7,7 @@ import { ApiLinks } from "@/gl-const/api-links";
 import toast from "react-hot-toast";
 import FormErrorWrap from "../FormError/formErrorWrap";
 import FormErrorParahraph from "../FormError/formErrorParagraph";
+import useTranslation from "@/lang/useTranslation";
 
 type formProps = {
   username: string | null;
@@ -17,6 +18,7 @@ type formProps = {
 
 const RegisterComponent = () => {
   const [isLoading, setIsLoading] = useState(false);
+  const { t } = useTranslation();
 
   const {
     register,
@@ -62,7 +64,7 @@ const RegisterComponent = () => {
       onSubmit={handleSubmit(onSubmit)}
     >
       <FormErrorWrap>
-        <p>Username</p>
+        <p>{t("register.username") || "Username"}</p>
         <Input
           className="rounded-md bg-[#374151] w-full p-2 text-white"
           type="text"
@@ -79,7 +81,7 @@ const RegisterComponent = () => {
       </FormErrorWrap>
 
       <FormErrorWrap>
-        <p>Full name</p>
+        <p>{t("register.fullName") || "Full name"}</p>
         <Input
           className="rounded-md bg-[#374151] w-full p-2 text-white"
           type="text"
@@ -96,7 +98,7 @@ const RegisterComponent = () => {
       </FormErrorWrap>
 
       <FormErrorWrap>
-        <p>Password</p>
+        <p>{t("register.password") || "Password"}</p>
         <Input
           className="rounded-md bg-[#374151] w-full p-2 text-white"
           type="password"
@@ -113,7 +115,9 @@ const RegisterComponent = () => {
       </FormErrorWrap>
 
       <FormErrorWrap>
-        <p>Repeat password</p>
+        <p>
+          {t("register.repPassword") || "Repeat password"}
+        </p>
         <Input
           className="rounded-md bg-[#374151] w-full p-2 text-white"
           type="password"
@@ -130,11 +134,16 @@ const RegisterComponent = () => {
       </FormErrorWrap>
       <br />
       <Button
-        value="Register"
+        value={t("register.register") || "Register"}
         type="submit"
         customWidth="60%"
         hoverEffect={true}
       />
+      <div>
+        <a href="#">
+          {t("register.forgotPassword") || "Forgot your password?"}
+        </a>
+      </div>
     </form>
   );
 };

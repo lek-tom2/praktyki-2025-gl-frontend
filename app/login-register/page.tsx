@@ -3,19 +3,13 @@
 import React from "react";
 import { useState } from "react";
 import PageTemplate from "../../templates/PageTemplate";
-import Input from "@/components/input/input";
-import Button from "@/components/button";
-import { SubmitHandler, useForm } from "react-hook-form";
-import { ApiLinks } from "@/gl-const/api-links";
-import toast from "react-hot-toast";
-import useUserContext from "@/gl-context/UserContextProvider";
-import { useRouter } from "next/navigation";
-import { User } from "@/gl-types/user-types";
 import LoginComponent from "@/components/login/loginComponent";
 import RegisterComponent from "@/components/register/registerComponent";
+import useTranslation from "@/lang/useTranslation";
 
 export default function LoginRegister() {
   const [active, setActive] = useState<"login" | "register">("login");
+  const { t } = useTranslation();
 
   return (
     <PageTemplate>
@@ -30,7 +24,7 @@ export default function LoginRegister() {
                   : "text-[#7F8CAA] hover:text-[#B8CFCE]"
               }`}
             >
-              Login
+              {t("login.login")}
             </button>
             <button
               onClick={() => setActive("register")}
@@ -40,7 +34,7 @@ export default function LoginRegister() {
                   : "text-[#7F8CAA] hover:text-[#B8CFCE]"
               }`}
             >
-              Register
+              {t("register.register")}
             </button>
           </div>
           <div className="text-left text-[#5D657E] flex flex-col gap-4">

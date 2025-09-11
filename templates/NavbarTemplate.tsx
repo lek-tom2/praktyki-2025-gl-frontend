@@ -1,8 +1,13 @@
+"use client";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
+import LanguageSwitcher from "@/components/LanguageSwitcher";
+import useTranslation from "@/lang/useTranslation";
 
 const NavbarTemplate = () => {
+  const { t } = useTranslation();
+
   // logged user
   if (false) {
     return (
@@ -16,12 +21,12 @@ const NavbarTemplate = () => {
         <ul className="flex flex-row gap-6 flex-1 justify-center">
           <li>
             <Link href={"#"} className="hover:underline">
-              Find Parking
+              {t("loggedNavbar.findParking")}
             </Link>
           </li>
           <li>
             <Link href={"#"} className="hover:underline">
-              Contact
+              {t("loggedNavbar.contact")}
             </Link>
           </li>
         </ul>
@@ -29,7 +34,11 @@ const NavbarTemplate = () => {
         <div className="rounded-4xl">
           <label className="input flex items-center gap-2 h-8 rounded-4xl">
             {/*future searchbox*/}
-            <input type="text" placeholder="Search..." className="grow" />
+            <input
+              type="text"
+              placeholder={t("loggedNavbar.search")}
+              className="grow"
+            />
           </label>
         </div>
         <div className="mr-20">
@@ -49,20 +58,21 @@ const NavbarTemplate = () => {
         <Image src={"/logo.png"} fill alt="GlobalPark" />
       </div>
 
-      <div className="flex flex-row items-center justify-between w-[9vw] mr-30 ml-auto text-[12px] ">
+      <div className="flex flex-row items-center justify-between w-[12vw] mr-30 ml-auto text-[12px] ">
         <Link
           href="login-register"
-          className="flex items-center font-semibold justify-center rounded-4xl w-[50%] text-center h-8 bg-base-300 ml-[-1rem] min-w-6 hover:scale-105 duration-300"
+          className="flex items-center font-semibold justify-center rounded-4xl mr-5 w-[120px] text-center h-8 bg-base-300 ml-[-1rem] min-w-6 hover:scale-105 duration-300"
         >
-          Login
+          {t("unloggedNavbar.login")}
         </Link>
         <Link
           href="login-register"
-          className="flex items-center font-semibold justify-center rounded-4xl w-[50%] text-center h-8 bg-base-300 min-w-6 hover:scale-105 duration-300"
+          className="flex items-center font-semibold justify-center rounded-4xl w-[120px] text-center h-8 bg-base-300 min-w-6 hover:scale-105 duration-300"
         >
-          Sign Up
+          {t("unloggedNavbar.signUp")}
         </Link>
       </div>
+      <LanguageSwitcher />
     </nav>
   );
 };

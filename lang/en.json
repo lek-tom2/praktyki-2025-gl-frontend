@@ -13,23 +13,19 @@
     "myReservations": "My Reservations"
   },
   "login": {
-    "signinToYourAccount": "Sign in to your account",
-    "login": "Login",
-    "register": "Register",
-    "emailAddress": "Email Address",
+    "username": "Username",
     "password": "Password",
-    "rememberMe": "Remember Me",
-    "forgotPassword": "Forgot password?"
+    "rememberMe": "Remember me",
+    "login": "Login",
+    "forgotPassword": "Forgot your password?"
   },
   "register": {
-    "createAccount": "Create Account",
-    "register": "Register",
-    "emailAddress": "Email Address",
-    "password": "Password",
+    "username": "Username",
     "fullName": "Full Name",
-    "phoneNumber": "Phone Number",
-    "rememberMe": "Remember Me",
-    "forgotPassword": "Forgot password?"
+    "password": "Password",
+    "repPassword": "Repeat Password",
+    "register": "Register",
+    "forgotPassword": "Forgot your password?"
   },
   "addACar": {
     "brand": "Brand",
@@ -44,21 +40,14 @@
     "addCar": "Add Car"
   },
   "landing": {
-    "title": "Find Parking",
+    "findParking": "Find Parking,",
     "simplified": "Simplified",
-    "subTitle": "Reserve your spot in advance and save time and money. Your seamless parking experience starts here",
-    "searchBar": "Enter a location, landmark, or address",
-    "search": "Search"
+    "reserveDescription": "Reserve your spot in advance and save time and money. Your seamless parking experience starts here."
   },
   "parkingDisplay": {
     "destination": "Destination",
     "checkin": "Check-in",
-    "checkout": "Check-out",
-    "found": "Found",
-    "nearYou": "Near You",
-    "list": "List",
-    "map": "Map",
-    "availableOn": "Available on"
+    "checkout": "Check-out"
   },
   "reservation": {
     "title": "Your Parking Spot Reservation",
@@ -74,7 +63,10 @@
     "changeReservation": "Change Your Reservation",
     "reservationHistory": "Reservation History",
     "spot": "Spot",
-    "viewFullHistory": "View Full History"
+    "viewFullHistory": "View Full History",
+    "chosenSpace": "Chosen space:",
+    "details": "Details:",
+    "createReservation": "Create Reservation"
   },
   "account": {
     "personalInformation": "Personal Information",
@@ -94,7 +86,11 @@
     "logout": "Logout"
   },
   "footer": {
-    "allrights": "All rights reserved"
+    "copyright": "All rights reserved."
   },
-  "adminPanel": {}
+  "adminPanel": {},
+  "notFound": {
+    "description": "Sorry but the page you're trying to find doesn't exist.",
+    "backToHome": "Back to home page"
+  }
 }

@@ -9,6 +9,7 @@ import toast from "react-hot-toast";
 import Button from "../button";
 import FormErrorWrap from "../FormError/formErrorWrap";
 import FormErrorParahraph from "../FormError/formErrorParagraph";
+import useTranslation from "@/lang/useTranslation";
 
 type formProps = {
   login: string | null;
@@ -17,6 +18,7 @@ type formProps = {
 
 const LoginComponent = () => {
   const [isLoading, setIsLoading] = useState(false);
+  const { t } = useTranslation();
 
   const {
     register,
@@ -70,7 +72,7 @@ const LoginComponent = () => {
       noValidate
     >
       <FormErrorWrap>
-        <p>Username</p>
+        <p>{t("login.username") || "Username"}</p>
         <Input
           className="rounded-md bg-[#374151] w-full p-2 text-white"
           type="text"
@@ -87,7 +89,7 @@ const LoginComponent = () => {
       </FormErrorWrap>
 
       <div>
-        <p>Password</p>
+        <p>{t("login.password") || "Password"}</p>
         <Input
           className="rounded-md bg-[#374151] w-full p-2 text-white"
           type="password"
@@ -106,18 +108,18 @@ const LoginComponent = () => {
       <section className="flex flex-row items-center justify-between">
         <div className="flex items-center gap-2">
           <input type="checkbox" className="relative -top-0.5" />
-          <p>Remember me</p>
+          <p>{t("login.rememberMe") || "Remember me"}</p>
         </div>
         <a
           href="#"
           className="hover:underline text-white p-2 transition-transform duration-200 hover:scale-105"
         >
-          Forgot your password?
+          {t("login.forgotPassword") || "Forgot your password?"}
         </a>
       </section>
 
       <Button
-        value="login"
+        value={t("login.login") || "login"}
         type="submit"
         customWidth="60%"
         hoverEffect={true}
