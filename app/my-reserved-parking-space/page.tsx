@@ -2,6 +2,34 @@ import PageTemplate from "@/templates/PageTemplate";
 import Button from "@/components/button";
 
 const MyReservedParkingSpacePage = () => {
+  
+{/*random const to check if getDuration work
+ in the future this const will be retrieved from database*/}
+
+const selectedTimeFrom = "10:00";
+const selectedTimeTo = "17:30";
+const selectedYear = 2025;
+const selectedMonth = 11;
+const selectedDay = 3;
+const day = String(selectedDay).padStart(2, "0"); 
+const month = String(selectedMonth).padStart(2, "0"); 
+const year = String(selectedYear).padStart(2, "0"); 
+
+const getDuration = (from: string, to: string) => {
+  if (!from || !to) return "0h";
+  const [startH, startM] = from.split(":").map(Number);
+  const [endH, endM] = to.split(":").map(Number);
+
+  const start = startH * 60 + startM;
+  const end = endH * 60 + endM;
+  const diff = end - start;
+  if (diff <= 0) return "0h";
+
+  const hours = Math.floor(diff / 60);
+  const minutes = diff % 60;
+  return minutes === 0 ? `${hours}h` : `${hours}h ${minutes}m`;
+};
+
   return (
     <PageTemplate>
       <div className="flex items-start justify-center mt-10 bg-base-100">
@@ -22,7 +50,7 @@ const MyReservedParkingSpacePage = () => {
                 Selected Date
               </h4>
               <div className="p-5 flex items-center justify-start bg-base-100 w-[512px] h-[56px] rounded-[0.5rem]">
-                <p className="text-base-content">07/23/2025</p>
+                <p className="text-base-content">{year}/{month}/{day}</p>
               </div>
 
               <h4 className="text-base-content font-bold text-[1rem] mt-7 mb-3">
@@ -30,10 +58,10 @@ const MyReservedParkingSpacePage = () => {
               </h4>
               <div className="flex gap-10">
                 <div className="p-5 flex items-center justify-start bg-base-100 w-[236px] h-[56px] rounded-[0.5rem]">
-                  <p className="text-base-content">From 09:00AM</p>
+                  <p className="text-base-content">From {selectedTimeFrom}</p>
                 </div>
                 <div className="p-5 flex items-center justify-start bg-base-100 w-[236px] h-[56px] rounded-[0.5rem]">
-                  <p className="text-base-content">To 10:00AM</p>
+                  <p className="text-base-content">To {selectedTimeTo}</p>
                 </div>
               </div>
 
@@ -49,7 +77,9 @@ const MyReservedParkingSpacePage = () => {
               </h4>
               <div className="p-5 flex items-center justify-between bg-base-100 w-[512px] h-[56px] rounded-[0.5rem]">
                 <p className="text-base-content">Total time :</p>
-                <span className="text-green-500 text-2xl font-bold">10h</span>
+                 <span className="text-green-500 text-2xl font-bold">
+                  {getDuration(selectedTimeFrom, selectedTimeTo)}
+                </span>
               </div>
             </section>
 
