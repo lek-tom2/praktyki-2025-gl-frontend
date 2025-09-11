@@ -16,14 +16,55 @@ const [open, setOpen] = useState(false);
 const inputChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
+const formatDate = (dateString: string): string => {
+  if (!dateString) return "";
+  const [year, month, day] = dateString.split("-");
+  return `${year}/${month}/${day}`;
+};
 
-  const submitRes = (e: React.FormEvent) => {
-    e.preventDefault();
-    alert("Reservation sent");
-    setOpen(false);
-    setForm({ date: "", time: "", timeEnd: "", vehicle: "" });
+const formatTime24 = (timeString: string): string => {
+  if (!timeString) return "";
+  
+  const [h, m] = timeString.split(":");
+  const hh = h.padStart(2, "0");
+  const mm = m.padStart(2, "0");
+  return `${hh}:${mm}`;
+};
+
+const submitRes = (e: React.FormEvent) => {
+  e.preventDefault();
+
+  const formattedDate = formatDate(form.date); 
+  const startTime24 = formatTime24(form.time);
+  const endTime24 = formatTime24(form.timeEnd);
+
+  const reservationData = {
+    date: formattedDate,
+    time: startTime24,
+    timeEnd: endTime24,
+    vehicle: form.vehicle,
   };
 
+  
+
+  alert("Reservation sent");
+  setOpen(false);
+  setForm({ date: "", time: "", timeEnd: "", vehicle: "" });
+};
+const getDuration = () => {
+  if (!form.time || !form.timeEnd) return "0h";
+  const [startH, startM] = form.time.split(":").map(Number);
+  const [endH, endM] = form.timeEnd.split(":").map(Number);
+
+  const start = startH * 60 + startM;
+  const end = endH * 60 + endM;
+  const diff = end - start;
+  if (diff <= 0) return "0h";
+
+  const hours = Math.floor(diff / 60);
+  const minutes = diff % 60;
+  return minutes === 0 ? `${hours}h` : `${hours}h ${minutes}m`;
+};
     return(
 <PageTemplate>
 
@@ -150,22 +191,31 @@ const inputChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<
                 Reservation Duration
               </h4>
               <div className="p-5 flex items-center justify-between bg-base-100  rounded-[0.5rem]">
-                <p className="text-base-content">Total time :</p>
-                <span className="text-green-500 text-2xl font-bold">10h</span>
-              </div>
+  <p className="text-base-content">Total time :</p>
+  <span className="text-green-500 text-2xl font-bold">{getDuration()}</span>
+</div>
           <div className='flex justify-end gap-40'>
              <input type='button' value='Cancel'  className='w-30 flex justify-start border-[2px] border-green-800 rounded-[1rem] h-9 ' onClick={() => setOpen(false)} />
 
          <Button
      className=''
-        type='button'
+        type='submit'
         value='Create Reservation'
         hoverEffect={true}
           onClick={() => setOpen(true)}
       />
     </div>
 
+       
         </form>
+    
+    {/*  Sprawdzenie zapisanej daty i czasu
+       
+         <p>Wysłana data: {formatDate(form.date)}</p>
+         <p>Start time: {formatTime24(form.time)}</p>
+         <p>End time: {formatTime24(form.timeEnd)}</p>
+
+    */} 
       </PopupOverlay>
 </PageTemplate>
 
