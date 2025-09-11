@@ -1,16 +1,17 @@
 "use client";
 
-import { ParkingSpot } from "@/gl-types/parkingSpot";
+import { ParkingSpotPL2, ParkingSpotPL3 } from "@/gl-types/parkingSpot";
 import Image from "next/image";
 import React, { useState } from "react";
 import Input from "../input/input";
 import { ParkingSpotEntry } from "./parkingListComponents";
 
 type parkingSpotListProps = {
-  parkingSpots: ParkingSpot[];
+  parkingSpots: ParkingSpotPL2[] | ParkingSpotPL3[];
+  level: "PL2" | "PL3";
 };
 
-const ParkingSpotList = ({ parkingSpots }: parkingSpotListProps) => {
+const ParkingSpotList = ({ parkingSpots, level }: parkingSpotListProps) => {
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState("all");
   const filteredSpots = parkingSpots.filter((spot) => {
@@ -29,11 +30,13 @@ const ParkingSpotList = ({ parkingSpots }: parkingSpotListProps) => {
   });
 
   return (
-    <div className="w-3/4 h-full max-h-[80vh] flex flex-col gap-4 overflow-y-scroll overflow-x-hidden m-4">
-      <div className="grid grid-cols-3 items-center w-full m-6">
+    <div className="w-3/4 h-full max-h-[80vh] flex flex-col gap-4 overflow-y-scroll overflow-x-hidden m-4 items-center p-2 max-w-screen-xl mx-auto box-border">
+      <div className="grid grid-cols-3 items-center w-full mb-12">
         <div />
 
-        <p className="text-[#eaefef] text-4xl text-center">Parking Level -2</p>
+        <p className="text-[#eaefef] text-4xl text-center">
+          Parking Level {level === "PL2" ? "-2" : "-3"}
+        </p>
 
         <div className="flex flex-row justify-end gap-4 mr-8">
           <div className="hover:scale-105 duration-300 ">

@@ -1,8 +1,8 @@
-import { ParkingSpot } from "@/gl-types/parkingSpot";
+import { ParkingSpotPL2, ParkingSpotPL3 } from "@/gl-types/parkingSpot";
 import Image from "next/image";
 
 type parkingSpotProps = {
-  parkingSpot: ParkingSpot;
+  parkingSpot: ParkingSpotPL2 | ParkingSpotPL3;
   onClick?: () => void | unknown;
 };
 
@@ -14,7 +14,7 @@ export const ParkingSpotEntry = ({
 
   return (
     <div
-      className={`flex flex-row items-center gap-6 bg-secondary min-h-20 text-primary-content w-full rounded-2xl shadow-[0_4px_4px_rgba(0,0,0,0.25)] border-l-2 border-r-2 hover:scale-101 duration-300 ${
+      className={`flex flex-row items-center gap-6 bg-secondary min-h-20 text-primary-content w-full rounded-2xl shadow-[0_4px_4px_rgba(0,0,0,0.25)] border-l-2 border-r-2 hover:scale-101 duration-300 ml-4 mr-4 ${
         parkingSpot.aviability === "occupied"
           ? "border-rose-800"
           : parkingSpot.aviability === "available"

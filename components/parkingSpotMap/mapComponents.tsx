@@ -1,11 +1,14 @@
-import { ParkingSpot as ParkingSpotType } from "@/gl-types/parkingSpot";
+import { ParkingSpotPL2, ParkingSpotPL3 } from "@/gl-types/parkingSpot";
 import { ReactNode } from "react";
 
 type separtaorProps = {
   text: string;
 };
 
-type parkingSpotProps = Pick<ParkingSpotType, "name" | "aviability"> & {
+type parkingSpotProps = Pick<
+  ParkingSpotPL2 | ParkingSpotPL3,
+  "name" | "aviability"
+> & {
   visible?: boolean;
   onClick?: () => void | unknown;
 };
@@ -24,8 +27,6 @@ export const ParkingSpot = ({
   visible = true,
   onClick = undefined,
 }: parkingSpotProps) => {
-  const sizeClasses = "w-12 md:w-14 lg:w-16 flex-shrink-0";
-
   const bgClass = visible
     ? aviability === "occupied"
       ? "bg-rose-800"
@@ -39,7 +40,7 @@ export const ParkingSpot = ({
   return (
     <div
       onClick={onClick}
-      className={`${bgClass} text-[#eaefef] ${sizeClasses} rounded-2xl aspect-square flex items-center justify-center cursor-pointer`}
+      className={`${bgClass} text-[#eaefef] w-12 md:w-14 lg:w-16 flex-shrink-0 rounded-2xl aspect-square flex items-center justify-center cursor-pointer hover:scale-105 duration-300`}
     >
       {visible ? name : null}
     </div>
