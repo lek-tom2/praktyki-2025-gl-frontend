@@ -4,7 +4,6 @@ import React, { useState } from "react";
 import PopupOverlay from "../popup/popup";
 import Input from "../input/input";
 import Button from "../button";
-import FormErrorParahraph from "../FormError/formErrorParagraph";
 
 export default function ReportIssue() {
   const [isOpen, setIsOpen] = useState(false);
@@ -28,7 +27,6 @@ export default function ReportIssue() {
 
   return (
     <>
-      {/* Red report button */}
       <Button
         type="button"
         value="Report Issue"
@@ -38,7 +36,6 @@ export default function ReportIssue() {
         onClick={() => setIsOpen(true)}
       />
 
-      {/* Popup using PopupOverlay */}
       <PopupOverlay
         open={isOpen}
         onOpenChange={setIsOpen}
