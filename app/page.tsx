@@ -287,7 +287,7 @@ export default async function Home() {
   // );
   return (
     <PageTemplate>
-      <ParkingSpotMap parkingSpots={spots} />
+      <ParkingSpotMap parkingSpots={spots} level="-2" />
     </PageTemplate>
   );
 }

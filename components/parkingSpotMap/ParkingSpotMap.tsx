@@ -9,9 +9,10 @@ import Input from "../input/input";
 
 type parkingSpotMapProps = {
   parkingSpots: ParkingSpotType[];
+  level: string;
 };
 
-const ParkingSpotMap = ({ parkingSpots }: parkingSpotMapProps) => {
+const ParkingSpotMap = ({ parkingSpots, level }: parkingSpotMapProps) => {
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState("all");
 
@@ -38,7 +39,7 @@ const ParkingSpotMap = ({ parkingSpots }: parkingSpotMapProps) => {
       <div className="grid grid-cols-3 items-center w-full gap-4 mb-4">
         <div /> {/* left spacer */}
         <p className="text-[#eaefef] text-3xl md:text-4xl text-center">
-          Parking Level -2
+          Parking Level {level}
         </p>
         <div className="flex items-center justify-end gap-3">
           <div className="w-44 md:w-64 hover:scale-105 transition-transform duration-200">
