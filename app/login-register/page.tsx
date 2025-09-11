@@ -1,16 +1,26 @@
 "use client";
 
-import React from 'react'
-import { useState } from 'react';
-import PageTemplate from '../../templates/PageTemplate'
-import Input from '@/components/input/input';
-import Button from '@/components/button';
+import React from "react";
+import { useState } from "react";
+import PageTemplate from "../../templates/PageTemplate";
+import Input from "@/components/input/input";
+import Button from "@/components/button";
+import { SubmitHandler, useForm } from "react-hook-form";
+import { ApiLinks } from "@/gl-const/api-links";
+import toast from "react-hot-toast";
+import useUserContext from "@/gl-context/UserContextProvider";
+import { useRouter } from "next/navigation";
+import { User } from "@/gl-types/user-types";
+import LoginComponent from "@/components/login/loginComponent";
+import RegisterComponent from "@/components/register/registerComponent";
 
 export default function LoginRegister() {
-  const [active, setActive] = useState("login");
 
-    return (
-          <PageTemplate>
+
+  const [active, setActive] = useState<"login" | "register">("login");
+
+  return (
+    <PageTemplate>
       <div className="flex items-center justify-center min-h-[calc(100vh-64px-80px)]">
         <section className="w-[25%] h-[50%] bg-[#333446] rounded-xl shadow-lg p-6 flex flex-col justify-center">
           <div className="flex justify-center gap-14 mb-6">
@@ -36,95 +46,10 @@ export default function LoginRegister() {
             </button>
           </div>
           <div className="text-left text-[#5D657E] flex flex-col gap-4">
-  {active === "login" ? (
-    <>
-      <div>
-        <p>Username</p>
-        <Input
-        className="rounded-md bg-[#374151] w-full p-2 text-white"
-         type="text"
-          name="username">
-        </Input>
-      </div>
-
-      <div>
-        <p>Password</p>
-        <Input
-          className="rounded-md bg-[#374151] w-full p-2 text-white"
-          type="password"
-          name='password'
-        ></Input>
-      </div>
-
-      <section className="flex flex-row items-center justify-between">
-        <div className="flex items-center gap-2">
-          <input type="checkbox" className='relative -top-0.5'/>
-          <p>Remember me</p>
-        </div>
-        <a href="#" className="hover:underline text-white p-2 transition-transform duration-200 hover:scale-105">
-          Forgot your password?
-        </a>
-      </section>
-
-      <Button
-       value='login'
-       type='button'
-       customWidth='60%'
-       hoverEffect={true}
-       />
-    </>
-  ) : (
-    <>
-      <div>
-        <p>Username</p>
-        <Input
-          className="rounded-md bg-[#374151] w-full p-2 text-white"
-          type="text"
-          name='username'
-
-        ></Input>
-      </div>
-
-      <div>
-        <p>Full name</p>
-        <Input
-          className="rounded-md bg-[#374151] w-full p-2 text-white"
-          type="text"
-          name='name'
-        ></Input>
-      </div>
-
-      <div>
-        <p>Password</p>
-        <Input
-          className="rounded-md bg-[#374151] w-full p-2 text-white"
-          type="password"
-          name='password'
-        ></Input>
-      </div>
-
-      <div>
-        <p>Repeat password</p>
-        <Input
-          className="rounded-md bg-[#374151] w-full p-2 text-white"
-          type="password"
-          name='repeat'
-        ></Input>
-        </div><br />
-        <Button 
-        value='login'
-       type='button'
-       customWidth='60%'
-       hoverEffect={true}
-        />
-      </>
-    )}
-  </div>
-
+            {active === "login" ? <LoginComponent /> : <RegisterComponent />}
+          </div>
         </section>
       </div>
     </PageTemplate>
-        
-    )
-
+  );
 }

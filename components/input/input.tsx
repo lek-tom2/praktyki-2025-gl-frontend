@@ -1,4 +1,6 @@
+"use client";
 import React, { ReactNode, useState } from "react";
+import { UseFormRegister, UseFormRegisterReturn } from "react-hook-form";
 
 type InputProps = {
   type: string;
@@ -14,6 +16,8 @@ type InputProps = {
   height?: string;
   fontColor?: string;
   id?: string;
+  background?: string;
+  register?: UseFormRegisterReturn;
 };
 
 const Input = ({
@@ -30,6 +34,8 @@ const Input = ({
   height,
   fontColor,
   id = "default",
+  background = "bg-primary",
+  register,
   ...props
 }: InputProps) => {
   // fallback state only if uncontrolled
@@ -42,9 +48,9 @@ const Input = ({
       className={
         className
           ? `${className} input ${fontColor ?? "text-neutral"}`
-          : `input bg-primary text-neutral ${height ?? "h-9"} ${
+          : `input ${background} text-neutral ${height ?? "h-9"} ${
               width ?? "w-60"
-            } ${fontColor ?? "text-neutral"}`
+            } ${fontColor ?? "text-neutral"} border-0 `
       }
       htmlFor={id}
     >
@@ -69,6 +75,7 @@ const Input = ({
 
       <input
         {...props}
+        {...register}
         type={type}
         id={id}
         placeholder={placeholder}
