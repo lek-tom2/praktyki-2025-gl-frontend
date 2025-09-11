@@ -15,6 +15,8 @@ type formProps = {
   password: string | null;
 };
 
+  
+
 const LoginComponent = () => {
   const [isLoading, setIsLoading] = useState(false);
 
@@ -81,6 +83,14 @@ const LoginComponent = () => {
               value: true,
               message: "Login is required",
             },
+            minLength: {
+              value: 6,
+              message: "Username must be at least 6 characters long.",
+            },
+              pattern: {
+                value: /^[a-zA-Z0-9_]+$/,
+                message: "Login can only contain letters, numbers and underscores",
+            },
           })}
         />
         <FormErrorParahraph errorObject={errors.login} />
@@ -94,10 +104,18 @@ const LoginComponent = () => {
           name="password"
           register={register("password", {
             // password validation
-            required: {
-              value: true,
-              message: "Password is required",
-            },
+                required: {
+                  value: true,
+                  message: "Password is required",
+                },
+                minLength: {
+                  value: 8,
+                  message: "Password must be at least 8 characters long",
+                },
+                pattern: {
+                  value: /^(?=.*[A-Z])(?=.*\d).+$/,
+                  message: "Password must contain at least one uppercase letter and one number",
+                },
           })}
         />
         <FormErrorParahraph errorObject={errors.password} />

@@ -71,7 +71,15 @@ const RegisterComponent = () => {
             // username validation
             required: {
               value: true,
-              message: "Username is required",
+              message: "Login is required",
+            },
+            minLength: {
+              value: 6,
+              message: "Username must be at least 6 characters long.",
+            },
+              pattern: {
+                value: /^[a-zA-Z0-9_]+$/,
+                message: "Login can only contain letters, numbers and underscores",
             },
           })}
         />
@@ -86,6 +94,10 @@ const RegisterComponent = () => {
           name="fullName"
           register={register("fullName", {
             // full name validation
+            pattern: {
+              value: /^[\p{L}]([-']?[\p{L}]+)*( [\p{L}]([-']?[\p{L}]+)*)+$/,
+              message: "Full name must contain at least first and last name, only letters, apostrophes or hyphens allowed.",
+            },
             required: {
               value: true,
               message: "Name is required",
@@ -102,11 +114,18 @@ const RegisterComponent = () => {
           type="password"
           name="password"
           register={register("password", {
-            //password validation
             required: {
-              value: true,
-              message: "Password is required",
-            },
+                  value: true,
+                  message: "Password is required",
+                },
+                minLength: {
+                  value: 8,
+                  message: "Password must be at least 8 characters long",
+                },
+                pattern: {
+                  value: /^(?=.*[A-Z])(?=.*\d).+$/,
+                  message: "Password must contain at least one uppercase letter and one number",
+                },
           })}
         />
         <FormErrorParahraph errorObject={errors.password} />
@@ -120,6 +139,7 @@ const RegisterComponent = () => {
           name="repPassword"
           register={register("repPassword", {
             //repPassword validation
+            validate: (value) => value === getValues().password || "Passwords don't match",
             required: {
               value: true,
               message: "Password repetition is required",
