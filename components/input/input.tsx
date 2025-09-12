@@ -47,10 +47,10 @@ const Input = ({
     <label
       className={
         className
-          ? `${className} input ${fontColor ?? "text-neutral"}`
-          : `input ${background} text-neutral ${height ?? "h-9"} ${
+          ? `${className} input ${fontColor ?? "text-secondary-content"}`
+          : `input ${background} text-secondary-content ${height ?? "h-9"} ${
               width ?? "w-60"
-            } ${fontColor ?? "text-neutral"} border-0 `
+            } ${fontColor ?? "text-secondary-content"} border-0 `
       }
       htmlFor={id}
     >
