@@ -35,7 +35,7 @@ export const ParkingSpot = ({
       : aviability === "reserved"
       ? "bg-amber-600"
       : "bg-blue-500"
-    : "bg-transparent";
+    : "bg-gray-600";
 
   return (
     <div

@@ -14,8 +14,8 @@ export default async function Home() {
   // );
   return (
     <PageTemplate>
-      {/* <ParkingSpotMap parkingSpots={spotsPL2} level="PL2" /> */}
-      <ParkingSpotMap parkingSpots={spotsPL3} level="PL3" />
+      <ParkingSpotMap parkingSpots={spotsPL2} level="PL2" />
+      {/* <ParkingSpotMap parkingSpots={spotsPL3} level="PL3" /> */}
     </PageTemplate>
   );
 }
