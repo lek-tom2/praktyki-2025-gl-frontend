@@ -3,7 +3,13 @@
 import Languages from "@/gl-const/languages";
 import Themes from "@/gl-const/themes";
 import { User as UserEntityType, Vechicle } from "@/gl-types/user-types";
-import React, { ReactNode, createContext, useContext, useReducer } from "react";
+import React, {
+  ReactNode,
+  createContext,
+  useContext,
+  useEffect,
+  useReducer,
+} from "react";
 
 type UserContextProviderProps = {
   children: ReactNode;
@@ -16,7 +22,7 @@ type UserAction =
     }
   | {
       type: "setTheme";
-      value: "light" | "dark";
+      value: string;
     }
   | {
       type: "setProfilePicture";
@@ -92,6 +98,16 @@ export const UserContextProvider = ({ children }: UserContextProviderProps) => {
     vechicles: null,
   };
   const [User, UserDispatch] = useReducer(UserReducer, initialUser);
+
+  useEffect(() => {
+    const prefersDark = window.matchMedia(
+      "(prefers-color-scheme: dark)"
+    ).matches;
+    UserDispatch({
+      type: "setTheme",
+      value: prefersDark ? Themes.glDark : Themes.glLight,
+    });
+  }, []);
 
   return (
     <UserContext.Provider value={{ User, UserDispatch }}>
