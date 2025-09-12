@@ -56,33 +56,32 @@ const Switch = ({
   );
 
   return (
-    <div
-      className={`flex items-center bg-base-200 p-1 rounded-full ${className ?? ""}`}
+  <div
+    className={`flex items-center bg-base-200 p-1 rounded-full w-[200px] h-[48px] ${className ?? ""}`}
+  >
+    <button
+      type="button"
+      className={`${baseBtnClasses} w-[97px] h-[40px] ${
+        currentValue === "list" ? "bg-accent" : "bg-transparent"
+      }`}
+      onClick={() => handleSwitch("list")}
     >
-      
-      <button
-        type="button"
-        className={`${baseBtnClasses} ${
-          currentValue === "list" ? "bg-accent" : "bg-transparent"
-        }`}
-        onClick={() => handleSwitch("list")}
-      >
-        {ListIcon}
-        <span>List</span>
-      </button>
-      <button
-        type="button"
-        className={`${baseBtnClasses} ${
-          currentValue === "map" ? "bg-accent" : "bg-transparent"
-        }`}
-        onClick={() => handleSwitch("map")}
-      >
-        {MapIcon}
-        <span>Map</span>
-      </button>
-      {children}
-    </div>
-  );
+      {ListIcon}
+      <span>List</span>
+    </button>
+    <button
+      type="button"
+      className={`${baseBtnClasses} w-[97px] h-[40px] ${
+        currentValue === "map" ? "bg-accent" : "bg-transparent"
+      }`}
+      onClick={() => handleSwitch("map")}
+    >
+      {MapIcon}
+      <span>Map</span>
+    </button>
+    {children}
+  </div>
+);
 };
 
 export default Switch;
