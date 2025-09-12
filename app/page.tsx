@@ -1,8 +1,8 @@
 "use server";
 import PageTemplate from "@/templates/PageTemplate";
-import ParkingSpotMap from "@/components/parkingSpotMap/ParkingSpotMap";
-import { spotsPL2, spotsPL3 } from "@/gl-const/parking-spots-test-data";
-import ParkingSpotList from "@/components/parkingSpotList/ParkingSpotList";
+
+import Welcome from "@/pages/Welcome";
+
 
 export default async function Home() {
   // return <Welcome></Welcome>

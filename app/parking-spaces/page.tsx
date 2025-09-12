@@ -11,7 +11,6 @@ export default function ParkingSpaces() {
 
     return(
 <PageTemplate>
-
   <div className='w-[85%] ml-[10%] mr-[10%] h-[15%] mt-4 flex flex-row gap-4'>
     <div className="flex flex-col w-[60%]">
       <p className='text-left text-[#ffffff] text-xs mb-1'>Destination</p>
