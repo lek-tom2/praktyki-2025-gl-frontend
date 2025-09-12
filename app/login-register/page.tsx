@@ -15,6 +15,8 @@ import LoginComponent from "@/components/login/loginComponent";
 import RegisterComponent from "@/components/register/registerComponent";
 
 export default function LoginRegister() {
+
+
   const [active, setActive] = useState<"login" | "register">("login");
 
   return (
