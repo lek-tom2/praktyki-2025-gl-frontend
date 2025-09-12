@@ -1,6 +1,6 @@
 const Themes = {
-  dark: "dark",
-  light: "light",
+  glDark: "gl-dark",
+  glLight: "gl-light",
 } as const;
 
 export default Themes;
