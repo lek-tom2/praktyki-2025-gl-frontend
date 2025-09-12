@@ -7,7 +7,7 @@ export default function IconWithPopup() {
 
   const handleClickOutside = (event: React.MouseEvent<HTMLDivElement>) => {
     const target = event.target as HTMLElement;
-    // jeśli kliknięcie nie jest na popupie ani na ikonce, zamknij popup
+
     if (!target.closest("#popup") && !target.closest("#icon-btn")) {
       setIsOpen(false);
     }
@@ -15,14 +15,14 @@ export default function IconWithPopup() {
 
   return (
     <div onClick={handleClickOutside}>
-      {/* Ikonka */}
+
       <div className="flex justify-end mr-[15%] mt-4">
         <button id="icon-btn" onClick={() => setIsOpen(!isOpen)}>
           <img src="/people.png" alt="icon" className="w-8 h-8" />
         </button>
       </div>
 
-      {/* Popup */}
+
       {isOpen && (
         <div
           id="popup"
