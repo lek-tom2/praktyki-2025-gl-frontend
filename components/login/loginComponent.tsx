@@ -72,9 +72,9 @@ const LoginComponent = () => {
       noValidate
     >
       <FormErrorWrap>
-        <p>Username</p>
+        <p className="text-base-content">Username</p>
         <Input
-          className="rounded-md bg-[#374151] w-full p-2 text-white"
+          className="rounded-md bg-primary w-full p-2 text-base-content"
           type="text"
           name="login"
           register={register("login", {
@@ -97,9 +97,9 @@ const LoginComponent = () => {
       </FormErrorWrap>
 
       <div>
-        <p>Password</p>
+        <p className="text-base-content">Password</p>
         <Input
-          className="rounded-md bg-[#374151] w-full p-2 text-white"
+          className="rounded-md bg-primary w-full p-2 text-base-content"
           type="password"
           name="password"
           register={register("password", {
@@ -122,13 +122,13 @@ const LoginComponent = () => {
       </div>
 
       <section className="flex flex-row items-center justify-between">
-        <div className="flex items-center gap-2">
-          <input type="checkbox" className="relative -top-0.5" />
-          <p>Remember me</p>
+        <div className="flex items-center flex-row  gap-2">
+          <input type="checkbox" className="bg-primary" />
+          <p className="text-base-content">Remember me</p>
         </div>
         <a
           href="#"
-          className="hover:underline text-white p-2 transition-transform duration-200 hover:scale-105"
+          className="hover:underline text-base-content p-2 transition-transform duration-200 hover:scale-105"
         >
           Forgot your password?
         </a>

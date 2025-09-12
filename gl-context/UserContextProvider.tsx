@@ -1,5 +1,6 @@
 "use client";
 
+import Languages from "@/gl-const/languages";
 import Themes from "@/gl-const/themes";
 import { User as UserEntityType, Vechicle } from "@/gl-types/user-types";
 import React, {
@@ -93,7 +94,7 @@ export const UserContextProvider = ({ children }: UserContextProviderProps) => {
     authorities: null,
     accountNonLocked: null,
     token: null,
-    languageIso2: "en",
+    languageIso2: Languages.en,
     vechicles: null,
   };
   const [User, UserDispatch] = useReducer(UserReducer, initialUser);
