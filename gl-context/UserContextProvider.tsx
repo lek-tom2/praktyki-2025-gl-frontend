@@ -82,13 +82,11 @@ type UserContextType = {
 export const UserContext = createContext<UserContextType | null>(null);
 
 export const UserContextProvider = ({ children }: UserContextProviderProps) => {
-  const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-
   const initialUser: UserEntityType = {
     username: null,
     email: null,
     profilePicture: null,
-    theme: prefersDark ? Themes.glDark : Themes.glLight, // to be changed to glDark and glLight from themes constant
+    theme: Themes.glLight,
     userId: null,
     accountVerified: null,
     passwordLength: null,
@@ -99,6 +97,16 @@ export const UserContextProvider = ({ children }: UserContextProviderProps) => {
     vechicles: null,
   };
   const [User, UserDispatch] = useReducer(UserReducer, initialUser);
+
+  useEffect(() => {
+    const prefersDark = window.matchMedia(
+      "(prefers-color-scheme: dark)"
+    ).matches;
+    UserDispatch({
+      type: "setTheme",
+      value: prefersDark ? Themes.glDark : Themes.glLight,
+    });
+  }, []);
 
   return (
     <UserContext.Provider value={{ User, UserDispatch }}>
