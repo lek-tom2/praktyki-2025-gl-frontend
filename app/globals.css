@@ -88,14 +88,4 @@ body {
   --noise: 0;
 }
 
-@plugin "daisyui/theme" {
-  name: "gl-brand-dark";
-  default: false;
-  prefersdark: true;
-  color-scheme: dark;
-  
-  --color-base-content: #ffffff; /*text*/
---color-base-100: #464748; /*background*/
---color-base-200: #000000; /*navbar form */
 
-}
