@@ -1,9 +1,5 @@
 "use client";
-import {
-  ParkingSpotPL2,
-  ParkingSpotPL3,
-  SpotStatus,
-} from "@/gl-types/parkingSpot";
+import { ParkingSpotPL2, ParkingSpotPL3 } from "@/gl-types/parkingSpot";
 import React, { useState } from "react";
 import { Aisle, ParkingSpot, Separator, Wrapper } from "./mapComponents";
 import Input from "../input/input";
@@ -17,6 +13,8 @@ const ParkingSpotMap = ({ parkingSpots, level }: parkingSpotMapProps) => {
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState("all");
 
+  const isExactSearch = /^[a-zA-Z]\d{3}$/.test(search.trim());
+
   const filteredSpots = parkingSpots.map((spot) => {
     const matchesSearch = spot.name
       .toLowerCase()
@@ -29,11 +27,88 @@ const ParkingSpotMap = ({ parkingSpots, level }: parkingSpotMapProps) => {
       (filter === "reserved" && spot.aviability === "reserved") ||
       (filter === "yours" && spot.aviability === "yours");
 
+    if (isExactSearch) {
+      const searchedSpot = parkingSpots.find(
+        (s) => s.name.toLowerCase() === search.toLowerCase()
+      );
+      if (!searchedSpot) {
+        return { ...spot, visible: false, grayed: false };
+      }
+      const isMatch = spot.name.toLowerCase() === search.toLowerCase();
+      return {
+        ...spot,
+        visible: spot.aisle === searchedSpot.aisle,
+        grayed: !isMatch,
+      };
+    }
+
+    if (filter === "yours") {
+      const yourSpots = parkingSpots.filter((s) => s.aviability === "yours");
+      const yourAisles = new Set(yourSpots.map((s) => s.aisle));
+
+      if (yourAisles.size === 0) {
+        return { ...spot, visible: false, grayed: false };
+      }
+
+      const isYourSpot = spot.aviability === "yours";
+      return {
+        ...spot,
+        visible: yourAisles.has(spot.aisle),
+        grayed: !isYourSpot,
+      };
+    }
+
     return {
       ...spot,
-      visible: matchesSearch && matchesFilter,
+      visible: true,
+      grayed: !matchesFilter || (search.length > 0 && !matchesSearch),
     };
   });
+
+  const renderAisle = (
+    aisleName: string,
+    label: string,
+    addBottom?: string
+  ) => {
+    const aisleSpots = filteredSpots.filter(
+      (spot) => spot.aisle === aisleName && spot.visible
+    );
+    if (aisleSpots.length === 0) return null;
+
+    return (
+      <Wrapper>
+        <Aisle>
+          {filteredSpots
+            .filter((spot) => spot.aisle === aisleName)
+            .map((spot, i) => (
+              <ParkingSpot
+                key={spot.name + "-" + aisleName + "-" + i}
+                name={spot.name}
+                aviability={spot.aviability}
+                visible={spot.visible}
+                grayed={spot.grayed}
+              />
+            ))}
+        </Aisle>
+        <Separator text={label} />
+        {addBottom && (
+          <Aisle>
+            {filteredSpots
+              .filter((spot) => spot.aisle === addBottom)
+              .map((spot, i) => (
+                <ParkingSpot
+                  key={spot.name + "-" + addBottom + "-" + i}
+                  name={spot.name}
+                  aviability={spot.aviability}
+                  visible={spot.visible}
+                  grayed={spot.grayed}
+                />
+              ))}
+          </Aisle>
+        )}
+      </Wrapper>
+    );
+  };
 
   return (
     <div className="w-3/4 max-w-screen-xl mx-auto p-2 box-border overflow-x-hidden m-4">
@@ -73,169 +148,23 @@ const ParkingSpotMap = ({ parkingSpots, level }: parkingSpotMapProps) => {
           <div className="flex flex-col items-center justify-center gap-12 w-full">
             {level === "PL2" && (
               <>
-                <Wrapper>
-                  <Aisle>
-                    {filteredSpots
-                      .filter((spot) => spot.aisle === "mainAisleLeft")
-                      .map((spot, i) => (
-                        <ParkingSpot
-                          name={spot.name}
-                          aviability={spot.aviability}
-                          key={spot.name + "-mal-" + i}
-                          visible={spot.visible}
-                        />
-                      ))}
-                  </Aisle>
-                  <Separator text="Main Aisle" />
-                  <Aisle>
-                    {filteredSpots
-                      .filter((spot) => spot.aisle === "mainAisleRight")
-                      .map((spot, i) => (
-                        <ParkingSpot
-                          name={spot.name}
-                          aviability={spot.aviability}
-                          key={spot.name + "-mar-" + i}
-                          visible={spot.visible}
-                        />
-                      ))}
-                  </Aisle>
-                </Wrapper>
-
-                <Wrapper>
-                  <Aisle>
-                    {filteredSpots
-                      .filter((spot) => spot.aisle === "leftAisleLeft")
-                      .map((spot, i) => (
-                        <ParkingSpot
-                          name={spot.name}
-                          aviability={spot.aviability}
-                          key={spot.name + "-lall-" + i}
-                          visible={spot.visible}
-                        />
-                      ))}
-                  </Aisle>
-                  <Separator text="Left Aisle" />
-                  <Aisle>
-                    {filteredSpots
-                      .filter((spot) => spot.aisle === "leftAisleRight")
-                      .map((spot, i) => (
-                        <ParkingSpot
-                          name={spot.name}
-                          aviability={spot.aviability}
-                          key={spot.name + "-lalr-" + i}
-                          visible={spot.visible}
-                        />
-                      ))}
-                  </Aisle>
-                </Wrapper>
-
-                <Wrapper>
-                  <Aisle>
-                    {filteredSpots
-                      .filter((spot) => spot.aisle === "rightAisleLeft")
-                      .map((spot, i) => (
-                        <ParkingSpot
-                          name={spot.name}
-                          aviability={spot.aviability}
-                          key={spot.name + "-rall-" + i}
-                          visible={spot.visible}
-                        />
-                      ))}
-                  </Aisle>
-                  <Separator text="Right Aisle" />
-                </Wrapper>
-
-                <Wrapper>
-                  <Aisle>
-                    {filteredSpots
-                      .filter((spot) => spot.aisle === "tunnel")
-                      .map((spot, i) => (
-                        <ParkingSpot
-                          name={spot.name}
-                          aviability={spot.aviability}
-                          key={spot.name + "-tun-" + i}
-                          visible={spot.visible}
-                        />
-                      ))}
-                  </Aisle>
-                  <Separator text="After Tunnel" />
-                </Wrapper>
+                {renderAisle("mainAisleLeft", "Main Aisle")}
+                {renderAisle("mainAisleRight", "Main Aisle")}
+                {renderAisle("leftAisleLeft", "Left Aisle", "leftAisleRight")}
+                {renderAisle("rightAisleLeft", "Right Aisle")}
+                {renderAisle("tunnel", "After Tunnel")}
               </>
             )}
 
             {level === "PL3" && (
               <>
-                <Wrapper>
-                  <Aisle>
-                    {filteredSpots
-                      .filter((spot) => spot.aisle === "mainAisleLeft")
-                      .map((spot, i) => (
-                        <ParkingSpot
-                          name={spot.name}
-                          aviability={spot.aviability}
-                          key={spot.name + "-mal-" + i}
-                          visible={spot.visible}
-                        />
-                      ))}
-                  </Aisle>
-                  <Separator text="Main Aisle" />
-                </Wrapper>
-
-                <Wrapper>
-                  <Aisle>
-                    {filteredSpots
-                      .filter((spot) => spot.aisle === "topAisleTop")
-                      .map((spot, i) => (
-                        <ParkingSpot
-                          name={spot.name}
-                          aviability={spot.aviability}
-                          key={spot.name + "-tat-" + i}
-                          visible={spot.visible}
-                        />
-                      ))}
-                  </Aisle>
-                  <Separator text="Top Aisle" />
-                  <Aisle>
-                    {filteredSpots
-                      .filter((spot) => spot.aisle === "topAisleBottom")
-                      .map((spot, i) => (
-                        <ParkingSpot
-                          name={spot.name}
-                          aviability={spot.aviability}
-                          key={spot.name + "-tab-" + i}
-                          visible={spot.visible}
-                        />
-                      ))}
-                  </Aisle>
-                </Wrapper>
-
-                <Wrapper>
-                  <Aisle>
-                    {filteredSpots
-                      .filter((spot) => spot.aisle === "bottomAisleTop")
-                      .map((spot, i) => (
-                        <ParkingSpot
-                          name={spot.name}
-                          aviability={spot.aviability}
-                          key={spot.name + "-bat-" + i}
-                          visible={spot.visible}
-                        />
-                      ))}
-                  </Aisle>
-                  <Separator text="Bottom Aisle" />
-                  <Aisle>
-                    {filteredSpots
-                      .filter((spot) => spot.aisle === "bottomAisleBottom")
-                      .map((spot, i) => (
-                        <ParkingSpot
-                          name={spot.name}
-                          aviability={spot.aviability}
-                          key={spot.name + "-bab-" + i}
-                          visible={spot.visible}
-                        />
-                      ))}
-                  </Aisle>
-                </Wrapper>
+                {renderAisle("mainAisleLeft", "Main Aisle")}
+                {renderAisle("topAisleTop", "Top Aisle", "topAisleBottom")}
+                {renderAisle(
+                  "bottomAisleTop",
+                  "Bottom Aisle",
+                  "bottomAisleBottom"
+                )}
               </>
             )}
           </div>
