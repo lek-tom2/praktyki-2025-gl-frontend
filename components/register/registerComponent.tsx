@@ -62,9 +62,9 @@ const RegisterComponent = () => {
       onSubmit={handleSubmit(onSubmit)}
     >
       <FormErrorWrap>
-        <p>Username</p>
+        <p className="text-base-content">Username</p>
         <Input
-          className="rounded-md bg-[#374151] w-full p-2 text-white"
+          className="rounded-md bg-primary w-full p-2 text-base-content"
           type="text"
           name="username"
           register={register("username", {
@@ -87,9 +87,9 @@ const RegisterComponent = () => {
       </FormErrorWrap>
 
       <FormErrorWrap>
-        <p>Full name</p>
+        <p className="text-base-content">Full name</p>
         <Input
-          className="rounded-md bg-[#374151] w-full p-2 text-white"
+          className="rounded-md bg-primary w-full p-2 text-base-content"
           type="text"
           name="fullName"
           register={register("fullName", {
@@ -108,9 +108,9 @@ const RegisterComponent = () => {
       </FormErrorWrap>
 
       <FormErrorWrap>
-        <p>Password</p>
+        <p className="text-base-content">Password</p>
         <Input
-          className="rounded-md bg-[#374151] w-full p-2 text-white"
+          className="rounded-md bg-primary w-full p-2 text-base-content"
           type="password"
           name="password"
           register={register("password", {
@@ -132,9 +132,9 @@ const RegisterComponent = () => {
       </FormErrorWrap>
 
       <FormErrorWrap>
-        <p>Repeat password</p>
+        <p className="text-base-content">Repeat password</p>
         <Input
-          className="rounded-md bg-[#374151] w-full p-2 text-white"
+          className="rounded-md bg-primary w-full p-2 text-base-content"
           type="password"
           name="repPassword"
           register={register("repPassword", {
