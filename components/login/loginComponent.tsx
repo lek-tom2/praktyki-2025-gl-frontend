@@ -15,6 +15,8 @@ type formProps = {
   password: string | null;
 };
 
+  
+
 const LoginComponent = () => {
   const [isLoading, setIsLoading] = useState(false);
 
@@ -70,9 +72,9 @@ const LoginComponent = () => {
       noValidate
     >
       <FormErrorWrap>
-        <p>Username</p>
+        <p className="text-base-content">Username</p>
         <Input
-          className="rounded-md bg-[#374151] w-full p-2 text-white"
+          className="rounded-md bg-primary w-full p-2 text-base-content"
           type="text"
           name="login"
           register={register("login", {
@@ -81,36 +83,52 @@ const LoginComponent = () => {
               value: true,
               message: "Login is required",
             },
+            minLength: {
+              value: 6,
+              message: "Username must be at least 6 characters long.",
+            },
+              pattern: {
+                value: /^[a-zA-Z0-9_]+$/,
+                message: "Login can only contain letters, numbers and underscores",
+            },
           })}
         />
         <FormErrorParahraph errorObject={errors.login} />
       </FormErrorWrap>
 
       <div>
-        <p>Password</p>
+        <p className="text-base-content">Password</p>
         <Input
-          className="rounded-md bg-[#374151] w-full p-2 text-white"
+          className="rounded-md bg-primary w-full p-2 text-base-content"
           type="password"
           name="password"
           register={register("password", {
             // password validation
-            required: {
-              value: true,
-              message: "Password is required",
-            },
+                required: {
+                  value: true,
+                  message: "Password is required",
+                },
+                minLength: {
+                  value: 8,
+                  message: "Password must be at least 8 characters long",
+                },
+                pattern: {
+                  value: /^(?=.*[A-Z])(?=.*\d).+$/,
+                  message: "Password must contain at least one uppercase letter and one number",
+                },
           })}
         />
         <FormErrorParahraph errorObject={errors.password} />
       </div>
 
       <section className="flex flex-row items-center justify-between">
-        <div className="flex items-center gap-2">
-          <input type="checkbox" className="relative -top-0.5" />
-          <p>Remember me</p>
+        <div className="flex items-center flex-row  gap-2">
+          <input type="checkbox" className="bg-primary" />
+          <p className="text-base-content">Remember me</p>
         </div>
         <a
           href="#"
-          className="hover:underline text-white p-2 transition-transform duration-200 hover:scale-105"
+          className="hover:underline text-base-content p-2 transition-transform duration-200 hover:scale-105"
         >
           Forgot your password?
         </a>

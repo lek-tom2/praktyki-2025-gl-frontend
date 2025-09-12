@@ -62,16 +62,24 @@ const RegisterComponent = () => {
       onSubmit={handleSubmit(onSubmit)}
     >
       <FormErrorWrap>
-        <p>Username</p>
+        <p className="text-base-content">Username</p>
         <Input
-          className="rounded-md bg-[#374151] w-full p-2 text-white"
+          className="rounded-md bg-primary w-full p-2 text-base-content"
           type="text"
           name="username"
           register={register("username", {
             // username validation
             required: {
               value: true,
-              message: "Username is required",
+              message: "Login is required",
+            },
+            minLength: {
+              value: 6,
+              message: "Username must be at least 6 characters long.",
+            },
+              pattern: {
+                value: /^[a-zA-Z0-9_]+$/,
+                message: "Login can only contain letters, numbers and underscores",
             },
           })}
         />
@@ -79,13 +87,17 @@ const RegisterComponent = () => {
       </FormErrorWrap>
 
       <FormErrorWrap>
-        <p>Full name</p>
+        <p className="text-base-content">Full name</p>
         <Input
-          className="rounded-md bg-[#374151] w-full p-2 text-white"
+          className="rounded-md bg-primary w-full p-2 text-base-content"
           type="text"
           name="fullName"
           register={register("fullName", {
             // full name validation
+            pattern: {
+              value: /^[\p{L}]([-']?[\p{L}]+)*( [\p{L}]([-']?[\p{L}]+)*)+$/,
+              message: "Full name must contain at least first and last name, only letters, apostrophes or hyphens allowed.",
+            },
             required: {
               value: true,
               message: "Name is required",
@@ -96,30 +108,38 @@ const RegisterComponent = () => {
       </FormErrorWrap>
 
       <FormErrorWrap>
-        <p>Password</p>
+        <p className="text-base-content">Password</p>
         <Input
-          className="rounded-md bg-[#374151] w-full p-2 text-white"
+          className="rounded-md bg-primary w-full p-2 text-base-content"
           type="password"
           name="password"
           register={register("password", {
-            //password validation
             required: {
-              value: true,
-              message: "Password is required",
-            },
+                  value: true,
+                  message: "Password is required",
+                },
+                minLength: {
+                  value: 8,
+                  message: "Password must be at least 8 characters long",
+                },
+                pattern: {
+                  value: /^(?=.*[A-Z])(?=.*\d).+$/,
+                  message: "Password must contain at least one uppercase letter and one number",
+                },
           })}
         />
         <FormErrorParahraph errorObject={errors.password} />
       </FormErrorWrap>
 
       <FormErrorWrap>
-        <p>Repeat password</p>
+        <p className="text-base-content">Repeat password</p>
         <Input
-          className="rounded-md bg-[#374151] w-full p-2 text-white"
+          className="rounded-md bg-primary w-full p-2 text-base-content"
           type="password"
           name="repPassword"
           register={register("repPassword", {
             //repPassword validation
+            validate: (value) => value === getValues().password || "Passwords don't match",
             required: {
               value: true,
               message: "Password repetition is required",
