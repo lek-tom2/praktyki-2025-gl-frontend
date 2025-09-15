@@ -1,0 +1,100 @@
+{
+  "unloggedNavbar": {
+    "signUp": "Zarejestruj się",
+    "login": "Zaloguj się"
+  },
+  "loggedNavbar": {
+    "findParking": "Znajdź parking",
+    "contact": "Kontakt",
+    "search": "Szukaj",
+    "accountManagement": "Zarządzanie kontem",
+    "switchAccounts": "Przełącz konta",
+    "changeTheme": "Zmień motyw",
+    "myReservations": "Moje rezerwacje"
+  },
+  "login": {
+    "signinToYourAccount": "Zaloguj się na swoje konto",
+    "login": "Logowanie",
+    "register": "Rejestracja",
+    "emailAddress": "Adres e-mail",
+    "password": "Hasło",
+    "rememberMe": "Zapamiętaj mnie",
+    "forgotPassword": "Zapomniałeś hasła?"
+  },
+  "register": {
+    "createAccount": "Utwórz konto",
+    "register": "Rejestracja",
+    "emailAddress": "Adres e-mail",
+    "password": "Hasło",
+    "fullName": "Imię i nazwisko",
+    "phoneNumber": "Numer telefonu",
+    "rememberMe": "Zapamiętaj mnie",
+    "forgotPassword": "Zapomniałeś hasła?"
+  },
+  "addACar": {
+    "brand": "Marka",
+    "model": "Model",
+    "year": "Rok",
+    "color": "Kolor",
+    "licensePlateNumber": "Numer rejestracyjny",
+    "uploadCarPhoto": "Prześlij zdjęcie samochodu",
+    "dragAndDrop": "Przeciągnij i upuść lub kliknij, aby przesłać",
+    "supportedFormats": "Obsługiwane formaty",
+    "uploadPhoto": "Prześlij zdjęcie",
+    "addCar": "Dodaj samochód"
+  },
+  "landing": {
+    "title": "Znajdź parking",
+    "simplified": "Uproszczone",
+    "subTitle": "Zarezerwuj miejsce z wyprzedzeniem i zaoszczędź czas oraz pieniądze. Twoja bezproblemowa przygoda z parkowaniem zaczyna się tutaj",
+    "searchBar": "Wpisz lokalizację, punkt orientacyjny lub adres",
+    "search": "Szukaj"
+  },
+  "parkingDisplay": {
+    "destination": "Cel podróży",
+    "checkin": "Przyjazd",
+    "checkout": "Wyjazd",
+    "found": "Znaleziono",
+    "nearYou": "w pobliżu Ciebie",
+    "list": "Lista",
+    "map": "Mapa",
+    "availableOn": "Dostępne od"
+  },
+  "reservation": {
+    "title": "Twoja rezerwacja miejsca parkingowego",
+    "subtitle": "Wybrane miejsce:",
+    "selectedDate": "Wybrana data",
+    "selectedTime": "Wybrana godzina",
+    "from": "Od",
+    "to": "Do",
+    "selectedVehicle": "Wybrany pojazd",
+    "reservationDuration": "Czas trwania rezerwacji",
+    "totalTime": "Łączny czas",
+    "reportIssue": "Zgłoś problem",
+    "changeReservation": "Zmień rezerwację",
+    "reservationHistory": "Historia rezerwacji",
+    "spot": "Miejsce",
+    "viewFullHistory": "Zobacz całą historię"
+  },
+  "account": {
+    "personalInformation": "Dane osobowe",
+    "emailAddress": "Adres e-mail",
+    "password": "Hasło",
+    "fullName": "Imię i nazwisko",
+    "phoneNumber": "Numer telefonu",
+    "updateInformation": "Zaktualizuj dane",
+    "changePassword": "Zmień hasło",
+    "newPassword": "Nowe hasło",
+    "confirmNewPassword": "Potwierdź nowe hasło",
+    "registeredVehicles": "Zarejestrowane pojazdy",
+    "addNewVehicle": "Dodaj nowy pojazd",
+    "manageAccount": "Zarządzaj kontem",
+    "deleteAccount": "Usuń konto",
+    "bewareActionIsPermanent": "Pamiętaj, ta akcja jest nieodwracalna",
+    "logout": "Wyloguj się"
+  },
+  "footer": {
+    "allrights": "Wszelkie prawa zastrzeżone"
+  },
+  "adminPanel": {}
+}

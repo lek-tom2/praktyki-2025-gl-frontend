@@ -1,10 +1,21 @@
+"use server";
 import PageTemplate from "@/templates/PageTemplate";
-import Image from "next/image";
 
-export default function Home() {
+import Welcome from "@/pages/Welcome";
+
+
+export default async function Home() {
+  // return <Welcome></Welcome>
+  // return (
+  //   <PageTemplate>
+  //     {/* <ParkingSpotList parkingSpots={spotsPL2} level="PL2" /> */}
+  //     <ParkingSpotList parkingSpots={spotsPL3} level="PL3" />
+  //   </PageTemplate>
+  // );
   return (
     <PageTemplate>
-      <div>GlobalPark</div>
+      <ParkingSpotMap parkingSpots={spotsPL2} level="PL2" />
+      {/* <ParkingSpotMap parkingSpots={spotsPL3} level="PL3" /> */}
     </PageTemplate>
   );
 }
