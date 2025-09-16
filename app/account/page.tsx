@@ -3,8 +3,38 @@ import PageTemplate from "@/templates/PageTemplate";
 import Image from "next/image";
 import Input from "@/components/input/input";
 import Button from "@/components/button";
-
+import { useState, useEffect } from "react";
+type Vehicle = {
+  registration_number: string;
+  brand: string;
+};
 export default function Home() {
+    const [vehicles, setVehicles] = useState<Vehicle[]>([]);
+
+ useEffect(() => {
+    const fetchVehicles = async () => {
+      try {
+        const res = await fetch("/api/vehicles");
+        if (res.ok) {
+          const data = await res.json();
+          setVehicles(data.vehicles);
+        } else {
+          
+          setVehicles([
+           //  { registration_number: "ZS12345", brand: "Toyota Corolla" },
+           //example vehicle
+          ]);
+        }
+      } catch {
+        setVehicles([
+       //   { registration_number: "ZS12345", brand: "Toyota Corolla" },
+          //example vehicle
+        ]);
+      }
+    };
+    fetchVehicles();
+  }, []);
+
   return (
     <PageTemplate>
         <main className="flex flex-col items-center mb-4   "> 
@@ -68,32 +98,33 @@ export default function Home() {
  </section>
  </form>
  <h2 className="text-3xl font-bold text-base-content mb-4 ">Registered Vehicles</h2>
- <form>
 <section className="grid grid-cols-2 gap-x-8 gap-y-4">
-  
-    <div className="flex flex-col col-span-2 gap-y-2 text-base-content bg-primary rounded-[0.25rem] h-20 ">
-
-  <div className="flex flex-col col-span-2 gap-y-2 text-base-content bg-primary rounded-[0.25rem] h-20 relative">
-   <div className="flex flex-row items-center justify-end h-20 w-full bg-primary rounded-[0.25rem] col-span-2">
-  
-  <img src="/pencil.png" alt="edit" className="w-6 h-6 mr-2" />
-  <img src="/bin.png" alt="delete" className="w-6 h-6 mr-6" />
-</div>
+ {vehicles.length === 0 ? (
+  <div className="col-span-2 text-base-content">No vehicles registered.</div>
+) : (
+  vehicles.map((vehicle, idx) => (
+    <div key={idx} className="flex flex-col col-span-2 gap-y-2 text-base-content bg-primary rounded-[0.25rem] h-20">
+      <div className="flex flex-row items-center justify-between h-20 w-full px-4">
+        <span className="font-bold">{vehicle.brand}</span>
+        <span className="ml-4">{vehicle.registration_number}</span>
+        <div className="flex flex-row items-center">
+          <img src="/pencil.png" alt="edit" className="w-6 h-6 mr-2" />
+          <img src="/bin.png" alt="delete" className="w-6 h-6 mr-6" />
+        </div>
+      </div>
+    </div>
+  ))
+)}
+  <div className="flex flex-col col-span-2 gap-y-2">
+    <button
+      type="button"
+      className="border-2 border-dashed border-base-content rounded-[0.25rem] px-6 py-3 text-base-content flex items-center justify-center w-full"
+    >
+      + Add New Vehicle
+    </button>
   </div>
-</div>
+</section>
 
-    <div className="flex flex-col col-span-2 gap-y-2">
-  <button
-  type="button"
-  className="border-2 border-dashed border-base-content rounded-[0.25rem] px-6 py-3 text-base-content flex items-center justify-center w-full"
->
-  + Add New Vehicle
-</button>
-</div>
-
- 
- </section>
- </form>
   <h2 className="text-3xl font-bold  mb-4 mt-6 text-base-content">Manage Account</h2>
  <form>
 <section className="grid grid-cols-2 gap-x-8 gap-y-4">
