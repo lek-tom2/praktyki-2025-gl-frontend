@@ -9,6 +9,20 @@ WORKDIR /app
 COPY package.json .
 COPY package-lock.json .
 
+# --- Instructions to add the certificate ---
+# Switch to the root user to modify the truststore
+USER root
+
+# Copy your certificate into the container
+COPY github.crt /usr/local/share/ca-certificates/github.crt
+
+# Update the certificate store and fix permissions
+RUN update-ca-certificates
+
+# Switch back to the node user for security
+USER node
+# --- End of new instructions ---
+
 # Install Node.js dependencies
 RUN npm install
 
