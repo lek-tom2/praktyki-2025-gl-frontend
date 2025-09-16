@@ -10,7 +10,9 @@ type Vehicle = {
 };
 export default function Home() {
     const [vehicles, setVehicles] = useState<Vehicle[]>([]);
-
+const [editIdx, setEditIdx] = useState<number | null>(null);
+const [editBrand, setEditBrand] = useState("");
+const [editRegNum, setEditRegNum] = useState("");
  const handleDeleteVehicle = async (registration_number: string) => {
     await fetch(`/api/vehicles/${registration_number}`, {
       method: "DELETE",
@@ -18,7 +20,37 @@ export default function Home() {
     // Po usunięciu odśwież listę pojazdów lokalnie
     setVehicles((prev) => prev.filter(v => v.registration_number !== registration_number));
   };
+const handleEditClick = (idx: number) => {
+  setEditIdx(idx);
+  setEditBrand(vehicles[idx].brand);
+  setEditRegNum(vehicles[idx].registration_number);
+};
 
+const handleEditSave = async () => {
+  const updatedVehicle = {
+    registration_number: editRegNum,
+    brand: editBrand,
+  };
+  await fetch(`/api/vehicles/${vehicles[editIdx!].registration_number}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(updatedVehicle),
+  });
+  setVehicles((prev) =>
+    prev.map((v, idx) =>
+      idx === editIdx ? updatedVehicle : v
+    )
+  );
+  setEditIdx(null);
+  setEditBrand("");
+  setEditRegNum("");
+};
+
+const handleEditCancel = () => {
+  setEditIdx(null);
+  setEditBrand("");
+  setEditRegNum("");
+};
  useEffect(() => {
     const fetchVehicles = async () => {
       try {
@@ -112,18 +144,58 @@ export default function Home() {
 ) : (
   vehicles.map((vehicle, idx) => (
     <div key={idx} className="flex flex-col col-span-2 gap-y-2 text-base-content bg-primary rounded-[0.25rem] h-20">
-            <div className="flex flex-row items-center justify-between h-20 w-full px-4">
-              <span className="font-bold">{vehicle.brand}</span>
-              <span className="ml-4">{vehicle.registration_number}</span>
-              <div className="flex flex-row items-center">
-                <img src="/pencil.png" alt="edit" className="w-6 h-6 mr-2" />
-                <img
-                  src="/bin.png"
-                  alt="delete"
-                  className="w-6 h-6 mr-6 cursor-pointer"
-                  onClick={() => handleDeleteVehicle(vehicle.registration_number)}
-                />
-        </div>
+      <div className="flex flex-row items-center justify-between h-20 w-full px-4">
+        {editIdx === idx ? (
+          <div className="flex flex-row items-center w-full">
+            <input
+              type="text"
+              value={editBrand}
+              onChange={(e) => setEditBrand(e.target.value)}
+              className="mr-2 px-2 py-1 rounded"
+              placeholder="Brand"
+            />
+            <input
+              type="text"
+              value={editRegNum}
+              onChange={(e) => setEditRegNum(e.target.value)}
+              className="mr-2 px-2 py-1 rounded"
+              placeholder="Registration"
+            />
+            <Button
+              type="button"
+              className="text-base-content bg-accent rounded-sm h-10 w-20 "
+              onClick={handleEditSave}
+              value="Save"
+            />
+           
+            <Button
+              type="button"
+              className="text-base-content bg-gray-400 rounded-sm h-10 w-20 ml-2 "
+              onClick={handleEditCancel}
+              value="Cancel"
+            />
+            
+          </div>
+        ) : (
+          <>
+            <span className="font-bold">{vehicle.brand}</span>
+            <span className="ml-4">{vehicle.registration_number}</span>
+            <div className="flex flex-row items-center">
+              <img
+                src="/pencil.png"
+                alt="edit"
+                className="w-6 h-6 mr-2 cursor-pointer"
+                onClick={() => handleEditClick(idx)}
+              />
+              <img
+                src="/bin.png"
+                alt="delete"
+                className="w-6 h-6 mr-6 cursor-pointer"
+                onClick={() => handleDeleteVehicle(vehicle.registration_number)}
+              />
+            </div>
+          </>
+        )}
       </div>
     </div>
   ))
