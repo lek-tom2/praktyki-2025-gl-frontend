@@ -66,53 +66,68 @@ export default function AddCar() {
           onSubmit={handleSubmit}
         >
           <h2 className="text-3xl font-bold text-center text-base-content mb-2">Add a Car</h2>
-          <Input
-            className="rounded-md bg-primary w-full p-2 text-base-content"
-            type="text"
-            name="brand"
-            placeholder="Brand"
-            value={form.brand}
-            onChange={inputChange}
-            required
-          />
-          <Input
-            className="rounded-md bg-primary w-full p-2 text-base-content"
-            type="text"
-            name="model"
-            placeholder="Model"
-            value={form.model}
-            onChange={inputChange}
-            required
-          />
-          <Input
-            className="rounded-md bg-primary w-full p-2 text-base-content"
-            type="number"
-            name="year"
-            placeholder="Year"
-            value={form.year}
-            onChange={inputChange}
-            min="1900"
-            max={new Date().getFullYear()}
-            required
-          />
-          <Input
-            className="rounded-md bg-primary w-full p-2 text-base-content"
-            type="text"
-            name="color"
-            placeholder="Color"
-            value={form.color}
-            onChange={inputChange}
-            required
-          />
-          <Input
-            className="rounded-md bg-primary w-full p-2 text-base-content"
-            type="text"
-            name="plate"
-            placeholder="License Plate Number"
-            value={form.plate}
-            onChange={inputChange}
-            required
-          />
+          <div className="flex flex-col gap-1">
+            <label className="text-base-content font-semibold">Brand</label>
+            <Input
+              className="rounded-md bg-primary w-full p-2 text-base-content"
+              type="text"
+              name="brand"
+              placeholder="Brand"
+              value={form.brand}
+              onChange={inputChange}
+              required
+            />
+          </div>
+          <div className="flex flex-col gap-1">
+            <label className="text-base-content font-semibold">Model</label>
+            <Input
+              className="rounded-md bg-primary w-full p-2 text-base-content"
+              type="text"
+              name="model"
+              placeholder="Model"
+              value={form.model}
+              onChange={inputChange}
+              required
+            />
+          </div>
+          <div className="flex flex-col gap-1">
+            <label className="text-base-content font-semibold">Year</label>
+            <Input
+              className="rounded-md bg-primary w-full p-2 text-base-content"
+              type="number"
+              name="year"
+              placeholder="Year"
+              value={form.year}
+              onChange={inputChange}
+              min="1900"
+              max={new Date().getFullYear()}
+              required
+            />
+          </div>
+          <div className="flex flex-col gap-1">
+            <label className="text-base-content font-semibold">Color</label>
+            <Input
+              className="rounded-md bg-primary w-full p-2 text-base-content"
+              type="text"
+              name="color"
+              placeholder="Color"
+              value={form.color}
+              onChange={inputChange}
+              required
+            />
+          </div>
+          <div className="flex flex-col gap-1">
+            <label className="text-base-content font-semibold">License Plate Number</label>
+            <Input
+              className="rounded-md bg-primary w-full p-2 text-base-content"
+              type="text"
+              name="plate"
+              placeholder="License Plate Number"
+              value={form.plate}
+              onChange={inputChange}
+              required
+            />
+          </div>
 
           <div
             className="flex flex-col items-center gap-2 border-2 border-dashed border-[#7F8CAA] rounded-xl bg-primary py-6 px-4 mt-2 mb-2 cursor-pointer"
