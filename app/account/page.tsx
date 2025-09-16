@@ -3,8 +3,37 @@ import PageTemplate from "@/templates/PageTemplate";
 import Image from "next/image";
 import Input from "@/components/input/input";
 import Button from "@/components/button";
-
+import { useState } from "react";
 export default function Home() {
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmNewPassword, setConfirmNewPassword] = useState("");
+
+ 
+
+  const handleCurrentPasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setCurrentPassword(e.target.value);
+  };
+  const handleNewPasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setNewPassword(e.target.value);
+  };
+  const handleConfirmNewPasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setConfirmNewPassword(e.target.value);
+  };
+
+  const handlePasswordSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    await fetch("/api/changePassword", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        currentPassword,
+        newPassword,
+        confirmNewPassword,
+      }),
+    });
+   
+  };
   return (
     <PageTemplate>
         <main className="flex flex-col items-center mb-4   "> 
@@ -44,21 +73,42 @@ export default function Home() {
   </section>
  </form>
 
-  <h2 className="text-3xl font-bold text-base-content  mb-4" >Change Password</h2>
- <form>
-<section className="grid grid-cols-2 gap-x-8 gap-y-4">
-    <div className="flex flex-col gap-y-2">
-      <h4 className="text-sm  text-base-content">Current Password</h4>
-      <Input name="currentPassword" value="currentPassword" type="text" className="text-base-content bg-primary rounded-[0.25rem] h-10" placeholder="Enter current password" />
-    </div>
-    <div className="flex flex-col gap-y-2">
-      <h4 className="text-sm  text-base-content">New Password</h4>
-      <Input name="newPassword" value="newPassword" type="text" className="text-base-content bg-primary rounded-[0.25rem] h-10" placeholder="Enter new password" />
-    </div>
-     <div className="flex flex-col col-span-2 gap-y-2">
-      <h4 className="text-sm  text-base-content">Confirm New Password</h4>
-      <Input name="confirmNewPassword" value="confirmNewPassword" type="text" className="text-base-content bg-primary rounded-[0.25rem] h-10" placeholder="Confirm new password" />
-    </div>
+   <h2 className="text-3xl font-bold text-base-content  mb-4">Change Password</h2>
+        <form onSubmit={handlePasswordSubmit}>
+          <section className="grid grid-cols-2 gap-x-8 gap-y-4">
+            <div className="flex flex-col gap-y-2">
+              <h4 className="text-sm text-base-content">Current Password</h4>
+              <Input
+                name="currentPassword"
+                value={currentPassword}
+                onChange={handleCurrentPasswordChange}
+                type="password"
+                className="text-base-content bg-primary rounded-[0.25rem] h-10"
+                placeholder="Enter current password"
+              />
+            </div>
+            <div className="flex flex-col gap-y-2">
+              <h4 className="text-sm text-base-content">New Password</h4>
+              <Input
+                name="newPassword"
+                value={newPassword}
+                onChange={handleNewPasswordChange}
+                type="password"
+                className="text-base-content bg-primary rounded-[0.25rem] h-10"
+                placeholder="Enter new password"
+              />
+            </div>
+            <div className="flex flex-col col-span-2 gap-y-2">
+              <h4 className="text-sm text-base-content">Confirm New Password</h4>
+              <Input
+                name="confirmNewPassword"
+                value={confirmNewPassword}
+                onChange={handleConfirmNewPasswordChange}
+                type="password"
+                className="text-base-content bg-primary rounded-[0.25rem] h-10"
+                placeholder="Confirm new password"
+              />
+            </div>
      
     <div className="flex justify-end col-span-2">
         <Button type="submit" className="text-base-content bg-accent rounded-sm h-10 w-50 " value="Change Password" />
