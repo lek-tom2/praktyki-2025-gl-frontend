@@ -17,7 +17,7 @@ const [editRegNum, setEditRegNum] = useState("");
     await fetch(`/api/vehicles/${registration_number}`, {
       method: "DELETE",
     });
-    // Po usunięciu odśwież listę pojazdów lokalnie
+   
     setVehicles((prev) => prev.filter(v => v.registration_number !== registration_number));
   };
 const handleEditClick = (idx: number) => {
@@ -61,13 +61,13 @@ const handleEditCancel = () => {
         } else {
           
           setVehicles([
-             { registration_number: "ZS12345", brand: "Toyota Corolla" },
+           //  { registration_number: "ZS12345", brand: "Toyota Corolla" },
            //example vehicle
           ]);
         }
       } catch {
         setVehicles([
-         { registration_number: "ZS12345", brand: "Toyota Corolla" },
+         //{ registration_number: "ZS12345", brand: "Toyota Corolla" },
           //example vehicle
         ]);
       }
