@@ -1,5 +1,12 @@
 "use client";
 import React, { useEffect, useState } from "react";
+type Reservation = {
+  id: number;
+  start_date: string;
+  end_date: string;
+  user: number;
+  spot: number;
+};
 import PageTemplate from "../../templates/PageTemplate";
 import Input from "@/components/input/input";
 import Button from "@/components/button";
@@ -24,20 +31,39 @@ export default function ParkingSpaces() {
     timeEnd: "",
     vehicle: "",
   });
+  const [reservations, setReservations] = useState<Reservation[]>([]);
 
   useEffect(() => {
     fetch("/api/parking/")
       .then((res) => res.json())
       .then((data) => setParkingList(data));
+    fetch("/api/reservations/")
+      .then((res) => res.json())
+      .then((data) => setReservations(data));
   }, []);
+
+  // Funkcja sprawdzająca czy spot jest wolny w wybranym zakresie
+  function isSpotFree(spotId: number) {
+    if (!form["date"] || !form["time"] || !form["timeEnd"]) return true;
+    const start = new Date(`${form.date}T${form.time}`);
+    const end = new Date(`${form.date}T${form.timeEnd}`);
+    return !reservations.some(r => {
+      if (r.spot !== spotId) return false;
+      const resStart = new Date(r.start_date);
+      const resEnd = new Date(r.end_date);
+      // Sprawdź czy zakresy się nakładają
+      return (start < resEnd && end > resStart);
+    });
+  }
 
   useEffect(() => {
     setFiltered(
       parkingList.filter((spot) =>
-        spot.spot_number.toLowerCase().includes(search.toLowerCase())
+        spot.spot_number.toLowerCase().includes(search.toLowerCase()) &&
+        isSpotFree(spot.id)
       )
     );
-  }, [search, parkingList]);
+  }, [search, parkingList, reservations, form.date, form.time, form.timeEnd]);
 
   const inputChange = (
     e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>
