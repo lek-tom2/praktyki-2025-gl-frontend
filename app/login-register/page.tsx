@@ -22,13 +22,13 @@ export default function LoginRegister() {
   return (
     <PageTemplate>
       <div className="flex items-center justify-center min-h-[calc(100vh-64px-80px)]">
-        <section className="w-[25%] h-[50%] bg-base-200 rounded-xl shadow-lg p-6 flex flex-col justify-center">
+  <section className="w-[25%] h-[85%] bg-base-200 rounded-xl shadow-lg p-8 flex flex-col justify-center">
           {active === "login" ? (
             <p className="text-center mb-8 mt-4 text-3xl font-bold">
               Sign in to your account
             </p>
           ) : (
-            <p className="text-center mb-8 mt-4 text-3xl font-bold">
+            <p className="text-center mb-8 mt-14 text-3xl font-bold">
               Create account
             </p>
           )}
