@@ -9,6 +9,7 @@ type Reservation = {
   end_date: string;
   user: number;
   spot: number;
+  vehicle: string;
 };
 
 const MyReservedParkingSpacePage = () => {
@@ -28,6 +29,7 @@ const MyReservedParkingSpacePage = () => {
         end_date: "2025-09-10T17:30:00+02:00",
         user: 1,
         spot: 1,
+        vehicle: "tesla "
       });
     }
   };
@@ -86,7 +88,7 @@ const MyReservedParkingSpacePage = () => {
                 Selected Vehicle
               </h4>
               <div className="p-5 flex items-center justify-start bg-base-100 w-[512px] h-[56px] rounded-[0.5rem]">
-                <p className="text-base-content">Tesla Model 3</p>
+                <p className="text-base-content">{reservation?.vehicle}</p>
               </div>
               <h4 className="text-base-content font-bold text-[1rem] mt-7 mb-3">
                 Reservation Duration
