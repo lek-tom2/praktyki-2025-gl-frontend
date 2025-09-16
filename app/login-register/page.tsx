@@ -9,7 +9,7 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { ApiLinks } from "@/gl-const/api-links";
 import toast from "react-hot-toast";
 import useUserContext from "@/gl-context/UserContextProvider";
-import { useRouter } from "next/navigation";
+//import { useRouter } from "next/navigation";
 import { User } from "@/gl-types/user-types";
 import LoginComponent from "@/components/login/loginComponent";
 import RegisterComponent from "@/components/register/registerComponent";
