@@ -11,6 +11,14 @@ type Vehicle = {
 export default function Home() {
     const [vehicles, setVehicles] = useState<Vehicle[]>([]);
 
+ const handleDeleteVehicle = async (registration_number: string) => {
+    await fetch(`/api/vehicles/${registration_number}`, {
+      method: "DELETE",
+    });
+    // Po usunięciu odśwież listę pojazdów lokalnie
+    setVehicles((prev) => prev.filter(v => v.registration_number !== registration_number));
+  };
+
  useEffect(() => {
     const fetchVehicles = async () => {
       try {
@@ -21,13 +29,13 @@ export default function Home() {
         } else {
           
           setVehicles([
-           //  { registration_number: "ZS12345", brand: "Toyota Corolla" },
+             { registration_number: "ZS12345", brand: "Toyota Corolla" },
            //example vehicle
           ]);
         }
       } catch {
         setVehicles([
-       //   { registration_number: "ZS12345", brand: "Toyota Corolla" },
+         { registration_number: "ZS12345", brand: "Toyota Corolla" },
           //example vehicle
         ]);
       }
@@ -104,12 +112,17 @@ export default function Home() {
 ) : (
   vehicles.map((vehicle, idx) => (
     <div key={idx} className="flex flex-col col-span-2 gap-y-2 text-base-content bg-primary rounded-[0.25rem] h-20">
-      <div className="flex flex-row items-center justify-between h-20 w-full px-4">
-        <span className="font-bold">{vehicle.brand}</span>
-        <span className="ml-4">{vehicle.registration_number}</span>
-        <div className="flex flex-row items-center">
-          <img src="/pencil.png" alt="edit" className="w-6 h-6 mr-2" />
-          <img src="/bin.png" alt="delete" className="w-6 h-6 mr-6" />
+            <div className="flex flex-row items-center justify-between h-20 w-full px-4">
+              <span className="font-bold">{vehicle.brand}</span>
+              <span className="ml-4">{vehicle.registration_number}</span>
+              <div className="flex flex-row items-center">
+                <img src="/pencil.png" alt="edit" className="w-6 h-6 mr-2" />
+                <img
+                  src="/bin.png"
+                  alt="delete"
+                  className="w-6 h-6 mr-6 cursor-pointer"
+                  onClick={() => handleDeleteVehicle(vehicle.registration_number)}
+                />
         </div>
       </div>
     </div>
