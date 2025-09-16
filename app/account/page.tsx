@@ -22,14 +22,18 @@ export default function Home() {
   };
 
   const handleInfoSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    await fetch("/api/updateInfo", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, fullName, phone }),
-    });
-    
-  };
+  e.preventDefault();
+  const payload: any = {};
+  if (email) payload.email = email;
+  if (fullName) payload.fullName = fullName;
+  if (phone) payload.phone = phone;
+
+  await fetch("/api/updateInfo", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+};
   return (
     <PageTemplate>
         <main className="flex flex-col items-center mb-4   "> 
@@ -55,6 +59,7 @@ export default function Home() {
                     onChange={handleFullNameChange}
                     type="text"
                     className="text-base-content bg-primary rounded-[0.25rem]"
+                    required={false}
                   />
                 </div>
                 <div className="flex flex-col gap-y-2">
@@ -65,6 +70,7 @@ export default function Home() {
                     onChange={handleEmailChange}
                     type="text"
                     className="text-base-content bg-primary rounded-[0.25rem]"
+                    required={false}
                   />
                 </div>
                 <div className="flex flex-col col-span-2 gap-y-2">
@@ -75,6 +81,7 @@ export default function Home() {
                     onChange={handlePhoneChange}
                     type="text"
                     className="w-full text-base-content bg-primary rounded-[0.25rem]"
+                    required={false}
                   />
                 </div>
                 <div className="flex justify-end col-span-2">
