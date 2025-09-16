@@ -30,15 +30,13 @@ const ParkingSpotList = ({ parkingSpots, level }: parkingSpotListProps) => {
   });
 
   return (
-    <div className="w-3/4 h-full max-h-[80vh] flex flex-col gap-4 overflow-y-scroll overflow-x-hidden m-4 items-center p-2 max-w-screen-xl mx-auto box-border">
+    <div className="w-3/4 h-[75vh] flex flex-col gap-4 overflow-y-hidden overflow-x-hidden m-4 items-center p-2 max-w-screen-xl mx-auto box-border">
       <div className="grid grid-cols-3 items-center w-full mb-12">
         <div />
 
-        <p className="text-[#eaefef] text-4xl text-center">
-          Parking Level {level === "PL2" ? "-2" : "-3"}
-        </p>
+        <p></p>
 
-        <div className="flex flex-row justify-end gap-4 mr-8">
+        <div className="flex flex-row justify-end gap-4">
           <div className="hover:scale-105 duration-300 ">
             <Input
               type="search"
@@ -52,21 +50,25 @@ const ParkingSpotList = ({ parkingSpots, level }: parkingSpotListProps) => {
           <select
             value={filter}
             onChange={(e) => setFilter(e.target.value)}
-            className="select bg-secondary border-0 h-9 text-primary-content hover:scale-105 focus:scale-105 duration-300 "
+            className="select bg-secondary border-0 h-9 text-secondary-content hover:scale-105 focus:scale-105 duration-300 min-w-30 "
           >
             <option value="all">All</option>
             <option value="available">Available</option>
-            <option value="occupied">Unavailable</option>
+            <option value="occupied">Occupied</option>
             <option value="reserved">Reserved</option>
             <option value="yours">Yours</option>
           </select>
         </div>
       </div>
-
       {filteredSpots.length > 0 ? (
-        filteredSpots.map((spot, i) => (
-          <ParkingSpotEntry parkingSpot={spot} key={i} />
-        ))
+        <div
+          className="flex flex-col gap-4 w-full overflow-y-auto
+        "
+        >
+          {filteredSpots.map((spot, i) => (
+            <ParkingSpotEntry parkingSpot={spot} key={i} />
+          ))}
+        </div>
       ) : (
         <div className="text-center text-primary-content mt-4">
           No matching parking spots
