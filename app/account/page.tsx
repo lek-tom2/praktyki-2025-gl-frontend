@@ -3,8 +3,59 @@ import PageTemplate from "@/templates/PageTemplate";
 import Image from "next/image";
 import Input from "@/components/input/input";
 import Button from "@/components/button";
+import { useState, useEffect } from "react";
+
+type Reservation = {
+  id: number;
+  start_date: string;
+  end_date: string;
+  user: number;
+  spot: number;
+};
 
 export default function Home() {
+  const [reservations, setReservations] = useState<Reservation[]>([]);
+
+  useEffect(() => {
+    const fetchReservations = async () => {
+      try {
+        const res = await fetch("/api/reservations");
+        if (res.ok) {
+          const data = await res.json();
+          setReservations(data.reservations);
+        } else {
+   
+          setReservations([
+        
+        //example data
+            /*  {
+              id: 1,
+              start_date: "2025-09-10T02:00:00+02:00",
+              end_date: "2025-09-10T17:30:00+02:00",
+              user: 1,
+              spot: 1,
+            },
+           */
+          
+          ]);
+        }
+      } catch {
+        setReservations([
+          //example data
+       /*   {
+            id: 1,
+            start_date: "2025-09-10T02:00:00+02:00",
+            end_date: "2025-09-10T17:30:00+02:00",
+            user: 1,
+            spot: 1,
+          },
+         
+          */
+        ]);
+      }
+    };
+    fetchReservations();
+  }, []);
   return (
     <PageTemplate>
         <main className="flex flex-col items-center mb-4   "> 
@@ -117,37 +168,33 @@ export default function Home() {
 
 
 </article>
-<nav className="flex items-center justify-between  ml-5">
-<article className="text-base-content p-8 rounded-[0.5rem] bg-secondary w-[362px] h-[800px]"> 
-
-
-
-
- <h2 className="text-3xl font-bold  mb-6">Reservation History</h2>
- <form>
-<section className="grid grid-cols-2 gap-x-8 gap-y-4">
-    
-       
-     <div className="flex flex-col col-span-2 gap-y-2 text-base-content bg-primary rounded-[0.25rem] w-[306px] h-[92px]">
-
-    </div>
-     <div className="flex flex-col col-span-2 gap-y-2 text-base-content bg-primary rounded-[0.25rem] w-[306px] h-[92px]">
-    
-
-    </div>
-     <div className="flex flex-col col-span-2 gap-y-2 text-base-content bg-primary rounded-[0.25rem] w-[306px] h-[92px]">
-    
-
-    </div>
-     <div className="flex flex-col col-span-2 gap-y-2 text-base-content bg-primary rounded-[0.25rem] w-[306px] h-[92px]">
-
-    </div>
-     <div className="flex flex-col col-span-2 gap-y-2 text-base-content bg-primary rounded-[0.25rem] w-[306px] h-[92px]">
-
-    </div>
-     <div className="flex flex-col col-span-2 gap-y-2 text-base-content bg-primary rounded-[0.25rem] w-[306px] h-[92px]">
-
-    </div>
+ <nav className="flex items-center justify-between  ml-5 ">
+          <article className="overflow-y-auto text-base-content p-8 rounded-[0.5rem] bg-secondary w-[362px] h-[800px]">
+            <h2 className="text-3xl font-bold mb-6">Reservation History</h2>
+            <section className="grid grid-cols-2 gap-x-8 gap-y-4 ">
+              {reservations.length === 0 ? (
+                <div className="col-span-2 text-base-content">No reservations found.</div>
+              ) : (
+                reservations.map((reservation) => (
+                  <div
+                    key={reservation.id}
+                    className="flex flex-col col-span-2 gap-y-2 text-base-content bg-primary rounded-[0.25rem] w-[306px] h-[140px] p-4"
+                  >
+                    <div>
+                      <span className="font-bold">Reservation #{reservation.id}</span>
+                    </div>
+                    <div>
+                      <span>Start: {new Date(reservation.start_date).toLocaleString()}</span>
+                    </div>
+                    <div>
+                      <span>End: {new Date(reservation.end_date).toLocaleString()}</span>
+                    </div>
+                    <div>
+                      <span>User: {reservation.user}</span> | <span>Spot: {reservation.spot}</span>
+                    </div>
+                  </div>
+                ))
+              )}
      
     <div className="flex justify-end col-span-2">
         <Button type="submit" className=" text-base-content bg-accent rounded-sm h-10 w-50 " value="View all History" />
@@ -155,7 +202,7 @@ export default function Home() {
 
  
  </section>
- </form></article>
+</article>
 </nav>
 </div>
 
