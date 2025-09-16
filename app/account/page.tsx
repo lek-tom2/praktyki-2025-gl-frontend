@@ -3,8 +3,24 @@ import PageTemplate from "@/templates/PageTemplate";
 import Image from "next/image";
 import Input from "@/components/input/input";
 import Button from "@/components/button";
-
+import { useState } from "react";
 export default function Home() {
+   const [fullName, setFullName] = useState("");
+
+  const handleFullNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFullName(e.target.value);
+  };
+
+  const handleFullNameSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+   
+    await fetch("/api/updateFullName", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ fullName }),
+    });
+
+  };
   return (
     <PageTemplate>
         <main className="flex flex-col items-center mb-4   "> 
@@ -19,15 +35,19 @@ export default function Home() {
 
 
 
- <h2 className="text-3xl font-bold text-base-content mb-4">Personal Information</h2>
-
- <form>
-<section className="grid grid-cols-2 gap-x-8 gap-y-4">
-  
-    <div className="flex flex-col gap-y-2">
-      <h4 className="text-sm  text-base-content">Full name</h4>
-      <Input name="fullName" value="fullName" type="text" className="text-base-content bg-primary rounded-[0.25rem] "  />
-    </div>
+  <h2 className="text-3xl font-bold text-base-content mb-4">Personal Information</h2>
+        <form onSubmit={handleFullNameSubmit}>
+          <section className="grid grid-cols-2 gap-x-8 gap-y-4">
+            <div className="flex flex-col gap-y-2">
+              <h4 className="text-sm text-base-content">Full name</h4>
+              <Input
+                name="fullName"
+                value={fullName}
+                onChange={handleFullNameChange}
+                type="text"
+                className="text-base-content bg-primary rounded-[0.25rem]"
+              />
+            </div>
     <div className="flex flex-col gap-y-2">
       <h4 className="text-sm  text-base-content">Email Address</h4>
       <Input name="email" value="email" type="text" className="text-base-content bg-primary rounded-[0.25rem] " />
