@@ -3,16 +3,115 @@ import PageTemplate from "@/templates/PageTemplate";
 import Image from "next/image";
 import Input from "@/components/input/input";
 import Button from "@/components/button";
-
 import { useState, useEffect } from "react";
+
 type Vehicle = {
   registration_number: string;
   brand: string;
 };
+
+type Reservation = {
+  id: number;
+  start_date: string;
+  end_date: string;
+  user: number;
+  spot: number;
+};
+
 export default function Home() {
-    const [email, setEmail] = useState("");
+  const [reservations, setReservations] = useState<Reservation[]>([]);
+  const [email, setEmail] = useState("");
   const [fullName, setFullName] = useState("");
   const [phone, setPhone] = useState("");
+
+  const [vehicles, setVehicles] = useState<Vehicle[]>([]);
+  const [editIdx, setEditIdx] = useState<number | null>(null);
+  const [editBrand, setEditBrand] = useState("");
+  const [editRegNum, setEditRegNum] = useState("");
+
+  // Fetch reservations
+  useEffect(() => {
+    const fetchReservations = async () => {
+      try {
+        const res = await fetch("/api/reservations");
+        if (res.ok) {
+          const data = await res.json();
+          setReservations(data.reservations);
+        } else {
+          setReservations([]);
+        }
+      } catch {
+        setReservations([]);
+      }
+    };
+    fetchReservations();
+  }, []);
+
+  // Fetch vehicles
+  useEffect(() => {
+    const fetchVehicles = async () => {
+      try {
+        const res = await fetch("/api/vehicles");
+        if (res.ok) {
+          const data = await res.json();
+          setVehicles(data.vehicles);
+        } else {
+          setVehicles([]);
+        }
+      } catch {
+        setVehicles([]);
+      }
+    };
+    fetchVehicles();
+  }, []);
+
+  const handleDeleteVehicle = async (registration_number: string) => {
+    await fetch(`/api/vehicles/${registration_number}`, {
+      method: "DELETE",
+    });
+    setVehicles((prev) =>
+      prev.filter((v) => v.registration_number !== registration_number)
+    );
+  };
+
+  const handleEditClick = (idx: number) => {
+    setEditIdx(idx);
+    setEditBrand(vehicles[idx].brand);
+    setEditRegNum(vehicles[idx].registration_number);
+  };
+
+  const handleEditSave = async () => {
+    const updatedVehicle = {
+      registration_number: editRegNum,
+      brand: editBrand,
+    };
+    await fetch(`/api/vehicles/${vehicles[editIdx!].registration_number}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(updatedVehicle),
+    });
+    setVehicles((prev) =>
+      prev.map((v, idx) => (idx === editIdx ? updatedVehicle : v))
+    );
+    setEditIdx(null);
+    setEditBrand("");
+    setEditRegNum("");
+  };
+
+  const handleEditCancel = () => {
+    setEditIdx(null);
+    setEditBrand("");
+    setEditRegNum("");
+  };
+
+  const handleDeleteAccount = async (e: React.FormEvent) => {
+    e.preventDefault();
+    await fetch("/api/deleteAccount", {
+      method: "DELETE",
+    });
+    // Optional: redirect
+    // window.location.href = "/goodbye";
+  };
 
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value);
@@ -27,95 +126,18 @@ export default function Home() {
   };
 
   const handleInfoSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
-  const payload: any = {};
-  if (email) payload.email = email;
-  if (fullName) payload.fullName = fullName;
-  if (phone) payload.phone = phone;
-
-  await fetch("/api/updateInfo", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload),
-  });
-};
-
-
-
-
-    const [vehicles, setVehicles] = useState<Vehicle[]>([]);
-const [editIdx, setEditIdx] = useState<number | null>(null);
-const [editBrand, setEditBrand] = useState("");
-const [editRegNum, setEditRegNum] = useState("");
- const handleDeleteVehicle = async (registration_number: string) => {
-    await fetch(`/api/vehicles/${registration_number}`, {
-      method: "DELETE",
-    });
-   
-    setVehicles((prev) => prev.filter(v => v.registration_number !== registration_number));
-  };
-    
-    const handleDeleteAccount = async (e: React.FormEvent) => {
     e.preventDefault();
-    await fetch("/api/deleteAccount", {
-      method: "DELETE",
+    const payload: any = {};
+    if (email) payload.email = email;
+    if (fullName) payload.fullName = fullName;
+    if (phone) payload.phone = phone;
+
+    await fetch("/api/updateInfo", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
     });
-    
   };
-const handleEditClick = (idx: number) => {
-  setEditIdx(idx);
-  setEditBrand(vehicles[idx].brand);
-  setEditRegNum(vehicles[idx].registration_number);
-};
-
-const handleEditSave = async () => {
-  const updatedVehicle = {
-    registration_number: editRegNum,
-    brand: editBrand,
-  };
-  await fetch(`/api/vehicles/${vehicles[editIdx!].registration_number}`, {
-    method: "PUT",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(updatedVehicle),
-  });
-  setVehicles((prev) =>
-    prev.map((v, idx) =>
-      idx === editIdx ? updatedVehicle : v
-    )
-  );
-  setEditIdx(null);
-  setEditBrand("");
-  setEditRegNum("");
-};
-
-const handleEditCancel = () => {
-  setEditIdx(null);
-  setEditBrand("");
-  setEditRegNum("");
-};
- useEffect(() => {
-    const fetchVehicles = async () => {
-      try {
-        const res = await fetch("/api/vehicles");
-        if (res.ok) {
-          const data = await res.json();
-          setVehicles(data.vehicles);
-        } else {
-          
-          setVehicles([
-           //  { registration_number: "ZS12345", brand: "Toyota Corolla" },
-           //example vehicle
-          ]);
-        }
-      } catch {
-        setVehicles([
-         //{ registration_number: "ZS12345", brand: "Toyota Corolla" },
-          //example vehicle
-        ]);
-      }
-    };
-    fetchVehicles();
-  }, []);
 
 
   return (
@@ -298,37 +320,33 @@ const handleEditCancel = () => {
 
 
 </article>
-<nav className="flex items-center justify-between  ml-5">
-<article className="text-base-content p-8 rounded-[0.5rem] bg-secondary w-[362px] h-[800px]"> 
-
-
-
-
- <h2 className="text-3xl font-bold  mb-6">Reservation History</h2>
- <form>
-<section className="grid grid-cols-2 gap-x-8 gap-y-4">
-    
-       
-     <div className="flex flex-col col-span-2 gap-y-2 text-base-content bg-primary rounded-[0.25rem] w-[306px] h-[92px]">
-
-    </div>
-     <div className="flex flex-col col-span-2 gap-y-2 text-base-content bg-primary rounded-[0.25rem] w-[306px] h-[92px]">
-    
-
-    </div>
-     <div className="flex flex-col col-span-2 gap-y-2 text-base-content bg-primary rounded-[0.25rem] w-[306px] h-[92px]">
-    
-
-    </div>
-     <div className="flex flex-col col-span-2 gap-y-2 text-base-content bg-primary rounded-[0.25rem] w-[306px] h-[92px]">
-
-    </div>
-     <div className="flex flex-col col-span-2 gap-y-2 text-base-content bg-primary rounded-[0.25rem] w-[306px] h-[92px]">
-
-    </div>
-     <div className="flex flex-col col-span-2 gap-y-2 text-base-content bg-primary rounded-[0.25rem] w-[306px] h-[92px]">
-
-    </div>
+ <nav className="flex items-center justify-between  ml-5 ">
+          <article className="overflow-y-auto text-base-content p-8 rounded-[0.5rem] bg-secondary w-[362px] h-[800px]">
+            <h2 className="text-3xl font-bold mb-6">Reservation History</h2>
+            <section className="grid grid-cols-2 gap-x-8 gap-y-4 ">
+              {reservations.length === 0 ? (
+                <div className="col-span-2 text-base-content">No reservations found.</div>
+              ) : (
+                reservations.map((reservation) => (
+                  <div
+                    key={reservation.id}
+                    className="flex flex-col col-span-2 gap-y-2 text-base-content bg-primary rounded-[0.25rem] w-[306px] h-[140px] p-4"
+                  >
+                    <div>
+                      <span className="font-bold">Reservation #{reservation.id}</span>
+                    </div>
+                    <div>
+                      <span>Start: {new Date(reservation.start_date).toLocaleString()}</span>
+                    </div>
+                    <div>
+                      <span>End: {new Date(reservation.end_date).toLocaleString()}</span>
+                    </div>
+                    <div>
+                      <span>User: {reservation.user}</span> | <span>Spot: {reservation.spot}</span>
+                    </div>
+                  </div>
+                ))
+              )}
      
     <div className="flex justify-end col-span-2">
         <Button type="submit" className=" text-base-content bg-accent rounded-sm h-10 w-50 " value="View all History" />
@@ -336,7 +354,7 @@ const handleEditCancel = () => {
 
  
  </section>
- </form></article>
+</article>
 </nav>
 </div>
 
