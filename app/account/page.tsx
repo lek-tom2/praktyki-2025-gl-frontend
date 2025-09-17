@@ -10,6 +10,39 @@ type Vehicle = {
   brand: string;
 };
 export default function Home() {
+    const [email, setEmail] = useState("");
+  const [fullName, setFullName] = useState("");
+  const [phone, setPhone] = useState("");
+
+  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setEmail(e.target.value);
+  };
+
+  const handleFullNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFullName(e.target.value);
+  };
+
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setPhone(e.target.value);
+  };
+
+  const handleInfoSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+  const payload: any = {};
+  if (email) payload.email = email;
+  if (fullName) payload.fullName = fullName;
+  if (phone) payload.phone = phone;
+
+  await fetch("/api/updateInfo", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+};
+
+
+
+
     const [vehicles, setVehicles] = useState<Vehicle[]>([]);
 const [editIdx, setEditIdx] = useState<number | null>(null);
 const [editBrand, setEditBrand] = useState("");
@@ -99,28 +132,45 @@ const handleEditCancel = () => {
 
 
 
- <h2 className="text-3xl font-bold text-base-content mb-4">Personal Information</h2>
-
- <form>
-<section className="grid grid-cols-2 gap-x-8 gap-y-4">
-  
-    <div className="flex flex-col gap-y-2">
-      <h4 className="text-sm  text-base-content">Full name</h4>
-      <Input name="fullName" value="fullName" type="text" className="text-base-content bg-primary rounded-[0.25rem] "  />
-    </div>
-    <div className="flex flex-col gap-y-2">
-      <h4 className="text-sm  text-base-content">Email Address</h4>
-      <Input name="email" value="email" type="text" className="text-base-content bg-primary rounded-[0.25rem] " />
-    </div>
-     <div className="flex flex-col col-span-2 gap-y-2">
-      <h4 className="text-sm  text-base-content">Phone Number</h4>
-      <Input name="phone" value="phone" type="text" className="w-full text-base-content bg-primary rounded-[0.25rem] " />
-    </div>
-      
-    <div className="flex justify-end col-span-2">
-      <Button type="submit" className="text-base-content bg-accent rounded-sm  w-50 " value="Update Information" />
-  
-    </div>
+   <h2 className="text-3xl font-bold text-base-content mb-4">Personal Information</h2>
+            <form onSubmit={handleInfoSubmit}>
+              <section className="grid grid-cols-2 gap-x-8 gap-y-4">
+                <div className="flex flex-col gap-y-2">
+                  <h4 className="text-sm text-base-content">Full name</h4>
+                  <Input
+                    name="fullName"
+                    value={fullName}
+                    onChange={handleFullNameChange}
+                    type="text"
+                    className="text-base-content bg-primary rounded-[0.25rem]"
+                    required={false}
+                  />
+                </div>
+                <div className="flex flex-col gap-y-2">
+                  <h4 className="text-sm text-base-content">Email Address</h4>
+                  <Input
+                    name="email"
+                    value={email}
+                    onChange={handleEmailChange}
+                    type="text"
+                    className="text-base-content bg-primary rounded-[0.25rem]"
+                    required={false}
+                  />
+                </div>
+                <div className="flex flex-col col-span-2 gap-y-2">
+                  <h4 className="text-sm text-base-content">Phone Number</h4>
+                  <Input
+                    name="phone"
+                    value={phone}
+                    onChange={handlePhoneChange}
+                    type="text"
+                    className="w-full text-base-content bg-primary rounded-[0.25rem]"
+                    required={false}
+                  />
+                </div>
+                <div className="flex justify-end col-span-2">
+                  <Button type="submit" className="text-base-content bg-accent rounded-sm  w-50 " value="Update Information" />
+                </div>
   </section>
  </form>
 
