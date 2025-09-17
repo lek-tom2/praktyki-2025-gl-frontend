@@ -117,19 +117,28 @@ useEffect(() => {
   e.preventDefault();
 
   if (!fullName.trim() && !email.trim() && !phone.trim()) {
-    toast.success("No changes made.");
+    toast.success("No changes made.", {
+        duration: 5000,
+    });
+
     return;
   }
   if (fullName.trim() && !validateFullName(fullName)) {
-    toast.error("Full name must be in format: 'John Doe'");
+    toast.error("Full name must be in format: 'John Doe'", {
+      duration: 5000,
+    });
     return;
   }
   if (email.trim() && !validateEmail(email)) {
-    toast.error("Invalid email format.");
+    toast.error("Invalid email format.", {
+      duration: 5000,
+    });
     return;
   }
   if (phone.trim() && !validatePhone(phone)) {
-    toast.error("Phone number must be in format: 123-456-789");
+    toast.error("Phone number must be in format: 123-456-789", {
+      duration: 5000,
+    });
     return;
   }
 
@@ -161,15 +170,23 @@ useEffect(() => {
       if (email.trim()) UserDispatch({ type: "setEmail", value: email });
       if (fullName.trim()) UserDispatch({ type: "setUsername", value: fullName });
       if (changedFields.length > 0) {
-        toast.success(`Updated: ${changedFields.join(", ")}`);
+        toast.success(`Updated: ${changedFields.join(", ")}`, {
+          duration: 5000,
+        });
       } else {
-        toast.success("No changes made.");
+        toast.success("No changes made.", {
+          duration: 5000,
+        });
       }
     } else {
-      toast.error("Failed to update information. Try again later.");
+      toast.error("Failed to update information. Try again later.", {
+        duration: 5000,
+      });
     }
   } catch (error) {
-    toast.error("Unexpected error. Try again later.");
+    toast.error("Unexpected error. Try again later.", {
+      duration: 5000,
+    });
   } finally {
     setLoading(false);
   }
@@ -179,19 +196,27 @@ useEffect(() => {
   e.preventDefault();
 
   if (!currentPassword.trim()) {
-    toast.error("Current password is required.");
+    toast.error("Current password is required.", {
+      duration: 5000,
+    });
     return;
   }
   if (!newPassword.trim()) {
-    toast.error("New password is required.");
+    toast.error("New password is required.", {
+      duration: 5000,
+    });
     return;
   }
   if (newPassword.length < 6) {
-    toast.error("New password must be at least 6 characters.");
+    toast.error("New password must be at least 6 characters.", {
+      duration: 5000,
+    });
     return;
   }
   if (newPassword !== confirmNewPassword) {
-    toast.error("New password and confirmation must match!");
+    toast.error("New password and confirmation must match!", {
+      duration: 5000,
+    });
     return;
   }
 
@@ -208,15 +233,21 @@ useEffect(() => {
     });
 
     if (response.ok) {
-      toast.success("Password changed successfully!");
+      toast.success("Password changed successfully!", {
+        duration: 5000,
+      });
       setCurrentPassword("");
       setNewPassword("");
       setConfirmNewPassword("");
     } else {
-      toast.error("Failed to change password. Try again later.");
+      toast.error("Failed to change password. Try again later.", {
+        duration: 5000,
+      });
     }
   } catch (error) {
-    toast.error("Unexpected error. Try again later.");
+    toast.error("Unexpected error. Try again later.", {
+      duration: 5000,
+    });
   } finally {
     setLoading(false);
   }
@@ -232,13 +263,18 @@ useEffect(() => {
     });
 
     if (response.ok) {
-      toast.success("Your account has been permanently deleted.");
-      
+      toast.success("Your account has been permanently deleted.", {
+        duration: 5000,
+      });
     } else {
-      toast.error("Failed to delete account. Try again later.");
+      toast.error("Failed to delete account. Try again later.", {
+        duration: 5000,
+      });
     }
   } catch (error) {
-    toast.error("Unexpected error. Try again later.");
+    toast.error("Unexpected error. Try again later.", {
+      duration: 5000,
+    });
   } finally {
     setLoading(false);
   }
@@ -255,12 +291,18 @@ useEffect(() => {
       setVehicles((prev) =>
         prev.filter((v) => v.registration_number !== registration_number)
       );
-      toast.success("Vehicle has been removed from your account.");
+      toast.success("Vehicle has been removed from your account.", {
+        duration: 5000,
+      });
     } else {
-      toast.error("Failed to delete vehicle. Try again later.");
+      toast.error("Failed to delete vehicle. Try again later.", {
+        duration: 5000,
+      });
     }
   } catch (error) {
-    toast.error("Unexpected error. Try again later.");
+    toast.error("Unexpected error. Try again later.", {
+      duration: 5000,
+    });
   } finally {
     setLoading(false);
   }
@@ -275,11 +317,15 @@ useEffect(() => {
 
 const handleEditSave = async () => {
   if (!editBrand.trim()) {
-    toast.error("Brand is required.");
+    toast.error("Brand is required.", {
+      duration: 5000,
+    });
     return;
   }
   if (!editRegNum.trim()) {
-    toast.error("Registration number is required.");
+    toast.error("Registration number is required.", {
+      duration: 5000,
+    });
     return;
   }
 
@@ -303,12 +349,18 @@ const handleEditSave = async () => {
       setEditIdx(null);
       setEditBrand("");
       setEditRegNum("");
-      toast.success("Vehicle details have been updated!");
+      toast.success("Vehicle details have been updated!", {
+        duration: 5000,
+      });
     } else {
-      toast.error("Failed to update vehicle. Try again later.");
+      toast.error("Failed to update vehicle. Try again later.", {
+        duration: 5000,
+      });
     }
   } catch (error) {
-    toast.error("Unexpected error. Try again later.");
+    toast.error("Unexpected error. Try again later.", {
+      duration: 5000,
+    });
   } finally {
     setLoading(false);
   }
