@@ -86,7 +86,7 @@ const Input = ({
         }
         disabled={disabled ?? false}
         required={required ?? true}
-        className="grow"
+       className={`grow ${className ?? ""} ${fontColor ?? ""}`}
       />
 
       {children}

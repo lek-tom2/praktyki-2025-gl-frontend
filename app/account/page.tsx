@@ -77,10 +77,18 @@ const handleConfirmNewPasswordChange = (e: React.ChangeEvent<HTMLInputElement>) 
           const data = await res.json();
           setVehicles(data.vehicles);
         } else {
-          setVehicles([]);
+         setVehicles([
+ // { registration_number: "KR12345", brand: "Toyota Corolla" },
+ // { registration_number: "WX54321", brand: "Ford Focus" },
+  //{ registration_number: "GD98765", brand: "Tesla Model 3" },
+]);
         }
       } catch {
-        setVehicles([]);
+        setVehicles([
+   //   { registration_number: "KR12345", brand: "Toyota Corolla" },
+    //  { registration_number: "WX54321", brand: "Ford Focus" },
+    //  { registration_number: "GD98765", brand: "Tesla Model 3" },
+    ]);
       }
     };
 
@@ -89,48 +97,74 @@ const handleConfirmNewPasswordChange = (e: React.ChangeEvent<HTMLInputElement>) 
   }, []);
 
   const handleInfoSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    const payload: any = {};
-    if (email) payload.email = email;
-    if (fullName) payload.fullName = fullName;
-    if (phone) payload.phone = phone;
+  e.preventDefault();
+  const payload: any = {};
+  let changedFields: string[] = [];
 
-    await fetch("/api/updateInfo", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-    });
-  };
+  if (email) {
+    payload.email = email;
+    changedFields.push("Email");
+  }
+  if (fullName) {
+    payload.fullName = fullName;
+    changedFields.push("Full name");
+  }
+  if (phone) {
+    payload.phone = phone;
+    changedFields.push("Phone number");
+  }
 
-  const handlePasswordSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    await fetch("/api/changePassword", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        currentPassword,
-        newPassword,
-        confirmNewPassword,
-      }),
-    });
-  };
+  await fetch("/api/updateInfo", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+
+  if (changedFields.length > 0) {
+    alert(`Updated: ${changedFields.join(", ")}`);
+  } else {
+    alert("No changes made.");
+  }
+};
+
+ const handlePasswordSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+
+  if (newPassword !== confirmNewPassword) {
+    alert("New password and confirmation must match!");
+    return;
+  }
+
+  await fetch("/api/changePassword", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      currentPassword,
+      newPassword,
+      confirmNewPassword,
+    }),
+  });
+
+  alert("Password changed successfully!");
+};
 
   const handleDeleteAccount = async (e: React.FormEvent) => {
-    e.preventDefault();
-    await fetch("/api/deleteAccount", {
-      method: "DELETE",
-    });
-  };
+  e.preventDefault();
+  await fetch("/api/deleteAccount", {
+    method: "DELETE",
+  });
+  alert("Account deleted!");
+};
 
   const handleDeleteVehicle = async (registration_number: string) => {
-    await fetch(`/api/vehicles/${registration_number}`, {
-      method: "DELETE",
-    });
-    setVehicles((prev) =>
-      prev.filter((v) => v.registration_number !== registration_number)
-    );
-  };
-
+  await fetch(`/api/vehicles/${registration_number}`, {
+    method: "DELETE",
+  });
+  setVehicles((prev) =>
+    prev.filter((v) => v.registration_number !== registration_number)
+  );
+  alert("Vehicle deleted!");
+};
   const handleEditClick = (idx: number) => {
     setEditIdx(idx);
     setEditBrand(vehicles[idx].brand);
@@ -138,22 +172,23 @@ const handleConfirmNewPasswordChange = (e: React.ChangeEvent<HTMLInputElement>) 
   };
 
   const handleEditSave = async () => {
-    const updatedVehicle = {
-      registration_number: editRegNum,
-      brand: editBrand,
-    };
-    await fetch(`/api/vehicles/${vehicles[editIdx!].registration_number}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(updatedVehicle),
-    });
-    setVehicles((prev) =>
-      prev.map((v, idx) => (idx === editIdx ? updatedVehicle : v))
-    );
-    setEditIdx(null);
-    setEditBrand("");
-    setEditRegNum("");
+  const updatedVehicle = {
+    registration_number: editRegNum,
+    brand: editBrand,
   };
+  await fetch(`/api/vehicles/${vehicles[editIdx!].registration_number}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(updatedVehicle),
+  });
+  setVehicles((prev) =>
+    prev.map((v, idx) => (idx === editIdx ? updatedVehicle : v))
+  );
+  setEditIdx(null);
+  setEditBrand("");
+  setEditRegNum("");
+  alert("Vehicle updated!");
+};
 
   const handleEditCancel = () => {
     setEditIdx(null);
@@ -162,7 +197,7 @@ const handleConfirmNewPasswordChange = (e: React.ChangeEvent<HTMLInputElement>) 
   };
   return (
     <PageTemplate>
-        <main className="flex flex-col items-center mb-4   "> 
+        <main className="overflow-auto flex flex-col items-center mb-4   "> 
 <header className=" ml-[-34rem] mx-0 p-0 mb-4 mt-4">
   <h1 className="text-4xl font-bold  text-base-content">Account Management</h1>
   <p className="text-gray-400">View and manage your personal information, vehicles, and reservation history.</p>
@@ -226,7 +261,7 @@ const handleConfirmNewPasswordChange = (e: React.ChangeEvent<HTMLInputElement>) 
                 value={currentPassword}
                 onChange={handleCurrentPasswordChange}
                 type="password"
-                className="text-base-content bg-primary rounded-[0.25rem] h-10"
+                className="w-full text-base-content bg-primary rounded-[0.25rem]"
                 placeholder="Enter current password"
               />
             </div>
@@ -237,7 +272,7 @@ const handleConfirmNewPasswordChange = (e: React.ChangeEvent<HTMLInputElement>) 
                 value={newPassword}
                 onChange={handleNewPasswordChange}
                 type="password"
-                className="text-base-content bg-primary rounded-[0.25rem] h-10"
+                className="w-full text-base-content bg-primary rounded-[0.25rem]"
                 placeholder="Enter new password"
               />
             </div>
@@ -248,7 +283,7 @@ const handleConfirmNewPasswordChange = (e: React.ChangeEvent<HTMLInputElement>) 
                 value={confirmNewPassword}
                 onChange={handleConfirmNewPasswordChange}
                 type="password"
-                className="text-base-content bg-primary rounded-[0.25rem] h-10"
+                className="w-full text-base-content bg-primary rounded-[0.25rem]"
                 placeholder="Confirm new password"
               />
             </div>
@@ -261,29 +296,31 @@ const handleConfirmNewPasswordChange = (e: React.ChangeEvent<HTMLInputElement>) 
  </section>
  </form>
  <h2 className="text-3xl font-bold text-base-content mb-4 ">Registered Vehicles</h2>
-<section className="grid grid-cols-2 gap-x-8 gap-y-4">
+<section className="grid grid-cols-2 gap-x-8 gap-y-4 overflow-auto max-h-[200px]">
  {vehicles.length === 0 ? (
   <div className="col-span-2 text-base-content">No vehicles registered.</div>
 ) : (
   vehicles.map((vehicle, idx) => (
-    <div key={idx} className="flex flex-col col-span-2 gap-y-2 text-base-content bg-primary rounded-[0.25rem] h-20">
+    <div key={idx} className="flex flex-col col-span-2 gap-y-2 text-base-content bg-primary rounded-[0.25rem] h-20 ">
       <div className="flex flex-row items-center justify-between h-20 w-full px-4">
         {editIdx === idx ? (
           <div className="flex flex-row items-center w-full">
-            <input
-              type="text"
-              value={editBrand}
-              onChange={(e) => setEditBrand(e.target.value)}
-              className="mr-2 px-2 py-1 rounded"
-              placeholder="Brand"
-            />
-            <input
-              type="text"
-              value={editRegNum}
-              onChange={(e) => setEditRegNum(e.target.value)}
-              className="mr-2 px-2 py-1 rounded"
-              placeholder="Registration"
-            />
+           <Input
+      type="text"
+      name="editBrand"
+      value={editBrand}
+      onChange={(e) => setEditBrand(e.target.value)}
+        className="w-50% text-base-content bg-primary rounded-[0.25rem] mr-4"
+      placeholder="Brand"
+    />
+            <Input
+      type="text"
+      name="editRegistrationNumber"
+      value={editRegNum}
+      onChange={(e) => setEditRegNum(e.target.value)}
+        className="w-50% text-base-content bg-primary rounded-[0.25rem] mr-4"
+      placeholder="Registration"
+    />
             <Button
               type="button"
               className="text-base-content bg-accent rounded-sm h-10 w-20 "
@@ -361,7 +398,7 @@ const handleConfirmNewPasswordChange = (e: React.ChangeEvent<HTMLInputElement>) 
 
 </article>
  <nav className="flex items-center justify-between  ml-5 ">
-          <article className="overflow-y-auto text-base-content p-8 rounded-[0.5rem] bg-secondary w-[362px] h-[800px]">
+          <article className="overflow-y-auto text-base-content p-8 rounded-[0.5rem]  w-[362px] h-[800px] bg-base-200">
             <h2 className="text-3xl font-bold mb-6">Reservation History</h2>
             <section className="grid grid-cols-2 gap-x-8 gap-y-4 ">
               {reservations.length === 0 ? (
