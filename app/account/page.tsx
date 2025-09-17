@@ -31,6 +31,29 @@ export default function Home() {
   const [editBrand, setEditBrand] = useState("");
   const [editRegNum, setEditRegNum] = useState("");
   const [reservations, setReservations] = useState<Reservation[]>([]);
+const handleFullNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  setFullName(e.target.value);
+};
+
+const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  setEmail(e.target.value);
+};
+
+const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  setPhone(e.target.value);
+};
+
+const handleCurrentPasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  setCurrentPassword(e.target.value);
+};
+
+const handleNewPasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  setNewPassword(e.target.value);
+};
+
+const handleConfirmNewPasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  setConfirmNewPassword(e.target.value);
+}
 
   useEffect(() => {
     const fetchReservations = async () => {
@@ -312,8 +335,7 @@ export default function Home() {
 
 
  
- </section>
- </form>
+
    <h2 className="text-3xl font-bold  mb-4 mt-6 text-base-content">Manage Account</h2>
         <form onSubmit={handleDeleteAccount}>
           <section className="grid grid-cols-2 gap-x-8 gap-y-4">
