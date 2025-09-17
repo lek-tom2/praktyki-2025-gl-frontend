@@ -4,6 +4,7 @@ import PageTemplate from "@/templates/PageTemplate";
 import Input from "@/components/input/input";
 import Button from "@/components/button";
 import { useState, useEffect } from "react";
+import useUserContext from "@/gl-context/UserContextProvider";
 
 type Vehicle = {
   registration_number: string;
@@ -19,6 +20,7 @@ type Reservation = {
 };
 
 export default function Home() {
+   const { User, UserDispatch } = useUserContext();
   const [email, setEmail] = useState("");
   const [fullName, setFullName] = useState("");
   const [phone, setPhone] = useState("");
@@ -54,6 +56,9 @@ const handleNewPasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 const handleConfirmNewPasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
   setConfirmNewPassword(e.target.value);
 }
+useEffect(() => {
+    if (User.email) setEmail(User.email);
+  }, [User.email]);
 
   useEffect(() => {
     const fetchReservations = async () => {
@@ -76,16 +81,19 @@ const handleConfirmNewPasswordChange = (e: React.ChangeEvent<HTMLInputElement>) 
         if (res.ok) {
           const data = await res.json();
           setVehicles(data.vehicles);
+            UserDispatch({ type: "setVechicles", value: data.vehicles }); // <--- zapis do kontekstu
+   
         } else {
          setVehicles([
- // { registration_number: "KR12345", brand: "Toyota Corolla" },
+  { registration_number: "KR12345", brand: "Toyota Corolla" },
  // { registration_number: "WX54321", brand: "Ford Focus" },
   //{ registration_number: "GD98765", brand: "Tesla Model 3" },
 ]);
+
         }
       } catch {
         setVehicles([
-   //   { registration_number: "KR12345", brand: "Toyota Corolla" },
+    { registration_number: "KR12345", brand: "Toyota Corolla" },
     //  { registration_number: "WX54321", brand: "Ford Focus" },
     //  { registration_number: "GD98765", brand: "Tesla Model 3" },
     ]);
@@ -97,21 +105,24 @@ const handleConfirmNewPasswordChange = (e: React.ChangeEvent<HTMLInputElement>) 
   }, []);
 
   const handleInfoSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
-  const payload: any = {};
-  let changedFields: string[] = [];
+    e.preventDefault();
+    const payload: any = {};
+    let changedFields: string[] = [];
 
-  if (email) {
-    payload.email = email;
-    changedFields.push("Email");
-  }
+    if (email) {
+      payload.email = email;
+      changedFields.push("Email");
+      UserDispatch({ type: "setEmail", value: email }); 
+    }
   if (fullName) {
     payload.fullName = fullName;
     changedFields.push("Full name");
+    UserDispatch({ type: "setUsername", value: fullName }); 
   }
   if (phone) {
     payload.phone = phone;
     changedFields.push("Phone number");
+   
   }
 
   await fetch("/api/updateInfo", {
@@ -195,10 +206,25 @@ const handleConfirmNewPasswordChange = (e: React.ChangeEvent<HTMLInputElement>) 
     setEditBrand("");
     setEditRegNum("");
   };
+ 
   return (
     <PageTemplate>
         <main className="overflow-auto flex flex-col items-center mb-4   "> 
 <header className=" ml-[-34rem] mx-0 p-0 mb-4 mt-4">
+ {/*<p className="text-sm text-gray-400">Current email in context: {User.email}</p>
+  <p className="text-sm text-gray-400">Current full name in context: {User.username}</p>
+   <h4 className="text-sm text-gray-400">Current vehicles in context:</h4>
+  {User.vechicles && User.vechicles.length > 0 ? (
+    <ul className="text-xs text-gray-400">
+      {User.vechicles.map((v, idx) => (
+        <li key={idx}>
+          {v.brand} 
+        </li>
+      ))}
+    </ul>
+  ) : (
+    <p className="text-xs text-gray-400">No vehicles in context.</p>
+  )}*/} 
   <h1 className="text-4xl font-bold  text-base-content">Account Management</h1>
   <p className="text-gray-400">View and manage your personal information, vehicles, and reservation history.</p>
 </header>
