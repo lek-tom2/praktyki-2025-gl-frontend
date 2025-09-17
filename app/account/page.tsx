@@ -25,6 +25,7 @@ const validateFullName = (name: string) =>
 const validatePhone = (phone: string) =>
   /^\d{3}-\d{3}-\d{3}$/.test(phone.trim());
 export default function Home() {
+  const [loading, setLoading] = useState(false);
    const { User, UserDispatch } = useUserContext();
   const [email, setEmail] = useState("");
   
@@ -113,8 +114,9 @@ useEffect(() => {
   }, []);
 
   const handleInfoSubmit = async (e: React.FormEvent) => {
-     e.preventDefault();
-if (!fullName.trim() && !email.trim() && !phone.trim()) {
+  e.preventDefault();
+
+  if (!fullName.trim() && !email.trim() && !phone.trim()) {
     toast.success("No changes made.");
     return;
   }
@@ -122,107 +124,145 @@ if (!fullName.trim() && !email.trim() && !phone.trim()) {
     toast.error("Full name must be in format: 'John Doe'");
     return;
   }
- if (email.trim() && !validateEmail(email)) {
+  if (email.trim() && !validateEmail(email)) {
     toast.error("Invalid email format.");
     return;
   }
-   if (email.trim() && !validateEmail(email)) {
-    toast.error("Invalid email format.");
-    return;
-  }
-
   if (phone.trim() && !validatePhone(phone)) {
     toast.error("Phone number must be in format: 123-456-789");
     return;
   }
-    e.preventDefault();
+
+  setLoading(true);
+  try {
     const payload: any = {};
     let changedFields: string[] = [];
 
-    if (email) {
+    if (email.trim()) {
       payload.email = email;
       changedFields.push("Email");
-      UserDispatch({ type: "setEmail", value: email }); 
     }
-  if (fullName) {
-    payload.fullName = fullName;
-    changedFields.push("Full name");
-    UserDispatch({ type: "setUsername", value: fullName }); 
-  }
-  if (phone) {
-    payload.phone = phone;
-    changedFields.push("Phone number");
-   
-  }
+    if (fullName.trim()) {
+      payload.fullName = fullName;
+      changedFields.push("Full name");
+    }
+    if (phone.trim()) {
+      payload.phone = phone;
+      changedFields.push("Phone number");
+    }
 
-  const response = await fetch("/api/updateInfo", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload),
-  });
+    const response = await fetch("/api/updateInfo", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
 
-  if (response.ok) {
-    // Aktualizacja w context tylko jeśli OK
-    if (email.trim()) UserDispatch({ type: "setEmail", value: email });
-    if (fullName.trim()) UserDispatch({ type: "setUsername", value: fullName });
-    if (changedFields.length > 0) {
-      toast.success(`Updated: ${changedFields.join(", ")}`);
+    if (response.ok) {
+      if (email.trim()) UserDispatch({ type: "setEmail", value: email });
+      if (fullName.trim()) UserDispatch({ type: "setUsername", value: fullName });
+      if (changedFields.length > 0) {
+        toast.success(`Updated: ${changedFields.join(", ")}`);
+      } else {
+        toast.success("No changes made.");
+      }
     } else {
-      toast.success("No changes made.");
+      toast.error("Failed to update information. Try again later.");
     }
-  } else {
-    toast.error("Failed to update information. Try again later.");
+  } catch (error) {
+    toast.error("Unexpected error. Try again later.");
+  } finally {
+    setLoading(false);
   }
 };
 
  const handlePasswordSubmit = async (e: React.FormEvent) => {
   e.preventDefault();
 
+  if (!currentPassword.trim()) {
+    toast.error("Current password is required.");
+    return;
+  }
+  if (!newPassword.trim()) {
+    toast.error("New password is required.");
+    return;
+  }
+  if (newPassword.length < 6) {
+    toast.error("New password must be at least 6 characters.");
+    return;
+  }
   if (newPassword !== confirmNewPassword) {
     toast.error("New password and confirmation must match!");
     return;
   }
 
-  const response = await fetch("/api/changePassword", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      currentPassword,
-      newPassword,
-      confirmNewPassword,
-    }),
-  });
+  setLoading(true);
+  try {
+    const response = await fetch("/api/changePassword", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        currentPassword,
+        newPassword,
+        confirmNewPassword,
+      }),
+    });
 
-  if (response.ok) {
-    toast.success("Password changed successfully!");
-    setCurrentPassword("");
-    setNewPassword("");
-    setConfirmNewPassword("");
-  } else {
-    toast.error("Failed to change password. Try again later.");
+    if (response.ok) {
+      toast.success("Password changed successfully!");
+      setCurrentPassword("");
+      setNewPassword("");
+      setConfirmNewPassword("");
+    } else {
+      toast.error("Failed to change password. Try again later.");
+    }
+  } catch (error) {
+    toast.error("Unexpected error. Try again later.");
+  } finally {
+    setLoading(false);
   }
 };
 
-  const handleDeleteAccount = async (e: React.FormEvent) => {
+ const handleDeleteAccount = async (e: React.FormEvent) => {
   e.preventDefault();
-  await fetch("/api/deleteAccount", {
-    method: "DELETE",
-  });
-  toast.success("Account deleted!");
+
+  setLoading(true);
+  try {
+    const response = await fetch("/api/deleteAccount", {
+      method: "DELETE",
+    });
+
+    if (response.ok) {
+      toast.success("Account deleted!");
+      
+    } else {
+      toast.error("Failed to delete account. Try again later.");
+    }
+  } catch (error) {
+    toast.error("Unexpected error. Try again later.");
+  } finally {
+    setLoading(false);
+  }
 };
 
  const handleDeleteVehicle = async (registration_number: string) => {
-  const response = await fetch(`/api/vehicles/${registration_number}`, {
-    method: "DELETE",
-  });
+  setLoading(true);
+  try {
+    const response = await fetch(`/api/vehicles/${registration_number}`, {
+      method: "DELETE",
+    });
 
-  if (response.ok) {
-    setVehicles((prev) =>
-      prev.filter((v) => v.registration_number !== registration_number)
-    );
-    toast.success("Vehicle deleted!");
-  } else {
-    toast.error("Failed to delete vehicle. Try again later.");
+    if (response.ok) {
+      setVehicles((prev) =>
+        prev.filter((v) => v.registration_number !== registration_number)
+      );
+      toast.success("Vehicle deleted!");
+    } else {
+      toast.error("Failed to delete vehicle. Try again later.");
+    }
+  } catch (error) {
+    toast.error("Unexpected error. Try again later.");
+  } finally {
+    setLoading(false);
   }
 };
   const handleEditClick = (idx: number) => {
@@ -231,8 +271,9 @@ if (!fullName.trim() && !email.trim() && !phone.trim()) {
     setEditRegNum(vehicles[idx].registration_number);
   };
 
-  const handleEditSave = async () => {
-  // Walidacja pól
+  
+
+const handleEditSave = async () => {
   if (!editBrand.trim()) {
     toast.error("Brand is required.");
     return;
@@ -242,27 +283,34 @@ if (!fullName.trim() && !email.trim() && !phone.trim()) {
     return;
   }
 
-  const updatedVehicle = {
-    registration_number: editRegNum,
-    brand: editBrand,
-  };
+  setLoading(true);
+  try {
+    const updatedVehicle = {
+      registration_number: editRegNum,
+      brand: editBrand,
+    };
 
-  const response = await fetch(`/api/vehicles/${vehicles[editIdx!].registration_number}`, {
-    method: "PUT",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(updatedVehicle),
-  });
+    const response = await fetch(`/api/vehicles/${vehicles[editIdx!].registration_number}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(updatedVehicle),
+    });
 
-  if (response.ok) {
-    setVehicles((prev) =>
-      prev.map((v, idx) => (idx === editIdx ? updatedVehicle : v))
-    );
-    setEditIdx(null);
-    setEditBrand("");
-    setEditRegNum("");
-    toast.success("Vehicle updated!");
-  } else {
-    toast.error("Failed to update vehicle. Try again later.");
+    if (response.ok) {
+      setVehicles((prev) =>
+        prev.map((v, idx) => (idx === editIdx ? updatedVehicle : v))
+      );
+      setEditIdx(null);
+      setEditBrand("");
+      setEditRegNum("");
+      toast.success("Vehicle updated!");
+    } else {
+      toast.error("Failed to update vehicle. Try again later.");
+    }
+  } catch (error) {
+    toast.error("Unexpected error. Try again later.");
+  } finally {
+    setLoading(false);
   }
 };
 
