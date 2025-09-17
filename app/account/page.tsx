@@ -232,7 +232,7 @@ useEffect(() => {
     });
 
     if (response.ok) {
-      toast.success("Account deleted!");
+      toast.success("Your account has been permanently deleted.");
       
     } else {
       toast.error("Failed to delete account. Try again later.");
@@ -255,7 +255,7 @@ useEffect(() => {
       setVehicles((prev) =>
         prev.filter((v) => v.registration_number !== registration_number)
       );
-      toast.success("Vehicle deleted!");
+      toast.success("Vehicle has been removed from your account.");
     } else {
       toast.error("Failed to delete vehicle. Try again later.");
     }
@@ -303,7 +303,7 @@ const handleEditSave = async () => {
       setEditIdx(null);
       setEditBrand("");
       setEditRegNum("");
-      toast.success("Vehicle updated!");
+      toast.success("Vehicle details have been updated!");
     } else {
       toast.error("Failed to update vehicle. Try again later.");
     }
