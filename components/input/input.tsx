@@ -18,6 +18,8 @@ type InputProps = {
   id?: string;
   background?: string;
   register?: UseFormRegisterReturn;
+  min?: string | number;
+  max?: string | number;
 };
 
 const Input = ({
@@ -87,6 +89,8 @@ const Input = ({
         disabled={disabled ?? false}
         required={required ?? true}
         className="grow"
+        min={props.min}
+        max={props.max}
       />
 
       {children}
