@@ -5,7 +5,7 @@ import Input from "@/components/input/input";
 import Button from "@/components/button";
 import { useState, useEffect } from "react";
 import useUserContext from "@/gl-context/UserContextProvider";
-
+import toast from "react-hot-toast";
 type Vehicle = {
   registration_number: string;
   brand: string;
@@ -132,9 +132,9 @@ useEffect(() => {
   });
 
   if (changedFields.length > 0) {
-    alert(`Updated: ${changedFields.join(", ")}`);
+    toast.success(`Updated: ${changedFields.join(", ")}`);
   } else {
-    alert("No changes made.");
+    toast.success("No changes made.");
   }
 };
 
@@ -142,7 +142,7 @@ useEffect(() => {
   e.preventDefault();
 
   if (newPassword !== confirmNewPassword) {
-    alert("New password and confirmation must match!");
+    toast.success("New password and confirmation must match!");
     return;
   }
 
@@ -156,7 +156,7 @@ useEffect(() => {
     }),
   });
 
-  alert("Password changed successfully!");
+  toast.success("Password changed successfully!");
 };
 
   const handleDeleteAccount = async (e: React.FormEvent) => {
@@ -164,7 +164,7 @@ useEffect(() => {
   await fetch("/api/deleteAccount", {
     method: "DELETE",
   });
-  alert("Account deleted!");
+  toast.success("Account deleted!");
 };
 
   const handleDeleteVehicle = async (registration_number: string) => {
@@ -174,7 +174,7 @@ useEffect(() => {
   setVehicles((prev) =>
     prev.filter((v) => v.registration_number !== registration_number)
   );
-  alert("Vehicle deleted!");
+  toast.success("Vehicle deleted!");
 };
   const handleEditClick = (idx: number) => {
     setEditIdx(idx);
@@ -198,7 +198,7 @@ useEffect(() => {
   setEditIdx(null);
   setEditBrand("");
   setEditRegNum("");
-  alert("Vehicle updated!");
+  toast.success("Vehicle updated!");
 };
 
   const handleEditCancel = () => {
