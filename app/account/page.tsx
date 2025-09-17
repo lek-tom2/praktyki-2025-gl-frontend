@@ -18,10 +18,16 @@ type Reservation = {
   user: number;
   spot: number;
 };
-
+const validateEmail = (email: string) =>
+  /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+const validateFullName = (name: string) =>
+  /^[A-Z][a-z]+(?: [A-Z][a-z]+(?:-[A-Z][a-z]+)?)$/.test(name.trim());
+const validatePhone = (phone: string) =>
+  /^\d{3}-\d{3}-\d{3}$/.test(phone.trim());
 export default function Home() {
    const { User, UserDispatch } = useUserContext();
   const [email, setEmail] = useState("");
+  
   const [fullName, setFullName] = useState("");
   const [phone, setPhone] = useState("");
   const [currentPassword, setCurrentPassword] = useState("");
@@ -68,7 +74,9 @@ useEffect(() => {
           const data = await res.json();
           setReservations(data.reservations);
         } else {
-          setReservations([]);
+          setReservations([
+            
+          ]);
         }
       } catch {
         setReservations([]);
@@ -105,6 +113,28 @@ useEffect(() => {
   }, []);
 
   const handleInfoSubmit = async (e: React.FormEvent) => {
+     e.preventDefault();
+if (!fullName.trim() && !email.trim() && !phone.trim()) {
+    toast.success("No changes made.");
+    return;
+  }
+  if (fullName.trim() && !validateFullName(fullName)) {
+    toast.error("Full name must be in format: 'John Doe'");
+    return;
+  }
+ if (email.trim() && !validateEmail(email)) {
+    toast.error("Invalid email format.");
+    return;
+  }
+   if (email.trim() && !validateEmail(email)) {
+    toast.error("Invalid email format.");
+    return;
+  }
+
+  if (phone.trim() && !validatePhone(phone)) {
+    toast.error("Phone number must be in format: 123-456-789");
+    return;
+  }
     e.preventDefault();
     const payload: any = {};
     let changedFields: string[] = [];
@@ -125,16 +155,23 @@ useEffect(() => {
    
   }
 
-  await fetch("/api/updateInfo", {
+  const response = await fetch("/api/updateInfo", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload),
   });
 
-  if (changedFields.length > 0) {
-    toast.success(`Updated: ${changedFields.join(", ")}`);
+  if (response.ok) {
+    // Aktualizacja w context tylko jeśli OK
+    if (email.trim()) UserDispatch({ type: "setEmail", value: email });
+    if (fullName.trim()) UserDispatch({ type: "setUsername", value: fullName });
+    if (changedFields.length > 0) {
+      toast.success(`Updated: ${changedFields.join(", ")}`);
+    } else {
+      toast.success("No changes made.");
+    }
   } else {
-    toast.success("No changes made.");
+    toast.error("Failed to update information. Try again later.");
   }
 };
 
@@ -142,11 +179,11 @@ useEffect(() => {
   e.preventDefault();
 
   if (newPassword !== confirmNewPassword) {
-    toast.success("New password and confirmation must match!");
+    toast.error("New password and confirmation must match!");
     return;
   }
 
-  await fetch("/api/changePassword", {
+  const response = await fetch("/api/changePassword", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
@@ -156,7 +193,14 @@ useEffect(() => {
     }),
   });
 
-  toast.success("Password changed successfully!");
+  if (response.ok) {
+    toast.success("Password changed successfully!");
+    setCurrentPassword("");
+    setNewPassword("");
+    setConfirmNewPassword("");
+  } else {
+    toast.error("Failed to change password. Try again later.");
+  }
 };
 
   const handleDeleteAccount = async (e: React.FormEvent) => {
@@ -167,14 +211,19 @@ useEffect(() => {
   toast.success("Account deleted!");
 };
 
-  const handleDeleteVehicle = async (registration_number: string) => {
-  await fetch(`/api/vehicles/${registration_number}`, {
+ const handleDeleteVehicle = async (registration_number: string) => {
+  const response = await fetch(`/api/vehicles/${registration_number}`, {
     method: "DELETE",
   });
-  setVehicles((prev) =>
-    prev.filter((v) => v.registration_number !== registration_number)
-  );
-  toast.success("Vehicle deleted!");
+
+  if (response.ok) {
+    setVehicles((prev) =>
+      prev.filter((v) => v.registration_number !== registration_number)
+    );
+    toast.success("Vehicle deleted!");
+  } else {
+    toast.error("Failed to delete vehicle. Try again later.");
+  }
 };
   const handleEditClick = (idx: number) => {
     setEditIdx(idx);
@@ -183,22 +232,38 @@ useEffect(() => {
   };
 
   const handleEditSave = async () => {
+  // Walidacja pól
+  if (!editBrand.trim()) {
+    toast.error("Brand is required.");
+    return;
+  }
+  if (!editRegNum.trim()) {
+    toast.error("Registration number is required.");
+    return;
+  }
+
   const updatedVehicle = {
     registration_number: editRegNum,
     brand: editBrand,
   };
-  await fetch(`/api/vehicles/${vehicles[editIdx!].registration_number}`, {
+
+  const response = await fetch(`/api/vehicles/${vehicles[editIdx!].registration_number}`, {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(updatedVehicle),
   });
-  setVehicles((prev) =>
-    prev.map((v, idx) => (idx === editIdx ? updatedVehicle : v))
-  );
-  setEditIdx(null);
-  setEditBrand("");
-  setEditRegNum("");
-  toast.success("Vehicle updated!");
+
+  if (response.ok) {
+    setVehicles((prev) =>
+      prev.map((v, idx) => (idx === editIdx ? updatedVehicle : v))
+    );
+    setEditIdx(null);
+    setEditBrand("");
+    setEditRegNum("");
+    toast.success("Vehicle updated!");
+  } else {
+    toast.error("Failed to update vehicle. Try again later.");
+  }
 };
 
   const handleEditCancel = () => {
@@ -242,6 +307,7 @@ useEffect(() => {
                   <h4 className="text-sm text-base-content">Full name</h4>
                   <Input
                     name="fullName"
+                    placeholder="John Doe"
                     value={fullName}
                     onChange={handleFullNameChange}
                     type="text"
@@ -253,6 +319,7 @@ useEffect(() => {
                   <h4 className="text-sm text-base-content">Email Address</h4>
                   <Input
                     name="email"
+                    placeholder="example@mail.com"
                     value={email}
                     onChange={handleEmailChange}
                     type="text"
@@ -264,6 +331,8 @@ useEffect(() => {
                   <h4 className="text-sm text-base-content">Phone Number</h4>
                   <Input
                     name="phone"
+
+                    placeholder="123-456-789"
                     value={phone}
                     onChange={handlePhoneChange}
                     type="text"
