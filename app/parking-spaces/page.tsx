@@ -31,7 +31,7 @@ const formatTime24 = (timeString: string): string => {
   return `${hh}:${mm}`;
 };
 
-const submitRes = (e: React.FormEvent) => {
+const submitRes = async (e: React.FormEvent) => {
   e.preventDefault();
 
   const formattedDate = formatDate(form.date); 
@@ -45,7 +45,12 @@ const submitRes = (e: React.FormEvent) => {
     vehicle: form.vehicle,
   };
 
-  
+ 
+  await fetch("/api/reservations", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(reservationData),
+  });
 
   alert("Reservation sent");
   setOpen(false);
@@ -182,9 +187,9 @@ const getDuration = () => {
             required
           >
             <option value="">Select vehicle</option>
-            <option value="car">audi</option>
-            <option value="motorcycle">mercedes</option>
-            <option value="van">ford</option>
+            <option value="audi">audi</option>
+            <option value="mercedes">mercedes</option>
+            <option value="ford">ford</option>
           </select>
 <h4 className="text-base-content font-bold text-[1rem] mt-7 mb-3">
                 Reservation Duration
