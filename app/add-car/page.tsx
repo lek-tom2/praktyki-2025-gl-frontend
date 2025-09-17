@@ -62,7 +62,7 @@ export default function AddCar() {
     <PageTemplate>
       <div className="flex flex-col items-center justify-center min-h-[calc(100vh-64px-80px)]">
         <form
-          className="w-[30%] bg-base-200 rounded-xl shadow-lg p-8 flex flex-col gap-6"
+          className="w-full max-w-[420px] bg-base-200 rounded-xl shadow-lg p-4 sm:p-8 flex flex-col gap-6 overflow-y-auto max-h-[80vh]"
           onSubmit={handleSubmit}
         >
           <h2 className="text-3xl font-bold text-center text-base-content mb-2">Add a Car</h2>
