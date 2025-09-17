@@ -6,9 +6,6 @@ import Button from "@/components/button";
 import AdminNavbarTemplate from "@/templates/AdminNavbarTemplate";
 
 
-//przykladowy wyglad 
-
-
 const mockUsers = [
 	{ id: 1, name: "Jan", surname: "Kowalski", email: "jan.kowalski@email.com" },
 	{ id: 2, name: "Anna", surname: "Nowak", email: "anna.nowak@email.com" },
@@ -38,7 +35,6 @@ export default function AdminDashboard() {
 	const [deleteModal, setDeleteModal] = useState<{ type: string; data: any } | null>(null);
 	const [editForm, setEditForm] = useState<any>({});
 
-	// --- API REQUESTS ---
 	const handleEdit = async () => {
 		if (!editModal) return;
 		let url = "";
@@ -48,7 +44,7 @@ export default function AdminDashboard() {
 			url = `/api/users/${editForm.id}`;
 			body = { ...editForm };
 		} else if (editModal.type === "cars") {
-			url = `/api/cars/${editForm.id || 1}`; // TODO: use real id
+			url = `/api/cars/${editForm.id || 1}`;
 			body = { ...editForm };
 		} else if (editModal.type === "spots") {
 			url = `/api/parking/${editForm.id}`;
@@ -60,7 +56,6 @@ export default function AdminDashboard() {
 			body: JSON.stringify(body),
 		});
 		setEditModal(null);
-		// TODO: refresh data
 	};
 	const handleDelete = async () => {
 		if (!deleteModal) return;
@@ -68,13 +63,12 @@ export default function AdminDashboard() {
 		if (deleteModal.type === "users") {
 			url = `/api/users/${deleteModal.data.id}`;
 		} else if (deleteModal.type === "cars") {
-			url = `/api/cars/${deleteModal.data.id || 1}`; // TODO: use real id
+			url = `/api/cars/${deleteModal.data.id || 1}`;
 		} else if (deleteModal.type === "spots") {
 			url = `/api/parking/${deleteModal.data.id}`;
 		}
 		await fetch(url, { method: "DELETE" });
 		setDeleteModal(null);
-		// TODO: refresh data
 	};
 
 		let content = null;
@@ -208,7 +202,6 @@ export default function AdminDashboard() {
 							</section>
 						</div>
 
-						{/* EDIT MODAL */}
 						{editModal && (
 							<div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
 								<div className="bg-white rounded-xl shadow-lg p-8 min-w-[320px] w-[90vw] max-w-[400px] flex flex-col gap-4">
@@ -233,7 +226,6 @@ export default function AdminDashboard() {
 							</div>
 						)}
 
-						{/* DELETE MODAL */}
 						{deleteModal && (
 							<div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
 								<div className="bg-white rounded-xl shadow-lg p-8 min-w-[320px] w-[90vw] max-w-[400px] flex flex-col gap-4">
