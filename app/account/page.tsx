@@ -3,8 +3,17 @@ import PageTemplate from "@/templates/PageTemplate";
 import Image from "next/image";
 import Input from "@/components/input/input";
 import Button from "@/components/button";
-
+import { useState } from "react";
 export default function Home() {
+
+const handleDeleteAccount = async (e: React.FormEvent) => {
+    e.preventDefault();
+    await fetch("/api/deleteAccount", {
+      method: "DELETE",
+    });
+    
+  };
+
   return (
     <PageTemplate>
         <main className="flex flex-col items-center mb-4   "> 
@@ -94,21 +103,21 @@ export default function Home() {
  
  </section>
  </form>
-  <h2 className="text-3xl font-bold  mb-4 mt-6 text-base-content">Manage Account</h2>
- <form>
-<section className="grid grid-cols-2 gap-x-8 gap-y-4">
-    <div className="flex flex-col col-span-2 gap-y-2 text-base-content bg-primary rounded-[0.25rem] h-20">
-    
-     <div className="flex items-center justify-start col-span-2 h-20 ml-4">
-  <input type="submit" className="text-base-content bg-gray-700 rounded-sm h-10 w-40 bg-red-600 pd-10" value="Delete account" />
-   <h4 className="text-sm m-5 text-base-content">be aware that this action is permanent</h4>
-</div>
-    </div>
-    
-
- 
- </section>
- </form>
+   <h2 className="text-3xl font-bold  mb-4 mt-6 text-base-content">Manage Account</h2>
+        <form onSubmit={handleDeleteAccount}>
+          <section className="grid grid-cols-2 gap-x-8 gap-y-4">
+            <div className="flex flex-col col-span-2 gap-y-2 text-base-content bg-primary rounded-[0.25rem] h-20">
+              <div className="flex items-center justify-start col-span-2 h-20 ml-4">
+                <input
+                  type="submit"
+                  className="text-base-content bg-gray-700 rounded-sm h-10 w-40 bg-red-600 pd-10"
+                  value="Delete account"
+                />
+                <h4 className="text-sm m-5 text-base-content">be aware that this action is permanent</h4>
+              </div>
+            </div>
+          </section>
+        </form>
   <section className="flex items-center justify-center col-span-2 h-20 ml-4">
   <input type="submit" className="text-base-content bg-gray-700 rounded-sm h-10 w-40 bg-red-600 pd-10" value="Logout" />
 
