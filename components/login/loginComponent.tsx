@@ -35,34 +35,48 @@ const LoginComponent = () => {
   const router = useRouter();
 
   const onSubmit: SubmitHandler<formProps> = async (data) => {
-    const response = await fetch(ApiLinks.login, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        login: getValues().login,
-        password: getValues().password,
-      }),
-      credentials: "include",
-    });
-    if (!response.ok) {
-      const status = response.status;
-      if (status == 401) {
-        const err = await response.text();
-        toast.error(err, { duration: 5000 });
+    setIsLoading(true);
+    try {
+      const empRes = await fetch(`/api/employees/?email=${encodeURIComponent(getValues().login || "")}`);
+      if (!empRes.ok) {
+        toast.error("No employee found with this email", { duration: 5000 });
+        setIsLoading(false);
+        return;
       }
-
-      toast.error(`Login Failed \n Status: ${status}`, { duration: 5000 });
+      const empArr = await empRes.json();
+      if (!Array.isArray(empArr) || empArr.length === 0) {
+        toast.error("No employee found with this email", { duration: 5000 });
+        setIsLoading(false);
+        return;
+      }
+      const emp = empArr[0];
+      const userRes = await fetch(`/api/users/?employee=${emp.id}`);
+      if (!userRes.ok) {
+        toast.error("No user found for this employee", { duration: 5000 });
+        setIsLoading(false);
+        return;
+      }
+      const userArr = await userRes.json();
+      if (!Array.isArray(userArr) || userArr.length === 0) {
+        toast.error("No user found for this employee", { duration: 5000 });
+        setIsLoading(false);
+        return;
+      }
+      const user = userArr[0];
+      if (user.password !== getValues().password) {
+        toast.error("Invalid password", { duration: 5000 });
+        setIsLoading(false);
+        return;
+      }
       setIsLoading(false);
-      console.log(status);
-      return;
+      UserDispatch({ type: "setUser", value: { ...user, languageIso2: "en" } });
+      toast.success("Login Successful");
+      router.push("/");
+      router.refresh();
+    } catch (e) {
+      setIsLoading(false);
+      toast.error("Login failed (exception)");
     }
-    setIsLoading(false);
-    const tempUser = (await response.json()) as Omit<User, "languageIso2">;
-    const user: User = { ...tempUser, languageIso2: "en" };
-    UserDispatch({ type: "setUser", value: user });
-    toast.success("Login Successful");
-    router.push("/");
-    router.refresh();
   };
 
   return (
@@ -78,7 +92,6 @@ const LoginComponent = () => {
           type="text"
           name="login"
           register={register("login", {
-            // login validation
             required: {
               value: true,
               message: "Login is required",
@@ -103,7 +116,6 @@ const LoginComponent = () => {
           type="password"
           name="password"
           register={register("password", {
-            // password validation
                 required: {
                   value: true,
                   message: "Password is required",

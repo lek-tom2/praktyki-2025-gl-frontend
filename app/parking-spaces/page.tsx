@@ -77,8 +77,10 @@ export default function ParkingSpaces() {
     return `${year}/${month}/${day}`;
   };
 
+
   const formatTime24 = (timeString: string): string => {
     if (!timeString) return "";
+
 
     const [h, m] = timeString.split(":");
     const hh = h.padStart(2, "0");
@@ -109,6 +111,7 @@ export default function ParkingSpaces() {
     const [startH, startM] = form.time.split(":").map(Number);
     const [endH, endM] = form.timeEnd.split(":").map(Number);
 
+
     const start = startH * 60 + startM;
     const end = endH * 60 + endM;
     const diff = end - start;
@@ -120,6 +123,14 @@ export default function ParkingSpaces() {
   };
   return (
     <PageTemplate>
+
+ 
+  await fetch("/api/reservations", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(reservationData),
+  });
+
 
   <div className='w-[85%] ml-[10%] mr-[10%] h-[15%] mt-4 flex flex-row gap-4'>
 
@@ -269,9 +280,9 @@ export default function ParkingSpaces() {
             required
           >
             <option value="">Select vehicle</option>
-            <option value="car">audi</option>
-            <option value="motorcycle">mercedes</option>
-            <option value="van">ford</option>
+            <option value="audi">audi</option>
+            <option value="mercedes">mercedes</option>
+            <option value="ford">ford</option>
           </select>
           <h4 className="text-base-content font-bold text-[1rem] mt-7 mb-3">
             Reservation Duration

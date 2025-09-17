@@ -9,7 +9,7 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { ApiLinks } from "@/gl-const/api-links";
 import toast from "react-hot-toast";
 import useUserContext from "@/gl-context/UserContextProvider";
-import { useRouter } from "next/navigation";
+//import { useRouter } from "next/navigation";
 import { User } from "@/gl-types/user-types";
 import LoginComponent from "@/components/login/loginComponent";
 import RegisterComponent from "@/components/register/registerComponent";
@@ -21,19 +21,19 @@ export default function LoginRegister() {
 
   return (
     <PageTemplate>
-      <div className="flex items-center justify-center min-h-[calc(100vh-64px-80px)]">
-        <section className="w-[25%] h-[50%] bg-base-200 rounded-xl shadow-lg p-6 flex flex-col justify-center">
+      <div className="flex items-center justify-center min-h-[calc(100vh-64px-80px)] p-2 sm:p-4">
+        <section className="w-full max-w-[420px] sm:max-w-[420px] md:max-w-[420px] lg:max-w-[420px] bg-base-200 rounded-xl shadow-lg p-4 sm:p-8 flex flex-col justify-center overflow-y-auto max-h-[80vh] pt-16 sm:pt-24">
           {active === "login" ? (
-            <p className="text-center mb-8 mt-4 text-3xl font-bold">
+            <p className="text-center mb-8 text-2xl sm:text-3xl font-bold">
               Sign in to your account
             </p>
           ) : (
-            <p className="text-center mb-8 mt-4 text-3xl font-bold">
+            <p className="text-center mb-8 text-2xl mt-14 sm:text-3xl font-bold">
               Create account
             </p>
           )}
 
-          <div className="flex justify-center gap-14 mb-6">
+          <div className="flex justify-center gap-8 sm:gap-14 mb-6">
             <button
               onClick={() => setActive("login")}
               className={`text-m mb-6 transition ${

@@ -31,28 +31,50 @@ const RegisterComponent = () => {
 
   const router = useRouter();
 
+
   const onSubmit: SubmitHandler<formProps> = async (data) => {
-    const response = await fetch(ApiLinks.register, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        username: getValues().username,
-        fullName: getValues().fullName,
-        password: getValues().password,
-      }),
-      credentials: "include",
-    });
-    if (!response.ok) {
-      const status = response.status;
-      toast.error(`Register failed \n Status: ${status}`, { duration: 5000 });
+    setIsLoading(true);
+    try {
+      const [first_name, ...rest] = (getValues().fullName || "").split(" ");
+      const last_name = rest.join(" ");
+      const empRes = await fetch("/api/employees/", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          first_name,
+          last_name,
+          email: "",
+          vehicle: null,
+        }),
+      });
+      if (!empRes.ok) {
+        toast.error("Register failed at employee step", { duration: 5000 });
+        setIsLoading(false);
+        return;
+      }
+      const emp = await empRes.json();
+      const userRes = await fetch("/api/users/", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          password: getValues().password,
+          account_creation_date: new Date().toISOString().slice(0, 10),
+          employee: emp.id,
+        }),
+      });
+      if (!userRes.ok) {
+        toast.error("Register failed at user step", { duration: 5000 });
+        setIsLoading(false);
+        return;
+      }
       setIsLoading(false);
-      console.log(status);
-      return;
+      toast.success("Register Successful");
+      router.push("/login-register");
+      router.refresh();
+    } catch (e) {
+      setIsLoading(false);
+      toast.error("Register failed (exception)");
     }
-    setIsLoading(false);
-    toast.success("Register Successful");
-    router.push("/login-register");
-    router.refresh();
   };
 
   return (
@@ -68,7 +90,6 @@ const RegisterComponent = () => {
           type="text"
           name="username"
           register={register("username", {
-            // username validation
             required: {
               value: true,
               message: "Login is required",
@@ -93,7 +114,7 @@ const RegisterComponent = () => {
           type="text"
           name="fullName"
           register={register("fullName", {
-            // full name validation
+
             pattern: {
               value: /^[\p{L}]([-']?[\p{L}]+)*( [\p{L}]([-']?[\p{L}]+)*)+$/,
               message: "Full name must contain at least first and last name, only letters, apostrophes or hyphens allowed.",
@@ -138,7 +159,6 @@ const RegisterComponent = () => {
           type="password"
           name="repPassword"
           register={register("repPassword", {
-            //repPassword validation
             validate: (value) => value === getValues().password || "Passwords don't match",
             required: {
               value: true,
