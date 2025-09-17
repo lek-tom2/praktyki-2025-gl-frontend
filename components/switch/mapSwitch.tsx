@@ -1,19 +1,19 @@
 "use client";
 import React, { ReactNode, useState } from "react";
 
-type SwitchProps = {
+type MapSwitchProps = {
   value?: "map" | "list";
   onChange?: (value: "map" | "list") => void;
   className?: string;
   children?: ReactNode;
 };
 
-const Switch = ({
+const MapSwitch = ({
   value,
   onChange,
   className,
   children,
-}: SwitchProps) => {
+}: MapSwitchProps) => {
   const [internalValue, setInternalValue] = useState<"map" | "list">("map");
   const isControlled = value !== undefined && onChange !== undefined;
   const currentValue = isControlled ? value : internalValue;
@@ -56,32 +56,34 @@ const Switch = ({
   );
 
   return (
-  <div
-    className={`flex items-center bg-base-200 p-1 rounded-full w-[200px] h-[48px] ${className ?? ""}`}
-  >
-    <button
-      type="button"
-      className={`${baseBtnClasses} w-[97px] h-[40px] ${
-        currentValue === "list" ? "bg-accent" : "bg-transparent"
+    <div
+      className={`flex items-center bg-base-200 p-1 rounded-full w-[200px] h-[48px] ${
+        className ?? ""
       }`}
-      onClick={() => handleSwitch("list")}
     >
-      {ListIcon}
-      <span>List</span>
-    </button>
-    <button
-      type="button"
-      className={`${baseBtnClasses} w-[97px] h-[40px] ${
-        currentValue === "map" ? "bg-accent" : "bg-transparent"
-      }`}
-      onClick={() => handleSwitch("map")}
-    >
-      {MapIcon}
-      <span>Map</span>
-    </button>
-    {children}
-  </div>
-);
+      <button
+        type="button"
+        className={`${baseBtnClasses} w-[97px] h-[40px] ${
+          currentValue === "list" ? "bg-accent" : "bg-transparent"
+        }`}
+        onClick={() => handleSwitch("list")}
+      >
+        {ListIcon}
+        <span>List</span>
+      </button>
+      <button
+        type="button"
+        className={`${baseBtnClasses} w-[97px] h-[40px] ${
+          currentValue === "map" ? "bg-accent" : "bg-transparent"
+        }`}
+        onClick={() => handleSwitch("map")}
+      >
+        {MapIcon}
+        <span>Map</span>
+      </button>
+      {children}
+    </div>
+  );
 };
 
-export default Switch;
+export default MapSwitch;

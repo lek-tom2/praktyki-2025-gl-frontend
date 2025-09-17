@@ -14,7 +14,7 @@ export const ParkingSpotEntry = ({
 
   return (
     <div
-      className={`flex flex-row items-center gap-6 bg-secondary min-h-20 text-primary-content w-full rounded-2xl shadow-[0_4px_4px_rgba(0,0,0,0.25)] border-l-2 border-r-2 hover:scale-101 duration-300 ml-4 mr-4 ${
+      className={`flex flex-row items-center gap-6 w-[95%] bg-secondary min-h-20 text-primary-content rounded-2xl shadow-[0_4px_4px_rgba(0,0,0,0.25)] border-l-2 border-r-2 hover:scale-101 duration-300 ml-4 mr-4 ${
         parkingSpot.aviability === "occupied"
           ? "border-rose-800"
           : parkingSpot.aviability === "available"
@@ -32,7 +32,7 @@ export const ParkingSpotEntry = ({
           className="rounded-xl"
         />
       </div>
-      <div>{parkingSpot.name}</div>
+      <div className="text-secondary-content">{parkingSpot.name}</div>
       <div
         className={`${
           parkingSpot.aviability === "occupied"
