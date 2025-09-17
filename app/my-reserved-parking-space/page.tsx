@@ -108,7 +108,7 @@ const MyReservedParkingSpacePage = () => {
 
        
           <nav>
-            <article className="text-base-content p-8 rounded-[0.5rem] bg-secondary w-[362px] max-h-[723px] overflow-y-auto">
+            <article className="text-base-content p-8 rounded-[0.5rem] bg-base-200 w-[362px] max-h-[723px] overflow-y-auto">
               <h2 className="text-3xl font-bold mb-6">Reservation History</h2>
               <form>
                 <section className="grid grid-cols-2 gap-x-8 gap-y-4">
