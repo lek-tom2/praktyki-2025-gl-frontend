@@ -1,6 +1,6 @@
 "use client";
+
 import PageTemplate from "@/templates/PageTemplate";
-import Image from "next/image";
 import Input from "@/components/input/input";
 import Button from "@/components/button";
 import { useState, useEffect } from "react";
@@ -19,17 +19,19 @@ type Reservation = {
 };
 
 export default function Home() {
-  const [reservations, setReservations] = useState<Reservation[]>([]);
   const [email, setEmail] = useState("");
   const [fullName, setFullName] = useState("");
   const [phone, setPhone] = useState("");
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmNewPassword, setConfirmNewPassword] = useState("");
 
   const [vehicles, setVehicles] = useState<Vehicle[]>([]);
   const [editIdx, setEditIdx] = useState<number | null>(null);
   const [editBrand, setEditBrand] = useState("");
   const [editRegNum, setEditRegNum] = useState("");
+  const [reservations, setReservations] = useState<Reservation[]>([]);
 
-  // Fetch reservations
   useEffect(() => {
     const fetchReservations = async () => {
       try {
@@ -44,11 +46,7 @@ export default function Home() {
         setReservations([]);
       }
     };
-    fetchReservations();
-  }, []);
 
-  // Fetch vehicles
-  useEffect(() => {
     const fetchVehicles = async () => {
       try {
         const res = await fetch("/api/vehicles");
@@ -62,8 +60,44 @@ export default function Home() {
         setVehicles([]);
       }
     };
+
+    fetchReservations();
     fetchVehicles();
   }, []);
+
+  const handleInfoSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const payload: any = {};
+    if (email) payload.email = email;
+    if (fullName) payload.fullName = fullName;
+    if (phone) payload.phone = phone;
+
+    await fetch("/api/updateInfo", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+  };
+
+  const handlePasswordSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    await fetch("/api/changePassword", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        currentPassword,
+        newPassword,
+        confirmNewPassword,
+      }),
+    });
+  };
+
+  const handleDeleteAccount = async (e: React.FormEvent) => {
+    e.preventDefault();
+    await fetch("/api/deleteAccount", {
+      method: "DELETE",
+    });
+  };
 
   const handleDeleteVehicle = async (registration_number: string) => {
     await fetch(`/api/vehicles/${registration_number}`, {
@@ -103,43 +137,6 @@ export default function Home() {
     setEditBrand("");
     setEditRegNum("");
   };
-
-  const handleDeleteAccount = async (e: React.FormEvent) => {
-    e.preventDefault();
-    await fetch("/api/deleteAccount", {
-      method: "DELETE",
-    });
-    // Optional: redirect
-    // window.location.href = "/goodbye";
-  };
-
-  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setEmail(e.target.value);
-  };
-
-  const handleFullNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFullName(e.target.value);
-  };
-
-  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setPhone(e.target.value);
-  };
-
-  const handleInfoSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    const payload: any = {};
-    if (email) payload.email = email;
-    if (fullName) payload.fullName = fullName;
-    if (phone) payload.phone = phone;
-
-    await fetch("/api/updateInfo", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-    });
-  };
-
-
   return (
     <PageTemplate>
         <main className="flex flex-col items-center mb-4   "> 
@@ -196,21 +193,42 @@ export default function Home() {
   </section>
  </form>
 
-  <h2 className="text-3xl font-bold text-base-content  mb-4" >Change Password</h2>
- <form>
-<section className="grid grid-cols-2 gap-x-8 gap-y-4">
-    <div className="flex flex-col gap-y-2">
-      <h4 className="text-sm  text-base-content">Current Password</h4>
-      <Input name="currentPassword" value="currentPassword" type="text" className="text-base-content bg-primary rounded-[0.25rem] h-10" placeholder="Enter current password" />
-    </div>
-    <div className="flex flex-col gap-y-2">
-      <h4 className="text-sm  text-base-content">New Password</h4>
-      <Input name="newPassword" value="newPassword" type="text" className="text-base-content bg-primary rounded-[0.25rem] h-10" placeholder="Enter new password" />
-    </div>
-     <div className="flex flex-col col-span-2 gap-y-2">
-      <h4 className="text-sm  text-base-content">Confirm New Password</h4>
-      <Input name="confirmNewPassword" value="confirmNewPassword" type="text" className="text-base-content bg-primary rounded-[0.25rem] h-10" placeholder="Confirm new password" />
-    </div>
+   <h2 className="text-3xl font-bold text-base-content  mb-4">Change Password</h2>
+        <form onSubmit={handlePasswordSubmit}>
+          <section className="grid grid-cols-2 gap-x-8 gap-y-4">
+            <div className="flex flex-col gap-y-2">
+              <h4 className="text-sm text-base-content">Current Password</h4>
+              <Input
+                name="currentPassword"
+                value={currentPassword}
+                onChange={handleCurrentPasswordChange}
+                type="password"
+                className="text-base-content bg-primary rounded-[0.25rem] h-10"
+                placeholder="Enter current password"
+              />
+            </div>
+            <div className="flex flex-col gap-y-2">
+              <h4 className="text-sm text-base-content">New Password</h4>
+              <Input
+                name="newPassword"
+                value={newPassword}
+                onChange={handleNewPasswordChange}
+                type="password"
+                className="text-base-content bg-primary rounded-[0.25rem] h-10"
+                placeholder="Enter new password"
+              />
+            </div>
+            <div className="flex flex-col col-span-2 gap-y-2">
+              <h4 className="text-sm text-base-content">Confirm New Password</h4>
+              <Input
+                name="confirmNewPassword"
+                value={confirmNewPassword}
+                onChange={handleConfirmNewPasswordChange}
+                type="password"
+                className="text-base-content bg-primary rounded-[0.25rem] h-10"
+                placeholder="Confirm new password"
+              />
+            </div>
      
     <div className="flex justify-end col-span-2">
         <Button type="submit" className="text-base-content bg-accent rounded-sm h-10 w-50 " value="Change Password" />
