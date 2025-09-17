@@ -3,16 +3,87 @@ import PageTemplate from "@/templates/PageTemplate";
 import Image from "next/image";
 import Input from "@/components/input/input";
 import Button from "@/components/button";
-import { useState } from "react";
-export default function Home() {
 
-const handleDeleteAccount = async (e: React.FormEvent) => {
+import { useState, useEffect } from "react";
+type Vehicle = {
+  registration_number: string;
+  brand: string;
+};
+export default function Home() {
+    const [vehicles, setVehicles] = useState<Vehicle[]>([]);
+const [editIdx, setEditIdx] = useState<number | null>(null);
+const [editBrand, setEditBrand] = useState("");
+const [editRegNum, setEditRegNum] = useState("");
+ const handleDeleteVehicle = async (registration_number: string) => {
+    await fetch(`/api/vehicles/${registration_number}`, {
+      method: "DELETE",
+    });
+   
+    setVehicles((prev) => prev.filter(v => v.registration_number !== registration_number));
+  };
+    
+    const handleDeleteAccount = async (e: React.FormEvent) => {
     e.preventDefault();
     await fetch("/api/deleteAccount", {
       method: "DELETE",
     });
     
   };
+const handleEditClick = (idx: number) => {
+  setEditIdx(idx);
+  setEditBrand(vehicles[idx].brand);
+  setEditRegNum(vehicles[idx].registration_number);
+};
+
+const handleEditSave = async () => {
+  const updatedVehicle = {
+    registration_number: editRegNum,
+    brand: editBrand,
+  };
+  await fetch(`/api/vehicles/${vehicles[editIdx!].registration_number}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(updatedVehicle),
+  });
+  setVehicles((prev) =>
+    prev.map((v, idx) =>
+      idx === editIdx ? updatedVehicle : v
+    )
+  );
+  setEditIdx(null);
+  setEditBrand("");
+  setEditRegNum("");
+};
+
+const handleEditCancel = () => {
+  setEditIdx(null);
+  setEditBrand("");
+  setEditRegNum("");
+};
+ useEffect(() => {
+    const fetchVehicles = async () => {
+      try {
+        const res = await fetch("/api/vehicles");
+        if (res.ok) {
+          const data = await res.json();
+          setVehicles(data.vehicles);
+        } else {
+          
+          setVehicles([
+           //  { registration_number: "ZS12345", brand: "Toyota Corolla" },
+           //example vehicle
+          ]);
+        }
+      } catch {
+        setVehicles([
+         //{ registration_number: "ZS12345", brand: "Toyota Corolla" },
+          //example vehicle
+        ]);
+      }
+    };
+    fetchVehicles();
+  }, []);
+
 
   return (
     <PageTemplate>
@@ -77,28 +148,78 @@ const handleDeleteAccount = async (e: React.FormEvent) => {
  </section>
  </form>
  <h2 className="text-3xl font-bold text-base-content mb-4 ">Registered Vehicles</h2>
- <form>
 <section className="grid grid-cols-2 gap-x-8 gap-y-4">
-  
-    <div className="flex flex-col col-span-2 gap-y-2 text-base-content bg-primary rounded-[0.25rem] h-20 ">
-
-  <div className="flex flex-col col-span-2 gap-y-2 text-base-content bg-primary rounded-[0.25rem] h-20 relative">
-   <div className="flex flex-row items-center justify-end h-20 w-full bg-primary rounded-[0.25rem] col-span-2">
-  
-  <img src="/pencil.png" alt="edit" className="w-6 h-6 mr-2" />
-  <img src="/bin.png" alt="delete" className="w-6 h-6 mr-6" />
-</div>
+ {vehicles.length === 0 ? (
+  <div className="col-span-2 text-base-content">No vehicles registered.</div>
+) : (
+  vehicles.map((vehicle, idx) => (
+    <div key={idx} className="flex flex-col col-span-2 gap-y-2 text-base-content bg-primary rounded-[0.25rem] h-20">
+      <div className="flex flex-row items-center justify-between h-20 w-full px-4">
+        {editIdx === idx ? (
+          <div className="flex flex-row items-center w-full">
+            <input
+              type="text"
+              value={editBrand}
+              onChange={(e) => setEditBrand(e.target.value)}
+              className="mr-2 px-2 py-1 rounded"
+              placeholder="Brand"
+            />
+            <input
+              type="text"
+              value={editRegNum}
+              onChange={(e) => setEditRegNum(e.target.value)}
+              className="mr-2 px-2 py-1 rounded"
+              placeholder="Registration"
+            />
+            <Button
+              type="button"
+              className="text-base-content bg-accent rounded-sm h-10 w-20 "
+              onClick={handleEditSave}
+              value="Save"
+            />
+           
+            <Button
+              type="button"
+              className="text-base-content bg-gray-400 rounded-sm h-10 w-20 ml-2 "
+              onClick={handleEditCancel}
+              value="Cancel"
+            />
+            
+          </div>
+        ) : (
+          <>
+            <span className="font-bold">{vehicle.brand}</span>
+            <span className="ml-4">{vehicle.registration_number}</span>
+            <div className="flex flex-row items-center">
+              <img
+                src="/pencil.png"
+                alt="edit"
+                className="w-6 h-6 mr-2 cursor-pointer"
+                onClick={() => handleEditClick(idx)}
+              />
+              <img
+                src="/bin.png"
+                alt="delete"
+                className="w-6 h-6 mr-6 cursor-pointer"
+                onClick={() => handleDeleteVehicle(vehicle.registration_number)}
+              />
+            </div>
+          </>
+        )}
+      </div>
+    </div>
+  ))
+)}
+  <div className="flex flex-col col-span-2 gap-y-2">
+    <button
+      type="button"
+      className="border-2 border-dashed border-base-content rounded-[0.25rem] px-6 py-3 text-base-content flex items-center justify-center w-full"
+    >
+      + Add New Vehicle
+    </button>
   </div>
-</div>
+</section>
 
-    <div className="flex flex-col col-span-2 gap-y-2">
-  <button
-  type="button"
-  className="border-2 border-dashed border-base-content rounded-[0.25rem] px-6 py-3 text-base-content flex items-center justify-center w-full"
->
-  + Add New Vehicle
-</button>
-</div>
 
  
  </section>
@@ -118,6 +239,7 @@ const handleDeleteAccount = async (e: React.FormEvent) => {
             </div>
           </section>
         </form>
+
   <section className="flex items-center justify-center col-span-2 h-20 ml-4">
   <input type="submit" className="text-base-content bg-gray-700 rounded-sm h-10 w-40 bg-red-600 pd-10" value="Logout" />
 
