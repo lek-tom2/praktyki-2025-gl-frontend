@@ -111,14 +111,12 @@ const ParkingSpotMap = ({ parkingSpots, level }: parkingSpotMapProps) => {
   };
 
   return (
-    <div className="w-3/4 max-w-screen-xl mx-auto p-2 box-border overflow-x-hidden m-4">
+    <div className="w-3/4 h-full max-h-[80vh] flex flex-col gap-4 overflow-y-hidden overflow-x-hidden m-4 items-center p-2 max-w-screen-xl mx-auto box-border">
       <div className="grid grid-cols-3 items-center w-full gap-4 mb-12">
         <div /> {/* left spacer */}
-        <p className="text-[#eaefef] text-3xl md:text-4xl text-center">
-          Parking Level {level === "PL2" ? "-2" : "-3"}
-        </p>
-        <div className="flex items-center justify-end gap-3">
-          <div className="w-44 md:w-64 hover:scale-105 transition-transform duration-200">
+        <p></p>
+        <div className="flex items-center justify-end gap-4">
+          <div className="hover:scale-105 duration-300 ">
             <Input
               type="search"
               name="searchSpot"
@@ -131,11 +129,11 @@ const ParkingSpotMap = ({ parkingSpots, level }: parkingSpotMapProps) => {
           <select
             value={filter}
             onChange={(e) => setFilter(e.target.value)}
-            className="select bg-secondary border-0 h-9 text-primary-content hover:scale-105 focus:scale-105 duration-200 w-28"
+            className="select bg-secondary border-0 h-9 text-secondary-content hover:scale-105 focus:scale-105 duration-300 min-w-30"
           >
             <option value="all">All</option>
             <option value="available">Available</option>
-            <option value="occupied">Unavailable</option>
+            <option value="occupied">Occupied</option>
             <option value="reserved">Reserved</option>
             <option value="yours">Yours</option>
           </select>
@@ -144,28 +142,40 @@ const ParkingSpotMap = ({ parkingSpots, level }: parkingSpotMapProps) => {
 
       {/* map */}
       <div className="w-full flex flex-col items-center gap-8">
-        <div className="w-full max-h-[75vh] overflow-y-auto">
+        <div className="w-full h-[62vh] p-4 overflow-y-auto">
           <div className="flex flex-col items-center justify-center gap-12 w-full">
-            {level === "PL2" && (
+            {filteredSpots.length > 0 ? (
               <>
-                {renderAisle("mainAisleLeft", "Main Aisle")}
-                {renderAisle("mainAisleRight", "Main Aisle")}
-                {renderAisle("leftAisleLeft", "Left Aisle", "leftAisleRight")}
-                {renderAisle("rightAisleLeft", "Right Aisle")}
-                {renderAisle("tunnel", "After Tunnel")}
-              </>
-            )}
+                {level === "PL2" && (
+                  <>
+                    {renderAisle("mainAisleLeft", "Main Aisle")}
+                    {renderAisle("mainAisleRight", "Main Aisle")}
+                    {renderAisle(
+                      "leftAisleLeft",
+                      "Left Aisle",
+                      "leftAisleRight"
+                    )}
+                    {renderAisle("rightAisleLeft", "Right Aisle")}
+                    {renderAisle("tunnel", "After Tunnel")}
+                  </>
+                )}
 
-            {level === "PL3" && (
-              <>
-                {renderAisle("mainAisleLeft", "Main Aisle")}
-                {renderAisle("topAisleTop", "Top Aisle", "topAisleBottom")}
-                {renderAisle(
-                  "bottomAisleTop",
-                  "Bottom Aisle",
-                  "bottomAisleBottom"
+                {level === "PL3" && (
+                  <>
+                    {renderAisle("mainAisleLeft", "Main Aisle")}
+                    {renderAisle("topAisleTop", "Top Aisle", "topAisleBottom")}
+                    {renderAisle(
+                      "bottomAisleTop",
+                      "Bottom Aisle",
+                      "bottomAisleBottom"
+                    )}
+                  </>
                 )}
               </>
+            ) : (
+              <div className="text-center text-primary-content mt-4">
+                No matching parking spots
+              </div>
             )}
           </div>
         </div>

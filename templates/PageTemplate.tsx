@@ -13,11 +13,13 @@ const PageTemplate = ({ children }: PageTemplateProps) => {
 
   return (
     <div
-      className="flex flex-col bg-primary w-[100vw] h-[100vh]"
+      className="flex flex-col bg-primary w-[100vw] h-[100vh] overflow-x-hidden overflow-y-hidden"
       data-theme={User.theme}
     >
       <NavbarTemplate />
-      <main className="flex-1 bg-primary">{children}</main>
+      <main className=" bg-primary flex flex-col h-[calc(100vh-64px-48px)]">
+        {children}
+      </main>
       <FooterTemplate />
     </div>
   );
