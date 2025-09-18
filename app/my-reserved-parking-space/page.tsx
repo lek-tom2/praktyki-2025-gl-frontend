@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import PageTemplate from "@/templates/PageTemplate";
 import Button from "@/components/button";
 import useUserContext from "@/gl-context/UserContextProvider";
+import ReportIssue from "@/components/report-issue/reportIssue";
 type Reservation = {
   id: number;
   start_date: string;
@@ -140,7 +141,7 @@ const MyReservedParkingSpacePage = () => {
   </div>
 </section>
             <div className="flex justify-between w-[512px] mt-8 mb-8">
-              <Button type="submit" className=" text-base-content bg-red-500 rounded-[0.5rem] h-10 w-50 " value="Raport an issue" />
+              <ReportIssue />
               <Button type="submit" className=" text-base-content bg-accent rounded-[0.5rem] h-10 w-50 " value="Change your reservation" />
             </div>
           </div>
