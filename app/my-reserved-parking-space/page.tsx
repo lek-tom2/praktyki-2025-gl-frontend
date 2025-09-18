@@ -4,6 +4,7 @@ import PageTemplate from "@/templates/PageTemplate";
 import Button from "@/components/button";
 import useUserContext from "@/gl-context/UserContextProvider";
 import { toast } from "react-hot-toast";
+
 type Reservation = {
   id: number;
   start_date: string;
@@ -96,12 +97,13 @@ const MyReservedParkingSpacePage = () => {
 const handleChangeReservation = async () => {
     console.log("Change reservation clicked", reservation);
     if (!reservation) return;
-    try {
+   try {
       const response = await fetch(`/api/changeReservation`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           reservationId: reservation.id,
+          userId: User.userId, 
          
         }),
       });
