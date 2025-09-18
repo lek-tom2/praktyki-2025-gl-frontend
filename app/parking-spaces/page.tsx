@@ -85,27 +85,31 @@ export default function ParkingSpaces() {
   };
 
 const [vehicles, setVehicles] = useState<Vechicle[]>([]);
+const [vehiclesError, setVehiclesError] = useState(false);
+
 useEffect(() => {
-  fetch(`/api/vehicles?userId=${User.userId}`)
-    .then(res => res.json())
-    .then(data => {
-      if (data.vehicles && data.vehicles.length > 0) {
-        setVehicles(data.vehicles);
+  const fetchVehicles = async () => {
+    try {
+      const res = await fetch(`/api/vehicles?userId=${User.userId}`);
+      if (res.ok) {
+        const data = await res.json();
+        if (data.vehicles && data.vehicles.length > 0) {
+          setVehicles(data.vehicles);
+          setVehiclesError(false);
+        } else {
+          setVehicles([]);
+          setVehiclesError(true);
+        }
       } else {
-        setVehicles([
-          { registration_number: "ZS12345", brand: "Audi" },
-          { registration_number: "ZS54321", brand: "Mercedes" },
-          { registration_number: "ZS11111", brand: "Ford" }
-        ]);
+        setVehicles([]);
+        setVehiclesError(true);
       }
-    })
-    .catch(() => {
-      setVehicles([
-        { registration_number: "ZS12345", brand: "Audi" },
-        { registration_number: "ZS54321", brand: "Mercedes" },
-        { registration_number: "ZS11111", brand: "Ford" }
-      ]);
-    });
+    } catch {
+      setVehicles([]);
+      setVehiclesError(true);
+    }
+  };
+  fetchVehicles();
 }, [User.userId]);
   const formatTime24 = (timeString: string): string => {
     if (!timeString) return "";
@@ -315,20 +319,32 @@ useEffect(() => {
           <h4 className="text-base-content font-bold text-[1rem] mt-7 mb-3">
             Select Vehicle
           </h4>
-          <select
-            name="vehicle"
-            value={form.vehicle}
-            onChange={inputChange}
-            className="w-full bg-base-100 input input-bordered"
-            required
-          >
-           <option value="">Select vehicle</option>
-  {vehicles.map(v => (
-    <option key={v.registration_number} value={v.registration_number}>
-      {v.brand} ({v.registration_number})
-    </option>
-  ))}
-          </select>
+         {vehiclesError || vehicles.length === 0 ? (
+  <div className="flex justify-center items-center w-full">
+   <Button
+              className=""
+              type="button"
+              value="Add Vehicle"
+              hoverEffect={true}
+             
+            />
+  </div>
+) : (
+  <select
+    name="vehicle"
+    value={form.vehicle}
+    onChange={inputChange}
+    className="w-full bg-base-100 input input-bordered"
+    required
+  >
+    <option value="">Select vehicle</option>
+    {vehicles.map(v => (
+      <option key={v.registration_number} value={v.registration_number}>
+        {v.brand} ({v.registration_number})
+      </option>
+    ))}
+  </select>
+)}
           <h4 className="text-base-content font-bold text-[1rem] mt-7 mb-3">
             Reservation Duration
           </h4>
