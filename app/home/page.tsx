@@ -1,5 +1,5 @@
 "use client";
-import PageTemplate from "../../templates/PageTemplate";
+import PageTemplateAfterLogin from "../../templates/PageTemplateAfterLogin";
 import Input from "@/components/input/input";
 import ParkingManager from "@/components/parkingManager/parkingManager";
 import React, { useEffect, useState } from "react";
@@ -74,7 +74,7 @@ export default function HomePage() {
 		}, [checkIn, checkOut, parkingList, reservations]);
 
 	return (
-		<PageTemplate>
+    <PageTemplateAfterLogin>
 			<div className="flex flex-col items-center w-full bg-white min-h-screen pb-8">
 				<div className="w-full flex flex-row justify-center mt-8 gap-8">
 					<div className="flex flex-col w-[25%] min-w-[220px] max-w-[340px]">
@@ -111,6 +111,6 @@ export default function HomePage() {
 					<ParkingManager />
 				</div>
 			</div>
-		</PageTemplate>
+    </PageTemplateAfterLogin>
 	);
 }

@@ -7,7 +7,7 @@ type Reservation = {
   user: number;
   spot: number;
 };
-import PageTemplate from "../../templates/PageTemplate";
+import PageTemplateAfterLogin from "../../templates/PageTemplateAfterLogin";
 import Input from "@/components/input/input";
 import Button from "@/components/button";
 import PopupOverlay from "@/components/popup/popup";
@@ -122,7 +122,7 @@ export default function ParkingSpaces() {
     return minutes === 0 ? `${hours}h` : `${hours}h ${minutes}m`;
   };
   return (
-    <PageTemplate>
+    <PageTemplateAfterLogin>
 
 
 
@@ -305,6 +305,6 @@ export default function ParkingSpaces() {
           </div>
         </form>
       </PopupOverlay>
-    </PageTemplate>
+  </PageTemplateAfterLogin>
   );
 }
