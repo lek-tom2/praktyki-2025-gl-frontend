@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import PageTemplate from "@/templates/PageTemplate";
 import Button from "@/components/button";
-
+import useUserContext from "@/gl-context/UserContextProvider";
 type Reservation = {
   id: number;
   start_date: string;
@@ -11,13 +11,23 @@ type Reservation = {
   spot: number;
   vehicle: string;
 };
-
+type ReservationHistory = {
+  id: number;
+  start_date: string;
+  end_date: string;
+  spot: number;
+  vehicle: string;
+};
 const MyReservedParkingSpacePage = () => {
+  const { User, UserDispatch } = useUserContext();
   const [reservation, setReservation] = useState<Reservation | null>(null);
+const [history, setHistory] = useState<ReservationHistory[]>([]); 
 
   useEffect(() => {
   const fetchReservation = async () => {
-    const res = await fetch("/api/myReservation");
+    
+    const res = await fetch(`/api/myReservation?userId=${User.userId}`);
+
     if (res.ok) {
       const data = await res.json();
       setReservation(data.reservation);
@@ -33,7 +43,34 @@ const MyReservedParkingSpacePage = () => {
       });
     }
   };
+ const fetchHistory = async () => {
+    const res = await fetch(`/api/reservationHistory?userId=${User.userId}`);
+
+    if (res.ok) {
+      const data = await res.json();
+      setHistory(data.history);
+    } else {
+      setHistory([
+        {
+          id: 1,
+          start_date: "2025-08-01T08:00:00+02:00",
+          end_date: "2025-08-01T16:00:00+02:00",
+          spot: 2,
+          vehicle: "BMW"
+        },
+        {
+          id: 2,
+          start_date: "2025-08-10T09:30:00+02:00",
+          end_date: "2025-08-10T18:00:00+02:00",
+          spot: 7,
+          vehicle: "Audi"
+        }
+      ]);
+    }
+  };
+
   fetchReservation();
+  fetchHistory();
 }, []);
 
   
@@ -108,35 +145,22 @@ const MyReservedParkingSpacePage = () => {
 
        
           <nav>
-            <article className="text-base-content p-8 rounded-[0.5rem] bg-secondary w-[362px] max-h-[723px] overflow-y-auto">
+            <article className="text-base-content p-8 rounded-[0.5rem] bg-base-200 w-[362px] max-h-[723px] overflow-y-auto">
               <h2 className="text-3xl font-bold mb-6">Reservation History</h2>
               <form>
-                <section className="grid grid-cols-2 gap-x-8 gap-y-4">
-                 
-                    <div className="flex flex-col col-span-2 gap-y-2 text-base-content bg-primary rounded-[0.25rem] w-[306px] h-[92px]">
-                      
-                    </div>
-                     <div className="flex flex-col col-span-2 gap-y-2 text-base-content bg-primary rounded-[0.25rem] w-[306px] h-[92px]">
-                      
-                    </div>
-                     <div className="flex flex-col col-span-2 gap-y-2 text-base-content bg-primary rounded-[0.25rem] w-[306px] h-[92px]">
-                      
-                    </div>
-                     <div className="flex flex-col col-span-2 gap-y-2 text-base-content bg-primary rounded-[0.25rem] w-[306px] h-[92px]">
-                      
-                    </div>
-                     <div className="flex flex-col col-span-2 gap-y-2 text-base-content bg-primary rounded-[0.25rem] w-[306px] h-[92px]">
-                      
-                    </div>
-                     <div className="flex flex-col col-span-2 gap-y-2 text-base-content bg-primary rounded-[0.25rem] w-[306px] h-[92px]">
-                      
-                    </div>
-           
-
-                  <div className="flex justify-end col-span-2">
-                    <Button type="submit" className=" text-base-content bg-accent rounded-[0.5rem] h-10 w-full " value="View all History" />
-                  </div>
-                </section>
+               <section className="flex flex-col gap-y-4">
+    {history.map((item) => (
+      <div key={item.id} className="flex flex-col gap-y-2 text-base-content bg-primary rounded-[0.25rem] w-[306px] h-[150px] p-3">
+        <div><span className="font-bold">Date:</span> {item.start_date.split("T")[0].replace(/-/g, "/")}</div>
+        <div><span className="font-bold">Time:</span> {item.start_date.split("T")[1]?.slice(0,5)} - {item.end_date.split("T")[1]?.slice(0,5)}</div>
+        <div><span className="font-bold">Spot:</span> {item.spot}</div>
+        <div><span className="font-bold">Vehicle:</span> {item.vehicle}</div>
+      </div>
+    ))}
+    <div className="flex justify-end">
+      <Button type="submit" className=" text-base-content bg-accent rounded-[0.5rem] h-10 w-full " value="View all History" />
+    </div>
+  </section>
               </form>
             </article>
           </nav>

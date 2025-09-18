@@ -125,11 +125,7 @@ export default function ParkingSpaces() {
     <PageTemplate>
 
  
-  await fetch("/api/reservations", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(reservationData),
-  });
+  
 
 
   <div className='w-[85%] ml-[10%] mr-[10%] h-[15%] mt-4 flex flex-row gap-4'>
