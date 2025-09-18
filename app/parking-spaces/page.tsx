@@ -1,5 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
+import useUserContext from "@/gl-context/UserContextProvider";
+import { toast } from "react-hot-toast";
 type Reservation = {
   id: number;
   start_date: string;
@@ -18,8 +20,13 @@ type ParkingSpot = {
   floor: number;
   status: string;
 };
-
+type Vechicle = {
+  registration_number: string;
+  brand: string;
+};
 export default function ParkingSpaces() {
+  const { User, UserDispatch } = useUserContext();
+
   const [parkingList, setParkingList] = useState<ParkingSpot[]>([]);
   const [search, setSearch] = useState("");
   const [filtered, setFiltered] = useState<ParkingSpot[]>([]);
@@ -77,7 +84,33 @@ export default function ParkingSpaces() {
     return `${year}/${month}/${day}`;
   };
 
+const [vehicles, setVehicles] = useState<Vechicle[]>([]);
+const [vehiclesError, setVehiclesError] = useState(false);
 
+useEffect(() => {
+  const fetchVehicles = async () => {
+    try {
+      const res = await fetch(`/api/vehicles?userId=${User.userId}`);
+      if (res.ok) {
+        const data = await res.json();
+        if (data.vehicles && data.vehicles.length > 0) {
+          setVehicles(data.vehicles);
+          setVehiclesError(false);
+        } else {
+          setVehicles([]);
+          setVehiclesError(true);
+        }
+      } else {
+        setVehicles([]);
+        setVehiclesError(true);
+      }
+    } catch {
+      setVehicles([]);
+      setVehiclesError(true);
+    }
+  };
+  fetchVehicles();
+}, [User.userId]);
   const formatTime24 = (timeString: string): string => {
     if (!timeString) return "";
 
@@ -88,24 +121,42 @@ export default function ParkingSpaces() {
     return `${hh}:${mm}`;
   };
 
-  const submitRes = (e: React.FormEvent) => {
-    e.preventDefault();
+  const submitRes = async (e: React.FormEvent) => {
+  e.preventDefault();
 
-    const formattedDate = formatDate(form.date);
-    const startTime24 = formatTime24(form.time);
-    const endTime24 = formatTime24(form.timeEnd);
+  const formattedDate = formatDate(form.date);
+  const startTime24 = formatTime24(form.time);
+  const endTime24 = formatTime24(form.timeEnd);
 
-    const reservationData = {
-      date: formattedDate,
-      time: startTime24,
-      timeEnd: endTime24,
-      vehicle: form.vehicle,
-    };
-
-    alert("Reservation sent");
-    setOpen(false);
-    setForm({ date: "", time: "", timeEnd: "", vehicle: "" });
+  const reservationData = {
+    date: formattedDate,
+    time: startTime24,
+    timeEnd: endTime24,
+    vehicle: form.vehicle,
+    userId: User.userId,
+    spotId: chosen?.id,
   };
+
+  try {
+    const response = await fetch("/api/reservations/", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(reservationData),
+    });
+
+    if (response.ok) {
+      toast.success("Reservation created successfully!");
+      setOpen(false);
+      setForm({ date: "", time: "", timeEnd: "", vehicle: "" });
+    } else {
+      const err = await response.text();
+      toast.error(`Error creating reservation: ${response.status}`);
+    }
+  } catch (error) {
+    toast.error("Unexpected error. Try again later.");
+  }
+
+};
   const getDuration = () => {
     if (!form.time || !form.timeEnd) return "0h";
     const [startH, startM] = form.time.split(":").map(Number);
@@ -125,11 +176,7 @@ export default function ParkingSpaces() {
     <PageTemplate>
 
  
-  await fetch("/api/reservations", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(reservationData),
-  });
+  
 
 
   <div className='w-[85%] ml-[10%] mr-[10%] h-[15%] mt-4 flex flex-row gap-4'>
@@ -272,18 +319,32 @@ export default function ParkingSpaces() {
           <h4 className="text-base-content font-bold text-[1rem] mt-7 mb-3">
             Select Vehicle
           </h4>
-          <select
-            name="vehicle"
-            value={form.vehicle}
-            onChange={inputChange}
-            className="w-full bg-base-100 input input-bordered"
-            required
-          >
-            <option value="">Select vehicle</option>
-            <option value="audi">audi</option>
-            <option value="mercedes">mercedes</option>
-            <option value="ford">ford</option>
-          </select>
+         {vehiclesError || vehicles.length === 0 ? (
+  <div className="flex justify-center items-center w-full">
+   <Button
+              className=""
+              type="button"
+              value="Add Vehicle"
+              hoverEffect={true}
+             
+            />
+  </div>
+) : (
+  <select
+    name="vehicle"
+    value={form.vehicle}
+    onChange={inputChange}
+    className="w-full bg-base-100 input input-bordered"
+    required
+  >
+    <option value="">Select vehicle</option>
+    {vehicles.map(v => (
+      <option key={v.registration_number} value={v.registration_number}>
+        {v.brand} ({v.registration_number})
+      </option>
+    ))}
+  </select>
+)}
           <h4 className="text-base-content font-bold text-[1rem] mt-7 mb-3">
             Reservation Duration
           </h4>
@@ -306,7 +367,7 @@ export default function ParkingSpaces() {
               type="submit"
               value="Create Reservation"
               hoverEffect={true}
-              onClick={() => setOpen(true)}
+             
             />
           </div>
         </form>
