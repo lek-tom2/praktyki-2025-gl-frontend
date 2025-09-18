@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useRef, useState } from "react";
+import toast from "react-hot-toast";
 import PageTemplate from "../../templates/PageTemplate";
 import Input from "@/components/input/input";
 import Button from "@/components/button";
@@ -11,7 +12,7 @@ export default function AddCar() {
     model: "",
     year: "",
     color: "",
-    plate: "",
+    registration_number: "",
   });
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
@@ -52,10 +53,33 @@ export default function AddCar() {
     alert("Photo uploaded!");
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: add car logic
-    alert("Car added!");
+    try {
+      const res = await fetch("/api/cars", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          registration_number: form.registration_number,
+          brand: form.brand,
+          model: form.model,
+          year: form.year,
+          color: form.color,
+        }),
+      });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data?.message || "Failed to add car");
+      }
+      toast.success("Car added!");
+      setForm({ brand: "", model: "", year: "", color: "", registration_number: "" });
+      setFile(null);
+      setPreview(null);
+    } catch (err: any) {
+      toast.error(err.message || "Error adding car");
+    }
   };
 
   return (
@@ -117,13 +141,13 @@ export default function AddCar() {
             />
           </div>
           <div className="flex flex-col gap-1">
-            <label className="text-base-content font-semibold">License Plate Number</label>
+            <label className="text-base-content font-semibold">Registration Number</label>
             <Input
               className="rounded-md bg-primary w-full p-2 text-base-content"
               type="text"
-              name="plate"
-              placeholder="License Plate Number"
-              value={form.plate}
+              name="registration_number"
+              placeholder="Registration Number"
+              value={form.registration_number}
               onChange={inputChange}
               required
             />
