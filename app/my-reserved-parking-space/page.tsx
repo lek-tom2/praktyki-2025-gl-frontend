@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import PageTemplate from "@/templates/PageTemplate";
 import Button from "@/components/button";
 import useUserContext from "@/gl-context/UserContextProvider";
+import { toast } from "react-hot-toast";
 type Reservation = {
   id: number;
   start_date: string;
@@ -92,7 +93,29 @@ const MyReservedParkingSpacePage = () => {
     const minutes = diff % 60;
     return minutes === 0 ? `${hours}h` : `${hours}h ${minutes}m`;
   };
+const handleChangeReservation = async () => {
+    console.log("Change reservation clicked", reservation);
+    if (!reservation) return;
+    try {
+      const response = await fetch(`/api/changeReservation`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          reservationId: reservation.id,
+         
+        }),
+      });
 
+      if (response.ok) {
+        toast.success("Reservation updated successfully!");
+        
+      } else {
+        toast.error("Failed to update reservation.");
+      }
+    } catch {
+      toast.error("Unexpected error. Try again later.");
+    }
+  };
   return (
     <PageTemplate>
       <div className="flex items-start justify-center mt-10 bg-base-100">
@@ -141,7 +164,7 @@ const MyReservedParkingSpacePage = () => {
 </section>
             <div className="flex justify-between w-[512px] mt-8 mb-8">
               <Button type="submit" className=" text-base-content bg-red-500 rounded-[0.5rem] h-10 w-50 " value="Raport an issue" />
-              <Button type="submit" className=" text-base-content bg-accent rounded-[0.5rem] h-10 w-50 " value="Change your reservation" />
+              <Button type="button" onClick={handleChangeReservation} className=" text-base-content bg-accent rounded-[0.5rem] h-10 w-50 " value="Change your reservation" />
             </div>
           </div>
 
