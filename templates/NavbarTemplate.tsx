@@ -55,7 +55,7 @@ const NavbarTemplate = () => {
         <Image src={"/logo.png"} fill alt="GlobalPark" />
       </div>
 
-      <div className="flex flex-row items-center justify-between w-[9vw] mr-30 ml-auto text-[12px] ">
+      <div className="flex flex-row items-center justify-between min-w-30 w-[9vw] mr-30 ml-auto text-[12px] ">
         <Link
           href="login-register"
           className="flex items-center font-semibold justify-center rounded-4xl w-[50%] text-accent-content  h-8 bg-accent ml-[-1rem] min-w-6 hover:scale-105 duration-300"
