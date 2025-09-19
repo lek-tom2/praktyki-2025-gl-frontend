@@ -88,7 +88,7 @@ export default function ParkingSpaces() {
     return `${hh}:${mm}`;
   };
 
-  const submitRes = (e: React.FormEvent) => {
+  const submitRes = async (e: React.FormEvent) => {
     e.preventDefault();
 
     const formattedDate = formatDate(form.date);
@@ -100,12 +100,30 @@ export default function ParkingSpaces() {
       time: startTime24,
       timeEnd: endTime24,
       vehicle: form.vehicle,
+      spot: chosen?.id, // Assuming the spot ID should be sent
     };
 
-    alert("Reservation sent");
-    setOpen(false);
-    setForm({ date: "", time: "", timeEnd: "", vehicle: "" });
+    try {
+      const response = await fetch("/api/reservations", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(reservationData),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Server error: ${response.status}`);
+      }
+
+      alert("Reservation sent successfully!");
+      setOpen(false);
+      setForm({ date: "", time: "", timeEnd: "", vehicle: "" });
+
+    } catch (error) {
+      console.error("Failed to submit reservation:", error);
+      alert("Failed to send reservation. Please try again.");
+    }
   };
+
   const getDuration = () => {
     if (!form.time || !form.timeEnd) return "0h";
     const [startH, startM] = form.time.split(":").map(Number);
@@ -121,110 +139,91 @@ export default function ParkingSpaces() {
     const minutes = diff % 60;
     return minutes === 0 ? `${hours}h` : `${hours}h ${minutes}m`;
   };
+
   return (
     <PageTemplate>
-
- 
-  await fetch("/api/reservations", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(reservationData),
-  });
-
-
-  <div className='w-[85%] ml-[10%] mr-[10%] h-[15%] mt-4 flex flex-row gap-4'>
-
-    <div className="flex flex-col w-[60%] ">
-      <p className='text-left text-[#333446] text-xs mb-1'>Parking spot</p>
-      <Input
-        className='bg-[#333446] rounded-xl h-[50%] w-[100%]'
-        type="text"
-        name="search"
-        placeholder="Search parking spot..."
-        value={search}
-        onChange={e => setSearch(e.target.value)}
-      />
-      {search && (
-        <div className="bg-[#333446] rounded-xl mt-2 max-h-40 overflow-y-auto shadow-lg">
-          <ul>
-            {filtered.map((spot) => (
-              <li
-                key={spot.id}
-                className="cursor-pointer hover:bg-[#7F8CAA] px-3 py-2 rounded transition"
-                onClick={() => setChosen(spot)}
-              >
-                {spot.spot_number}
-              </li>
-            ))}
-            {filtered.length === 0 && (
-              <li className="text-gray-400 px-3 py-2">No results</li>
-            )}
-          </ul>
+      <div className='w-[85%] ml-[10%] mr-[10%] h-[15%] mt-4 flex flex-row gap-4'>
+        <div className="flex flex-col w-[60%] ">
+          <p className='text-left text-[#333446] text-xs mb-1'>Parking spot</p>
+          <Input
+            className='bg-[#333446] rounded-xl h-[50%] w-[100%]'
+            type="text"
+            name="search"
+            placeholder="Search parking spot..."
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+          />
+          {search && (
+            <div className="bg-[#333446] rounded-xl mt-2 max-h-40 overflow-y-auto shadow-lg">
+              <ul>
+                {filtered.map((spot) => (
+                  <li
+                    key={spot.id}
+                    className="cursor-pointer hover:bg-[#7F8CAA] px-3 py-2 rounded transition"
+                    onClick={() => setChosen(spot)}
+                  >
+                    {spot.spot_number}
+                  </li>
+                ))}
+                {filtered.length === 0 && (
+                  <li className="text-gray-400 px-3 py-2">No results</li>
+                )}
+              </ul>
+            </div>
+          )}
         </div>
-      )}
-    </div>
-
-
-    <div className="flex flex-col w-[20%] ">
-      <p className='text-left text-[#333446] text-xs mb-1'>Check-in</p>
-      <Input
-        className='bg-[#333446] rounded-xl h-[50%] w-[100%] placeholder:text-[#44465a]'
-        type="date"
-        name="check-in"
-      />
-    </div>
-
-
-    <div className="flex flex-col w-[20%] ">
-      <p className='text-left text-[#333446] text-xs mb-1'>Check-out</p>
-      <Input
-        className='bg-[#333446] rounded-xl h-[50%] w-[100%] placeholder:text-[#44465a]'
-        type="date"
-        name="check-out"
-      />
-    </div>
-  </div>
-
-
-  <div className="flex flex-row w-[85%] ml-[10%] gap-4  mb-10">
-
-<div className="flex flex-col justify-center w-[35%] text-left text-white gap-4">
-  <div className="w-[100%] h-[15%] pt-1 bg-[#333446] rounded-xl shadow-lg text-white text-left px-3 flex items-center">
-    <span className="font-bold">Chosen space:&nbsp;</span>
-    <span>{chosen ? chosen.spot_number : <span className="text-gray-400">None</span>}</span>
-  </div>
-  <div className="w-[100%] h-[50%] pt-1 bg-[#333446] rounded-xl shadow-lg text-white text-left px-3 flex flex-col justify-center">
-    <span className="font-bold mb-1">Details:</span>
-    {chosen ? (
-      <>
-        <div>Floor: {chosen.floor}</div>
-        <div>Status: {chosen.status}</div>
-      </>
-    ) : (
-      <span className="text-gray-400">No details</span>
-    )}
-  </div>
-
-  <Button
-    customWidth='100%'
-    type='button'
-    value='Create Reservation'
-    hoverEffect={true}
-    onClick={() => setOpen(true)}
-  />
-</div>
-
-
-    <div className="flex flex-col justify-center w-[65%]">
-      <img
-        src="/2floor.png"
-        alt="2nd floor"
-        width={600}
-        height={600}
-        style={{ width: '83%', height: '83%', borderRadius: '0.75rem'}}
-      />
-    </div>
-  </div>
+        <div className="flex flex-col w-[20%] ">
+          <p className='text-left text-[#333446] text-xs mb-1'>Check-in</p>
+          <Input
+            className='bg-[#333446] rounded-xl h-[50%] w-[100%] placeholder:text-[#44465a]'
+            type="date"
+            name="check-in"
+          />
+        </div>
+        <div className="flex flex-col w-[20%] ">
+          <p className='text-left text-[#333446] text-xs mb-1'>Check-out</p>
+          <Input
+            className='bg-[#333446] rounded-xl h-[50%] w-[100%] placeholder:text-[#44465a]'
+            type="date"
+            name="check-out"
+          />
+        </div>
+      </div>
+      <div className="flex flex-row w-[85%] ml-[10%] gap-4  mb-10">
+        <div className="flex flex-col justify-center w-[35%] text-left text-white gap-4">
+          <div className="w-[100%] h-[15%] pt-1 bg-[#333446] rounded-xl shadow-lg text-white text-left px-3 flex items-center">
+            <span className="font-bold">Chosen space:&nbsp;</span>
+            <span>{chosen ? chosen.spot_number : <span className="text-gray-400">None</span>}</span>
+          </div>
+          <div className="w-[100%] h-[50%] pt-1 bg-[#333446] rounded-xl shadow-lg text-white text-left px-3 flex flex-col justify-center">
+            <span className="font-bold mb-1">Details:</span>
+            {chosen ? (
+              <>
+                <div>Floor: {chosen.floor}</div>
+                <div>Status: {chosen.status}</div>
+              </>
+            ) : (
+              <span className="text-gray-400">No details</span>
+            )}
+          </div>
+          <Button
+            customWidth='100%'
+            type='button'
+            value='Create Reservation'
+            hoverEffect={true}
+            onClick={() => setOpen(true)}
+          />
+        </div>
+        <div className="flex flex-col justify-center w-[65%]">
+          <img
+            src="/2floor.png"
+            alt="2nd floor"
+            width={600}
+            height={600}
+            style={{ width: '83%', height: '83%', borderRadius: '0.75rem' }}
+          />
+        </div>
+      </div>
       <PopupOverlay
         open={open}
         onOpenChange={setOpen}
@@ -300,13 +299,11 @@ export default function ParkingSpaces() {
               className="w-30 flex justify-start border-[2px] border-green-800 rounded-[1rem] h-9 "
               onClick={() => setOpen(false)}
             />
-
             <Button
               className=""
               type="submit"
               value="Create Reservation"
               hoverEffect={true}
-              onClick={() => setOpen(true)}
             />
           </div>
         </form>

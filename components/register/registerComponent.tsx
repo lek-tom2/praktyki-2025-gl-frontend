@@ -98,9 +98,9 @@ const RegisterComponent = () => {
               value: 6,
               message: "Username must be at least 6 characters long.",
             },
-              pattern: {
-                value: /^[a-zA-Z0-9_]+$/,
-                message: "Login can only contain letters, numbers and underscores",
+            pattern: {
+              value: /^[a-zA-Z0-9_]+$/,
+              message: "Login can only contain letters, numbers and underscores",
             },
           })}
         />
@@ -116,7 +116,7 @@ const RegisterComponent = () => {
           register={register("fullName", {
 
             pattern: {
-              value: /^[\p{L}]([-']?[\p{L}]+)*( [\p{L}]([-']?[\p{L}]+)*)+$/,
+              value: /^[\p{L}]([-']?[\p{L}]+)*( [\p{L}]([-']?[\p{L}]+)*)+$/u,
               message: "Full name must contain at least first and last name, only letters, apostrophes or hyphens allowed.",
             },
             required: {
@@ -136,17 +136,17 @@ const RegisterComponent = () => {
           name="password"
           register={register("password", {
             required: {
-                  value: true,
-                  message: "Password is required",
-                },
-                minLength: {
-                  value: 8,
-                  message: "Password must be at least 8 characters long",
-                },
-                pattern: {
-                  value: /^(?=.*[A-Z])(?=.*\d).+$/,
-                  message: "Password must contain at least one uppercase letter and one number",
-                },
+              value: true,
+              message: "Password is required",
+            },
+            minLength: {
+              value: 8,
+              message: "Password must be at least 8 characters long",
+            },
+            pattern: {
+              value: /^(?=.*[A-Z])(?=.*\d).+$/,
+              message: "Password must contain at least one uppercase letter and one number",
+            },
           })}
         />
         <FormErrorParahraph errorObject={errors.password} />
