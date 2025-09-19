@@ -51,6 +51,12 @@ const RegisterComponent = () => {
       });
       if (!response.ok) {
         const status = response.status;
+        // if(status = 400 && response conatins same user ))
+        if (status === 400) {
+          toast.error("User with username or email already exists", {
+            duration: 5000,
+          });
+        }
         toast.error(`Register failed \n Status: ${status}`, { duration: 5000 });
         setIsLoading(false);
         console.log(status);
