@@ -94,10 +94,6 @@ body {
   color-scheme: light;
 
   /* Base */
-<<<<<<< HEAD
-  --color-base-content: #eaefef;
-  /* text */
-=======
   --color-base-content: #000000; /* text */
 
   --color-base-100: #f2f3f6; /* background */
@@ -159,7 +155,6 @@ body {
 
   /* Base */
   --color-base-content: #eaefef; /* text */
->>>>>>> 4ffcdea529f231e9ec5904d9450f286db5458a50
 
   --color-base-100: #374151;
   /* background */
@@ -216,10 +211,4 @@ body {
   /* effects */
   --depth: 1;
   --noise: 0;
-<<<<<<< HEAD
 }
-=======
-}
-
-
->>>>>>> 4ffcdea529f231e9ec5904d9450f286db5458a50
