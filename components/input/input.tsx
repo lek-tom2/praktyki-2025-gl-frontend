@@ -49,7 +49,7 @@ const Input = ({
     <label
       className={
         className
-          ? `${className} input ${fontColor ?? "text-secondary-content"}`
+          ? `${className} input ${fontColor ?? "text-base-content"}`
           : `input ${background} text-secondary-content ${height ?? "h-9"} ${
               width ?? "w-60"
             } ${fontColor ?? "text-secondary-content"} border-0 `

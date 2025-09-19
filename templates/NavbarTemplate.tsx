@@ -63,7 +63,7 @@ const NavbarTemplate = () => {
           Sign Up
         </Link>
       </div>
-    </nav>
+    </nav >
   );
 };
 
