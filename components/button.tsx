@@ -2,7 +2,6 @@
 
 import React from "react";
 
-
 type ButtonProps = {
   type: "submit" | "button" | "image";
   value?: string;
@@ -14,7 +13,7 @@ type ButtonProps = {
   hoverEffect?: boolean;
   onClick?: () => void | unknown;
   src?: string;
-};
+} & React.InputHTMLAttributes<HTMLInputElement>;
 
 const Button = ({
   type,
