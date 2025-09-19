@@ -1,5 +1,6 @@
 import React from "react";
 import PageTemplate from "../templates/PageTemplate";
+import { GetServerSideProps } from 'next';
 
 const Welcome = () => {
   return (
@@ -25,3 +26,11 @@ const Welcome = () => {
 };
 
 export default Welcome;
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  // This function's presence forces Server-Side Rendering (SSR),
+  // which solves the build-time "context is null" error.
+  return {
+    props: {}, // You can pass props to your page here if needed
+  };
+};
