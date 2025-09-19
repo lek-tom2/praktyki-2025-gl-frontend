@@ -34,9 +34,11 @@ body {
   color-scheme: dark;
 
   /* Base */
-  --color-base-content: #eaefef; /* text */
+  --color-base-content: #eaefef;
+  /* text */
 
-  --color-base-100: #f2f3f6; /* background */
+  --color-base-100: #f2f3f6;
+  /* background */
   --color-base-200: #000000;
   --color-base-300: #eaefef;
 
@@ -61,13 +63,17 @@ body {
   --color-neutral-content: #333446;
 
   /* Status colors (harmonized with your palette) */
-  --color-info: #e6e7e8; /* muted blue */
+  --color-info: #e6e7e8;
+  /* muted blue */
   --color-info-content: #000000;
-  --color-success: #b8cfce; /* calm greenish tone */
+  --color-success: #b8cfce;
+  /* calm greenish tone */
   --color-success-content: #333446;
-  --color-warning: #ffd580; /* warm subtle yellow */
+  --color-warning: #ffd580;
+  /* warm subtle yellow */
   --color-warning-content: #333446;
-  --color-error: #e57373; /* soft red */
+  --color-error: #e57373;
+  /* soft red */
   --color-error-content: #eaefef;
 
   /* border radius */
@@ -94,13 +100,11 @@ body {
   color-scheme: light;
 
   /* Base */
-<<<<<<< HEAD
-  --color-base-content: #eaefef;
+  --color-base-content: #000000;
   /* text */
-=======
-  --color-base-content: #000000; /* text */
 
-  --color-base-100: #f2f3f6; /* background */
+  --color-base-100: #f2f3f6;
+  /* background */
   --color-base-200: #e6e7e8;
   --color-base-300: #eaefef;
 
@@ -125,13 +129,17 @@ body {
   --color-neutral-content: #333446;
 
   /* Status colors (harmonized with your palette) */
-  --color-info: #e6e7e8; /* muted blue */
+  --color-info: #e6e7e8;
+  /* muted blue */
   --color-info-content: #000000;
-  --color-success: #b8cfce; /* calm greenish tone */
+  --color-success: #b8cfce;
+  /* calm greenish tone */
   --color-success-content: #333446;
-  --color-warning: #ffd580; /* warm subtle yellow */
+  --color-warning: #ffd580;
+  /* warm subtle yellow */
   --color-warning-content: #333446;
-  --color-error: #e57373; /* soft red */
+  --color-error: #e57373;
+  /* soft red */
   --color-error-content: #eaefef;
 
   /* border radius */
@@ -158,8 +166,8 @@ body {
   color-scheme: dark;
 
   /* Base */
-  --color-base-content: #eaefef; /* text */
->>>>>>> 4ffcdea529f231e9ec5904d9450f286db5458a50
+  --color-base-content: #eaefef;
+  /* text */
 
   --color-base-100: #374151;
   /* background */
@@ -216,10 +224,4 @@ body {
   /* effects */
   --depth: 1;
   --noise: 0;
-<<<<<<< HEAD
 }
-=======
-}
-
-
->>>>>>> 4ffcdea529f231e9ec5904d9450f286db5458a50
