@@ -3,6 +3,7 @@ import PageTemplateAfterLogin from "../../templates/PageTemplateAfterLogin";
 import Input from "@/components/input/input";
 import ParkingManager from "@/components/parkingManager/parkingManager";
 import React, { useEffect, useState } from "react";
+
 import toast from "react-hot-toast";
 
 export default function HomePage() {
@@ -12,6 +13,16 @@ export default function HomePage() {
 	const [checkOut, setCheckOut] = useState("");
 	const [availableCount, setAvailableCount] = useState(0);
 	const [occupiedCount, setOccupiedCount] = useState(0);
+
+
+		useEffect(() => {
+			fetch("/api/parking/")
+				.then((res) => res.json())
+				.then((data) => setParkingList(data));
+			fetch("/api/reservations/")
+				.then((res) => res.json())
+				.then((data) => setReservations(data));
+		}, []);
 
 			useEffect(() => {
 				const fetchParking = async () => {
