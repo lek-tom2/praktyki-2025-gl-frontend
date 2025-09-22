@@ -10,7 +10,7 @@ export type User = {
   username: string | null;
   profilePicture: string | null;
   theme: string;
-  userId: string | number | null;
+  userId: string | null;
   email: string | null;
   accountVerified: boolean | null;
   passwordLength: number | null;
