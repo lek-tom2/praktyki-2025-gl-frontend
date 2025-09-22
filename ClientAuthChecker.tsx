@@ -29,7 +29,40 @@ export default function ClientAuthChecker({
   const { User, UserDispatch } = useUserContext();
 
   useEffect(() => {
-    const access = localStorage.getItem("access");
+    const accessToken = localStorage.getItem("access");
+    const refreshToken = localStorage.getItem("refresh");
+
+    const refresh = async () => {
+      try {
+        const response = await fetch(ApiLinks.refresh, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ refresh: refreshToken }),
+        });
+
+        if (!response.ok) {
+          console.log("logout");
+
+          toast.error("Your session is invalid. Logout", { duration: 5000 });
+          router.push("/403");
+          setIsError(true);
+          logout();
+          return;
+        }
+        const body = await response.json();
+        localStorage.setItem("access", body.access);
+      } catch (err) {
+        console.error(err);
+        // router.push("/error");
+        setIsError(true);
+        return;
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
     const verify = async () => {
       try {
         const response = await fetch(
@@ -37,14 +70,16 @@ export default function ClientAuthChecker({
           {
             method: "GET",
             headers: {
-              Authorization: `Bearer ${access}`,
+              Authorization: `Bearer ${accessToken}`,
               "Content-Type": "application/json",
             },
           }
         );
 
         if (!response.ok) {
+          refresh();
           console.log("logout");
+
           toast.error("Your session is invalid. Logout", { duration: 5000 });
           router.push("/403");
           setIsError(true);
@@ -70,7 +105,7 @@ export default function ClientAuthChecker({
 
     verify();
 
-    const interval = setInterval(verify, 15 * 60 * 1000); // 15 min
+    const interval = setInterval(verify, 1 * 60 * 1000); // 15 min
     return () => clearInterval(interval);
   }, [router]);
 
