@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { ApiLinks } from "@/gl-const/api-links";
 import toast from "react-hot-toast";
 import useUserContext from "./gl-context/UserContextProvider";
+import { User } from "./gl-types/user-types";
 
 type ClientAuthCheckerProps = {
   children: ReactNode;
@@ -22,6 +23,8 @@ export default function ClientAuthChecker({
 
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
+
+  const { User, UserDispatch } = useUserContext();
 
   useEffect(() => {
     const access = localStorage.getItem("access");
@@ -47,15 +50,16 @@ export default function ClientAuthChecker({
         }
 
         if (!checkAuth) {
-          const { User, UserDispatch } = useUserContext();
           const body = await response.json();
+          console.log("bdy");
           console.log(body);
-          UserDispatch({ type: "setUser", value: body.details.user });
+          const user = body.detail.user as User;
+          UserDispatch({ type: "setUser", value: { ...user } });
         }
+        setIsLoading(false);
       } catch (err) {
         console.error(err);
         router.push("/error");
-      } finally {
         setIsLoading(false);
       }
     };

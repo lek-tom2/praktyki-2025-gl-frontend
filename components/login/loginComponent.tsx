@@ -61,9 +61,9 @@ const LoginComponent = () => {
       const data = await response.json();
       console.log("Login Data: ");
       console.log(data);
-      const tempUser = data.details.user as Omit<User, "languageIso2">;
-      const access = data.details.access;
-      const refresh = data.details.refresh;
+      const tempUser = data.detail.user as Omit<User, "languageIso2">;
+      const access = data.detail.access;
+      const refresh = data.detail.refresh;
       localStorage.setItem("refresh", refresh);
       localStorage.setItem("access", access);
       getValues().remember
