@@ -7,18 +7,9 @@ import { useState, useEffect } from "react";
 import useUserContext from "@/gl-context/UserContextProvider";
 import toast from "react-hot-toast";
 import logout from "@/logout";
-type Vehicle = {
-  registration_number: string;
-  brand: string;
-};
+import { Vehicle } from "@/gl-types/vehicle";
+import { Reservation } from "@/gl-types/reservation";
 
-type Reservation = {
-  id: number;
-  start_date: string;
-  end_date: string;
-  user: number;
-  spot: number;
-};
 const validateEmail = (email: string) =>
   /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 const validateFullName = (name: string) =>
