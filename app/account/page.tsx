@@ -1,3 +1,34 @@
+// ...existing code...
+
+// Add employee form state
+const [empFirstName, setEmpFirstName] = useState("");
+const [empLastName, setEmpLastName] = useState("");
+const [empEmail, setEmpEmail] = useState("");
+const [empVehicle, setEmpVehicle] = useState("");
+
+const handleAddEmployee = async (e: React.FormEvent) => {
+  e.preventDefault();
+  try {
+    const res = await fetch("/api/employees/", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        first_name: empFirstName,
+        last_name: empLastName,
+        email: empEmail,
+        vehicle: empVehicle || null,
+      }),
+    });
+    if (res.ok) {
+      toast.success("Employee added!");
+      setEmpFirstName(""); setEmpLastName(""); setEmpEmail(""); setEmpVehicle("");
+    } else {
+      toast.error("Failed to add employee");
+    }
+  } catch {
+    toast.error("Error adding employee");
+  }
+};
 "use client";
 
 import PageTemplate from "@/templates/PageTemplate";
@@ -396,6 +427,16 @@ const handleEditSave = async () => {
   <p className="text-gray-400">View and manage your personal information, vehicles, and reservation history.</p>
 </header>
 <div className="flex flex-row items-start">
+
+  {/* Add Employee Form */}
+  <form onSubmit={handleAddEmployee} className="mb-8 p-4 bg-base-100 rounded shadow flex flex-col gap-2 w-[350px]">
+    <h3 className="font-bold text-lg mb-2">Add Employee</h3>
+  <Input name="empFirstName" type="text" value={empFirstName} onChange={e => setEmpFirstName(e.target.value)} placeholder="First Name" required />
+  <Input name="empLastName" type="text" value={empLastName} onChange={e => setEmpLastName(e.target.value)} placeholder="Last Name" required />
+  <Input name="empEmail" type="email" value={empEmail} onChange={e => setEmpEmail(e.target.value)} placeholder="Email" required />
+  <Input name="empVehicle" type="text" value={empVehicle} onChange={e => setEmpVehicle(e.target.value)} placeholder="Vehicle (optional)" />
+    <Button type="submit" value="Add Employee" customWidth="100%" hoverEffect />
+  </form>
 
 <article className="text-base-content p-8 rounded-[0.5rem] bg-base-200 w-[757px] "> 
 
