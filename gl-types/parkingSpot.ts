@@ -22,4 +22,11 @@ export type ParkingSpotPL3 = {
     | "bottomAisleTop"
     | "bottomAisleBottom";
 };
+
+export type ParkingSpotBackend = {
+  spot_number: string;
+  floor: number;
+  status: SpotStatus;
+  aisle: string;
+};
 export type SpotStatus = "available" | "reserved" | "occupied" | "yours";
