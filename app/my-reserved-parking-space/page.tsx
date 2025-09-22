@@ -141,7 +141,9 @@ const MyReservedParkingSpacePage = () => {
   </div>
 </section>
             <div className="flex justify-between w-[512px] mt-8 mb-8">
-              <ReportIssue  />
+
+              <ReportIssue />
+
               <Button type="submit" className=" text-base-content bg-accent rounded-[0.5rem] h-10 w-50 " value="Change your reservation" />
             </div>
           </div>
