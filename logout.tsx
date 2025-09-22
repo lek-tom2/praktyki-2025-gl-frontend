@@ -1,3 +1,4 @@
+"use client";
 import Languages from "./gl-const/languages";
 import Themes from "./gl-const/themes";
 import useUserContext from "./gl-context/UserContextProvider";
@@ -21,6 +22,7 @@ const logout = () => {
       vechicles: null,
     },
   });
+  localStorage.clear();
 };
 
 export default logout;

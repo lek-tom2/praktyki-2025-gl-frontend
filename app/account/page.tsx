@@ -6,6 +6,7 @@ import Button from "@/components/button";
 import { useState, useEffect } from "react";
 import useUserContext from "@/gl-context/UserContextProvider";
 import toast from "react-hot-toast";
+import logout from "@/logout";
 type Vehicle = {
   registration_number: string;
   brand: string;
@@ -597,10 +598,11 @@ export default function Home() {
               <section className="grid grid-cols-2 gap-x-8 gap-y-4">
                 <div className="flex flex-col col-span-2 gap-y-2 text-base-content bg-primary rounded-[0.25rem] h-20">
                   <div className="flex items-center justify-start col-span-2 h-20 ml-4">
-                    <input
+                    <Button
                       type="submit"
-                      className="text-base-content bg-gray-700 rounded-sm h-10 w-40 bg-red-600 pd-10"
+                      className="text-base-content rounded-sm h-10 w-40 bg-red-600 pd-10"
                       value="Delete account"
+                      hoverEffect={true}
                     />
                     <h4 className="text-sm m-5 text-base-content">
                       be aware that this action is permanent
@@ -611,10 +613,14 @@ export default function Home() {
             </form>
 
             <section className="flex items-center justify-center col-span-2 h-20 ml-4">
-              <input
-                type="submit"
-                className="text-base-content bg-gray-700 rounded-sm h-10 w-40 bg-red-600 pd-10"
+              <Button
+                type="button"
+                className="text-base-content rounded-sm h-10 w-40 bg-red-600 pd-10"
                 value="Logout"
+                hoverEffect={true}
+                onClick={() => {
+                  logout();
+                }}
               />
             </section>
           </article>
