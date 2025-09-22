@@ -13,6 +13,7 @@ import FormErrorParahraph from "../FormError/formErrorParagraph";
 type formProps = {
   login: string | null;
   password: string | null;
+  remember: boolean;
 };
 
 const LoginComponent = () => {
@@ -61,6 +62,14 @@ const LoginComponent = () => {
       console.log("Login Data: ");
       console.log(data);
       const tempUser = data.details.user as Omit<User, "languageIso2">;
+      const access = data.details.access;
+      const refresh = data.details.refresh;
+      localStorage.setItem("refresh", refresh);
+      localStorage.setItem("access", access);
+      getValues().remember
+        ? localStorage.setItem("rememember", "true")
+        : localStorage.setItem("rememember", "false");
+
       console.log(tempUser);
       const user: User = { ...tempUser, languageIso2: "en" };
       UserDispatch({ type: "setUser", value: user });
@@ -131,7 +140,11 @@ const LoginComponent = () => {
 
       <section className="flex flex-row items-center justify-between">
         <div className="flex items-center flex-row  gap-2">
-          <input type="checkbox" className="bg-primary" />
+          <input
+            type="checkbox"
+            className="bg-primary"
+            {...register("remember")}
+          />
           <p className="text-base-content">Remember me</p>
         </div>
         <a

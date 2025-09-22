@@ -5,7 +5,7 @@ import PageTemplate from "../templates/PageTemplate";
 const Welcome = async () => {
   return (
     <>
-      <PageTemplate>
+      <PageTemplate performAuthorization={false}>
         <div className="flex flex-col justify-center items-center min-h-[calc(100vh-64px-48px)] bg-gradient-to-b from-primary to-secondary">
           <div className="flex flex-row">
             <h1 className="font-bold mb-10 text-7xl mr-3 text-base-300">
