@@ -9,7 +9,7 @@ type Reservation = {
   user: number;
   spot: number;
 };
-import PageTemplate from "../../templates/PageTemplate";
+import PageTemplateAfterLogin from "../../templates/PageTemplateAfterLogin";
 import Input from "@/components/input/input";
 import Button from "@/components/button";
 import PopupOverlay from "@/components/popup/popup";
@@ -173,7 +173,7 @@ useEffect(() => {
     return minutes === 0 ? `${hours}h` : `${hours}h ${minutes}m`;
   };
   return (
-    <PageTemplate>
+    <PageTemplateAfterLogin>
 
   <div className='w-[85%] ml-[10%] mr-[10%] h-[15%] mt-4 flex flex-row gap-4'>
 
@@ -368,6 +368,6 @@ useEffect(() => {
           </div>
         </form>
       </PopupOverlay>
-    </PageTemplate>
+  </PageTemplateAfterLogin>
   );
 }

@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import PageTemplate from "@/templates/PageTemplate";
+import PageTemplateAfterLogin from "@/templates/PageTemplateAfterLogin";
 import Button from "@/components/button";
 import useUserContext from "@/gl-context/UserContextProvider";
 import ReportIssue from "@/components/report-issue/reportIssue";
@@ -95,7 +95,7 @@ const MyReservedParkingSpacePage = () => {
   };
 
   return (
-    <PageTemplate>
+    <PageTemplateAfterLogin>
       <div className="flex items-start justify-center mt-10 bg-base-100">
         <div className="flex gap-10">
           <div className="w-full max-w-[634px] pr-6 h-auto max-h-[723px] bg-base-200 flex flex-col pl-10 justify-start p-1 rounded-[0.5rem]">
@@ -175,7 +175,7 @@ const MyReservedParkingSpacePage = () => {
           </nav>
         </div>
       </div>
-    </PageTemplate>
+    </PageTemplateAfterLogin>
   );
 };
 
