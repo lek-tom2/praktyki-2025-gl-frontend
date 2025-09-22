@@ -3,12 +3,17 @@ import React, { ReactNode } from "react";
 import NavbarTemplate from "./NavbarTemplate";
 import FooterTemplate from "./FooterTemplate";
 import useUserContext from "@/gl-context/UserContextProvider";
+import ClientAuthChecker from "@/ClientAuthChecker";
 
 type PageTemplateProps = {
   children: ReactNode;
+  performAuthorization?: boolean;
 };
 
-const PageTemplate = ({ children }: PageTemplateProps) => {
+const PageTemplate = ({
+  children,
+  performAuthorization = true,
+}: PageTemplateProps) => {
   const { User } = useUserContext();
 
   return (
@@ -18,7 +23,9 @@ const PageTemplate = ({ children }: PageTemplateProps) => {
     >
       <NavbarTemplate />
       <main className=" bg-primary flex flex-col h-[calc(100vh-64px-48px)]">
-        {children}
+        <ClientAuthChecker performAuthorization={performAuthorization}>
+          {children}
+        </ClientAuthChecker>
       </main>
       <FooterTemplate />
     </div>
