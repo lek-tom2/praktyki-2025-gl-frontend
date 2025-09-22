@@ -4,27 +4,42 @@ import React, { useState } from "react";
 import PopupOverlay from "../popup/popup";
 import Input from "../input/input";
 import Button from "../button";
+import { toast } from "react-hot-toast";
 
 export default function ReportIssue() {
   const [isOpen, setIsOpen] = useState(false);
   const [issue, setIssue] = useState("");
   const [error, setError] = useState<string | null>(null);
 
-  const handleReport = () => {
-    if (!issue.trim()) {
-      setError("Please describe your issue!");
-      return;
-    }
-    if (issue.length > 300) {
-      setError("Issue cannot exceed 300 characters!");
-      return;
-    }
-    console.log("Reported issue:", issue);
-    setIsOpen(false);
-    setIssue("");
-    setError(null);
-  };
+  const handleReport = async () => {
+  if (!issue.trim()) {
+    setError("Please describe your issue!");
+    return;
+  }
+  if (issue.length > 300) {
+    setError("Issue cannot exceed 300 characters!");
+    return;
+  }
 
+  try {
+    const response = await fetch("/api/reportIssue", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ issue }),
+    });
+
+    if (response.ok) {
+      setIsOpen(false);
+      setIssue("");
+      setError(null);
+      toast.success("Issue reported successfully!", { duration: 5000 });
+    } else {
+      toast.error("Failed to report issue. Try again later.");
+    }
+  } catch {
+    toast.error("Unexpected error. Try again later.");
+  }
+};
   return (
     <>
       <Button
@@ -42,7 +57,7 @@ export default function ReportIssue() {
         showCloseButton
         closeOnBackdrop
         closeOnEsc
-        boxClassName="bg-gray-800 h-[70%] text-white w-148 max-w-[700px] p-8"
+        boxClassName="bg-base-100 h-[70%] text-base-content w-148 max-w-[700px] p-8"
       >
         <h1 className="text-3xl">Report an issue</h1>
         <p className="mb-3 text-lg font-medium mt-12">Describe your issue:</p>
@@ -54,7 +69,7 @@ export default function ReportIssue() {
           onChange={(e) => {
             if (e.target.value.length <= 300) setIssue(e.target.value);
           }}
-          className="w-full h-60 p-3 rounded bg-gray-700 text-white text-base resize-none break-words"
+          className="w-full h-60 p-3 rounded  text-base-content text-base resize-none break-words bg-base-200"
           placeholder="max. 300 characters"
         />
 

@@ -15,8 +15,6 @@ type formProps = {
   password: string | null;
 };
 
-  
-
 const LoginComponent = () => {
   const [isLoading, setIsLoading] = useState(false);
 
@@ -61,39 +59,35 @@ const LoginComponent = () => {
     }
   
     try {
-      const empRes = await fetch(`/api/employees/?email=${encodeURIComponent(getValues().login || "")}`);
-      if (!empRes.ok) {
-        toast.error("No employee found with this email", { duration: 5000 });
+      const response = await fetch(ApiLinks.login, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          username: getValues().login,
+          password: getValues().password,
+        }),
+      });
+      console.log(response);
+      if (!response.ok) {
+        const status = response.status;
+        if (status == 401) {
+          const err = await response.text();
+          toast.error(err, { duration: 5000 });
+        }
+
+        toast.error(`Login Failed \n Status: ${status}`, { duration: 5000 });
         setIsLoading(false);
-        return;
-      }
-      const empArr = await empRes.json();
-      if (!Array.isArray(empArr) || empArr.length === 0) {
-        toast.error("No employee found with this email", { duration: 5000 });
-        setIsLoading(false);
-        return;
-      }
-      const emp = empArr[0];
-      const userRes = await fetch(`/api/users/?employee=${emp.id}`);
-      if (!userRes.ok) {
-        toast.error("No user found for this employee", { duration: 5000 });
-        setIsLoading(false);
-        return;
-      }
-      const userArr = await userRes.json();
-      if (!Array.isArray(userArr) || userArr.length === 0) {
-        toast.error("No user found for this employee", { duration: 5000 });
-        setIsLoading(false);
-        return;
-      }
-      const user = userArr[0];
-      if (user.password !== getValues().password) {
-        toast.error("Invalid password", { duration: 5000 });
-        setIsLoading(false);
+        console.log(status);
         return;
       }
       setIsLoading(false);
-      UserDispatch({ type: "setUser", value: { ...user, languageIso2: "en" } });
+      const data = await response.json();
+      console.log("Login Data: ");
+      console.log(data);
+      const tempUser = data.details.user as Omit<User, "languageIso2">;
+      console.log(tempUser);
+      const user: User = { ...tempUser, languageIso2: "en" };
+      UserDispatch({ type: "setUser", value: user });
       toast.success("Login Successful");
       router.push("/");
       router.refresh();
@@ -124,9 +118,10 @@ const LoginComponent = () => {
               value: 6,
               message: "Username must be at least 6 characters long.",
             },
-              pattern: {
-                value: /^[a-zA-Z0-9_]+$/,
-                message: "Login can only contain letters, numbers and underscores",
+            pattern: {
+              value: /^[a-zA-Z0-9_]+$/,
+              message:
+                "Login can only contain letters, numbers and underscores",
             },
           })}
         />
@@ -140,18 +135,19 @@ const LoginComponent = () => {
           type="password"
           name="password"
           register={register("password", {
-                required: {
-                  value: true,
-                  message: "Password is required",
-                },
-                minLength: {
-                  value: 8,
-                  message: "Password must be at least 8 characters long",
-                },
-                pattern: {
-                  value: /^(?=.*[A-Z])(?=.*\d).+$/,
-                  message: "Password must contain at least one uppercase letter and one number",
-                },
+            required: {
+              value: true,
+              message: "Password is required",
+            },
+            minLength: {
+              value: 8,
+              message: "Password must be at least 8 characters long",
+            },
+            pattern: {
+              value: /^(?=.*[A-Z])(?=.*\d).+$/,
+              message:
+                "Password must contain at least one uppercase letter and one number",
+            },
           })}
         />
         <FormErrorParahraph errorObject={errors.password} />
@@ -171,10 +167,11 @@ const LoginComponent = () => {
       </section>
 
       <Button
-        value="login"
+        value={isLoading ? "..." : "Login"}
         type="submit"
         customWidth="60%"
         hoverEffect={true}
+        disabled={isLoading}
       />
     </form>
   );

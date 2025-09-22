@@ -13,6 +13,8 @@ type formProps = {
   fullName: string | null;
   password: string | null;
   repPassword: string | null;
+  email: string | null;
+  phoneNumber: string | null;
 };
 
 const RegisterComponent = () => {
@@ -31,45 +33,38 @@ const RegisterComponent = () => {
 
   const router = useRouter();
 
-
   const onSubmit: SubmitHandler<formProps> = async (data) => {
     setIsLoading(true);
+    const req = JSON.stringify({
+      username: getValues().username,
+      full_name: getValues().fullName,
+      phone_number: getValues().phoneNumber,
+      password: getValues().password,
+      email: getValues().email,
+    });
+    console.log(req);
     try {
-      const [first_name, ...rest] = (getValues().fullName || "").split(" ");
-      const last_name = rest.join(" ");
-      const empRes = await fetch("/api/employees/", {
+      const response = await fetch(ApiLinks.register, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          first_name,
-          last_name,
-          email: "",
-          vehicle: null,
-        }),
+        body: req,
       });
-      if (!empRes.ok) {
-        toast.error("Register failed at employee step", { duration: 5000 });
+      if (!response.ok) {
+        const status = response.status;
+        // if(status = 400 && response conatins same user ))
+        if (status === 400) {
+          toast.error("User with username or email already exists", {
+            duration: 5000,
+          });
+        }
+        toast.error(`Register failed \n Status: ${status}`, { duration: 5000 });
         setIsLoading(false);
-        return;
-      }
-      const emp = await empRes.json();
-      const userRes = await fetch("/api/users/", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          password: getValues().password,
-          account_creation_date: new Date().toISOString().slice(0, 10),
-          employee: emp.id,
-        }),
-      });
-      if (!userRes.ok) {
-        toast.error("Register failed at user step", { duration: 5000 });
-        setIsLoading(false);
+        console.log(status);
         return;
       }
       setIsLoading(false);
       toast.success("Register Successful");
-      router.push("/login-register");
+      router.push("/");
       router.refresh();
     } catch (e) {
       setIsLoading(false);
@@ -98,9 +93,10 @@ const RegisterComponent = () => {
               value: 6,
               message: "Username must be at least 6 characters long.",
             },
-              pattern: {
-                value: /^[a-zA-Z0-9_]+$/,
-                message: "Login can only contain letters, numbers and underscores",
+            pattern: {
+              value: /^[a-zA-Z0-9_]+$/,
+              message:
+                "Login can only contain letters, numbers and underscores",
             },
           })}
         />
@@ -114,10 +110,10 @@ const RegisterComponent = () => {
           type="text"
           name="fullName"
           register={register("fullName", {
-
             pattern: {
-              value: /^[\p{L}]([-']?[\p{L}]+)*( [\p{L}]([-']?[\p{L}]+)*)+$/,
-              message: "Full name must contain at least first and last name, only letters, apostrophes or hyphens allowed.",
+              value: /^[\p{L}]([-']?[\p{L}]+)*( [\p{L}]([-']?[\p{L}]+)*)+$/u,
+              message:
+                "Full name must contain at least first and last name, only letters, apostrophes or hyphens allowed.",
             },
             required: {
               value: true,
@@ -129,6 +125,46 @@ const RegisterComponent = () => {
       </FormErrorWrap>
 
       <FormErrorWrap>
+        <p className="text-base-content">Email</p>
+        <Input
+          className="rounded-md bg-primary w-full p-2 text-base-content"
+          type="text"
+          name="email"
+          register={register("email", {
+            pattern: {
+              value: /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
+              message: "Email must be correct.",
+            },
+            required: {
+              value: true,
+              message: "Email is required.",
+            },
+          })}
+        />
+        <FormErrorParahraph errorObject={errors.email} />
+      </FormErrorWrap>
+
+      <FormErrorWrap>
+        <p className="text-base-content">Phone Number</p>
+        <Input
+          className="rounded-md bg-primary w-full p-2 text-base-content"
+          type="text"
+          name="phoneNumber"
+          register={register("phoneNumber", {
+            pattern: {
+              value: /^\+?[1-9][0-9]{7,14}$/,
+              message: "Phone Number must be correct.",
+            },
+            required: {
+              value: true,
+              message: "Phone number is required",
+            },
+          })}
+        />
+        <FormErrorParahraph errorObject={errors.phoneNumber} />
+      </FormErrorWrap>
+
+      <FormErrorWrap>
         <p className="text-base-content">Password</p>
         <Input
           className="rounded-md bg-primary w-full p-2 text-base-content"
@@ -136,17 +172,18 @@ const RegisterComponent = () => {
           name="password"
           register={register("password", {
             required: {
-                  value: true,
-                  message: "Password is required",
-                },
-                minLength: {
-                  value: 8,
-                  message: "Password must be at least 8 characters long",
-                },
-                pattern: {
-                  value: /^(?=.*[A-Z])(?=.*\d).+$/,
-                  message: "Password must contain at least one uppercase letter and one number",
-                },
+              value: true,
+              message: "Password is required",
+            },
+            minLength: {
+              value: 8,
+              message: "Password must be at least 8 characters long",
+            },
+            pattern: {
+              value: /^(?=.*[A-Z])(?=.*\d).+$/,
+              message:
+                "Password must contain at least one uppercase letter and one number",
+            },
           })}
         />
         <FormErrorParahraph errorObject={errors.password} />
@@ -159,7 +196,8 @@ const RegisterComponent = () => {
           type="password"
           name="repPassword"
           register={register("repPassword", {
-            validate: (value) => value === getValues().password || "Passwords don't match",
+            validate: (value) =>
+              value === getValues().password || "Passwords don't match",
             required: {
               value: true,
               message: "Password repetition is required",
@@ -170,10 +208,11 @@ const RegisterComponent = () => {
       </FormErrorWrap>
       <br />
       <Button
-        value="Register"
+        value={isLoading ? "..." : "Register"}
         type="submit"
         customWidth="60%"
         hoverEffect={true}
+        disabled={isLoading}
       />
     </form>
   );
