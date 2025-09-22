@@ -49,38 +49,44 @@ export default function AddCar() {
 
   const handleUpload = () => {
     if (!file) return;
-    // TODO: upload logic
+    
     alert("Photo uploaded!");
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      const res = await fetch("/api/cars", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          registration_number: form.registration_number,
-          brand: form.brand,
-          model: form.model,
-          year: form.year,
-          color: form.color,
-        }),
-      });
-      if (!res.ok) {
-        const data = await res.json().catch(() => ({}));
-        throw new Error(data?.message || "Failed to add car");
-      }
-      toast.success("Car added!");
-      setForm({ brand: "", model: "", year: "", color: "", registration_number: "" });
-      setFile(null);
-      setPreview(null);
-    } catch (err: any) {
-      toast.error(err.message || "Error adding car");
+  e.preventDefault();
+  const token = localStorage.getItem("token"); 
+  if (!token) {
+    toast.error("No token found. Please log in.");
+    return;
+  }
+  try {
+    const res = await fetch("http://localhost:8000/api/vehicles/", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        registration_number: form.registration_number,
+        brand: form.brand,
+        model: form.model,
+        year: Number(form.year), 
+        color: form.color,
+      }),
+    });
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({}));
+      throw new Error(data?.detail || data?.messages?.message || "Failed to add vehicle");
     }
-  };
+    toast.success("Vehicle added!");
+    setForm({ brand: "", model: "", year: "", color: "", registration_number: "" });
+    setFile(null);
+    setPreview(null);
+  } catch (err: any) {
+    toast.error(err.message || "Error adding vehicle");
+  }
+};
 
   return (
     <PageTemplateAfterLogin>
