@@ -1,5 +1,6 @@
 import PageTemplate from "@/templates/PageTemplate";
 import Button from "@/components/button";
+import Link from "next/link";
 
 export default function NotFound() {
   return (
@@ -16,12 +17,14 @@ export default function NotFound() {
             You’re not authorized to view this page.
           </p>
           <div className="flex items-center justify-center">
-            <Button
-              src="home"
-              value="back to home page"
-              type="button"
-              hoverEffect={true}
-            />
+            <Link href={"/"}>
+              <Button
+                src="home"
+                value="back to home page"
+                type="button"
+                hoverEffect={true}
+              />
+            </Link>
           </div>
         </section>
       </div>

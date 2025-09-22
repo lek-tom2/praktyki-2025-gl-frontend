@@ -1,13 +1,11 @@
 "use client";
-import { ReactNode, useEffect, useState } from "react";
+import { ReactNode, useEffect, useLayoutEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ApiLinks } from "@/gl-const/api-links";
 import toast from "react-hot-toast";
 import useUserContext from "./gl-context/UserContextProvider";
-<<<<<<< HEAD
 import { User } from "./gl-types/user-types";
-=======
->>>>>>> 797999ab
+import logout from "./logout";
 
 type ClientAuthCheckerProps = {
   children: ReactNode;
@@ -25,16 +23,15 @@ export default function ClientAuthChecker({
   }
 
   const router = useRouter();
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isError, setIsError] = useState(false);
 
-<<<<<<< HEAD
   const { User, UserDispatch } = useUserContext();
 
   useEffect(() => {
     const access = localStorage.getItem("access");
     const verify = async () => {
       try {
-        setIsLoading(true);
         const response = await fetch(
           checkAuth ? ApiLinks.jwtVerify : ApiLinks.jwtLogin,
           {
@@ -50,77 +47,54 @@ export default function ClientAuthChecker({
           console.log("logout");
           toast.error("Your session is invalid. Logout", { duration: 5000 });
           router.push("/403");
+          setIsError(true);
+          logout();
           return;
         }
 
         if (!checkAuth) {
           const body = await response.json();
-          console.log("bdy");
-          console.log(body);
+          console.log("bdy", body);
           const user = body.detail.user as User;
           UserDispatch({ type: "setUser", value: { ...user } });
         }
-        setIsLoading(false);
       } catch (err) {
         console.error(err);
-        router.push("/error");
+        // router.push("/error");
+        setIsError(true);
+        return;
+      } finally {
         setIsLoading(false);
       }
     };
 
     verify();
 
-=======
-  useEffect(() => {
-    const access = localStorage.getItem("access");
-    const verify = async () => {
-      try {
-        setIsLoading(true);
-        const response = await fetch(
-          checkAuth ? ApiLinks.jwtVerify : ApiLinks.jwtLogin,
-          {
-            method: "GET",
-            headers: {
-              Authorization: `Bearer ${access}`,
-              "Content-Type": "application/json",
-            },
-          }
-        );
-
-        if (!response.ok) {
-          console.log("logout");
-          toast.error("Your session is invalid. Logout", { duration: 5000 });
-          router.push("/403");
-          return;
-        }
-
-        if (!checkAuth) {
-          const body = await response.json();
-          console.log("bdy");
-          console.log(body);
-          const user = body.detail.user as User;
-          UserDispatch({ type: "setUser", value: { ...user } });
-        }
-        setIsLoading(false);
-      } catch (err) {
-        console.error(err);
-        router.push("/error");
-        setIsLoading(false);
-      }
-    };
-
-    verify();
-
->>>>>>> 797999ab
-    const interval = setInterval(verify, 15 * 60 * 1000); //15 min
+    const interval = setInterval(verify, 15 * 60 * 1000); // 15 min
     return () => clearInterval(interval);
   }, [router]);
 
   return (
     <>
       {isLoading ? (
+        isError ? (
+          <div className="w-full h-full flex items-center justify-center">
+            <div className="w-1/4 aspect-[2/1] bg-secondary text-base-content flex items-center just text-center rounded-3xl">
+              Error! Logging out.
+            </div>
+          </div>
+        ) : (
+          <div className="w-full h-full flex items-center justify-center">
+            <div className="w-1/4 aspect-[2/1] bg-secondary text-base-content flex items-center justify-center text-center rounded-3xl">
+              Loading...
+            </div>
+          </div>
+        )
+      ) : isError ? (
         <div className="w-full h-full flex items-center justify-center">
-          Loading...
+          <div className="w-1/4 aspect-[2/1] bg-secondary text-base-content flex items-center justify-center text-center rounded-3xl">
+            Error! Logging out.
+          </div>
         </div>
       ) : (
         children

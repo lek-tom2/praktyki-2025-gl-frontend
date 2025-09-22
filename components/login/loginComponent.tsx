@@ -75,7 +75,8 @@ const LoginComponent = () => {
         const status = response.status;
         if (status == 401) {
           const err = await response.text();
-          toast.error(err, { duration: 5000 });
+          toast.error("Invalid Credentials", { duration: 5000 });
+          return;
         }
 
         toast.error(`Login Failed \n Status: ${status}`, { duration: 5000 });
@@ -90,6 +91,7 @@ const LoginComponent = () => {
       const tempUser = data.detail.user as Omit<User, "languageIso2">;
       const access = data.detail.access;
       const refresh = data.detail.refresh;
+      localStorage.clear();
       localStorage.setItem("refresh", refresh);
       localStorage.setItem("access", access);
       getValues().remember
