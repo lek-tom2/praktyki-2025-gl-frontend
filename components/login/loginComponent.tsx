@@ -33,7 +33,9 @@ const LoginComponent = () => {
   const { User, UserDispatch } = useUserContext();
   const router = useRouter();
 
-  const isAdminPage = typeof window !== "undefined" && window.location.pathname.includes("/admin");
+  const isAdminPage =
+    typeof window !== "undefined" &&
+    window.location.pathname.includes("/admin");
 
   const onSubmit: SubmitHandler<formProps> = async (data) => {
     setIsLoading(true);
@@ -58,7 +60,7 @@ const LoginComponent = () => {
         return;
       }
     }
-  
+
     try {
       const response = await fetch(ApiLinks.login, {
         method: "POST",
@@ -85,15 +87,9 @@ const LoginComponent = () => {
       const data = await response.json();
       console.log("Login Data: ");
       console.log(data);
-<<<<<<< HEAD
       const tempUser = data.detail.user as Omit<User, "languageIso2">;
       const access = data.detail.access;
       const refresh = data.detail.refresh;
-=======
-      const tempUser = data.details.user as Omit<User, "languageIso2">;
-      const access = data.details.access;
-      const refresh = data.details.refresh;
->>>>>>> 797999ab
       localStorage.setItem("refresh", refresh);
       localStorage.setItem("access", access);
       getValues().remember

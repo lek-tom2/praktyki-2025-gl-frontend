@@ -95,15 +95,16 @@ export default function ClientAuthChecker({
         }
 
         if (!checkAuth) {
-          const { User, UserDispatch } = useUserContext();
           const body = await response.json();
+          console.log("bdy");
           console.log(body);
-          UserDispatch({ type: "setUser", value: body.details.user });
+          const user = body.detail.user as User;
+          UserDispatch({ type: "setUser", value: { ...user } });
         }
+        setIsLoading(false);
       } catch (err) {
         console.error(err);
         router.push("/error");
-      } finally {
         setIsLoading(false);
       }
     };
