@@ -4,6 +4,8 @@ import Input from "@/components/input/input";
 import ParkingManager from "@/components/parkingManager/parkingManager";
 import React, { useEffect, useState } from "react";
 
+import toast from "react-hot-toast";
+
 export default function HomePage() {
 	const [parkingList, setParkingList] = useState([]);
 	const [reservations, setReservations] = useState([]);
@@ -11,6 +13,7 @@ export default function HomePage() {
 	const [checkOut, setCheckOut] = useState("");
 	const [availableCount, setAvailableCount] = useState(0);
 	const [occupiedCount, setOccupiedCount] = useState(0);
+
 
 		useEffect(() => {
 			fetch("/api/parking/")
@@ -20,6 +23,39 @@ export default function HomePage() {
 				.then((res) => res.json())
 				.then((data) => setReservations(data));
 		}, []);
+
+			useEffect(() => {
+				const fetchParking = async () => {
+					try {
+						const res = await fetch("/api/parking/");
+						if (!res.ok) {
+							toast.error(`Error fetching parking spots: ${res.status}`);
+							return;
+						}
+						const data = await res.json();
+						setParkingList(data);
+						toast.success("Parking spots loaded");
+					} catch (error) {
+						toast.error("Failed to fetch parking spots");
+					}
+				};
+				const fetchReservations = async () => {
+					try {
+						const res = await fetch("/api/reservations/");
+						if (!res.ok) {
+							toast.error(`Error fetching reservations: ${res.status}`);
+							return;
+						}
+						const data = await res.json();
+						setReservations(data);
+						toast.success("Reservations loaded");
+					} catch (error) {
+						toast.error("Failed to fetch reservations");
+					}
+				};
+				fetchParking();
+				fetchReservations();
+			}, []);
 
 		useEffect(() => {
 			if (!checkIn || !checkOut) {
