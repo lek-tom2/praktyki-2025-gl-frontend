@@ -3,6 +3,7 @@ import PageTemplateAfterLogin from "../../templates/PageTemplateAfterLogin";
 import Input from "@/components/input/input";
 import ParkingManager from "@/components/parkingManager/parkingManager";
 import React, { useEffect, useState } from "react";
+
 import toast from "react-hot-toast";
 
 export default function HomePage() {
@@ -12,6 +13,16 @@ export default function HomePage() {
 	const [checkOut, setCheckOut] = useState("");
 	const [availableCount, setAvailableCount] = useState(0);
 	const [occupiedCount, setOccupiedCount] = useState(0);
+
+
+		useEffect(() => {
+			fetch("/api/parking/")
+				.then((res) => res.json())
+				.then((data) => setParkingList(data));
+			fetch("/api/reservations/")
+				.then((res) => res.json())
+				.then((data) => setReservations(data));
+		}, []);
 
 			useEffect(() => {
 				const fetchParking = async () => {
@@ -78,9 +89,9 @@ export default function HomePage() {
 			<div className="flex flex-col items-center w-full bg-white min-h-screen pb-8">
 				<div className="w-full flex flex-row justify-center mt-8 gap-8">
 					<div className="flex flex-col w-[25%] min-w-[220px] max-w-[340px]">
-						<p className='text-left text-[#333446] text-base mb-2'>Check-in</p>
+						<p className='text-left text-base-content text-base mb-2'>Check-in</p>
 									<Input
-										className='bg-[#000000] rounded-xl h-[56px] text-lg w-full px-6 placeholder:text-[#44465a]'
+										className='bg-base-200 rounded-xl h-[56px] text-lg w-full px-6 placeholder:text-[#44465a]'
 										type="date"
 										name="check-in"
 										value={checkIn}
@@ -88,9 +99,9 @@ export default function HomePage() {
 									/>
 					</div>
 					<div className="flex flex-col w-[25%] min-w-[220px] max-w-[340px]">
-						<p className='text-left text-[#333446] text-base mb-2'>Check-out</p>
+						<p className='text-left text-base-content text-base mb-2'>Check-out</p>
 									<Input
-										className='bg-[#000000] rounded-xl h-[56px] text-lg w-full px-6 placeholder:text-[#44465a]'
+										className='bg-base-200 rounded-xl h-[56px] text-lg w-full px-6 placeholder:text-[#44465a]'
 										type="date"
 										name="check-out"
 										value={checkOut}
