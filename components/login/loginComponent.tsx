@@ -32,8 +32,32 @@ const LoginComponent = () => {
   const { User, UserDispatch } = useUserContext();
   const router = useRouter();
 
+  const isAdminPage = typeof window !== "undefined" && window.location.pathname.includes("/admin");
+
   const onSubmit: SubmitHandler<formProps> = async (data) => {
     setIsLoading(true);
+    if (isAdminPage) {
+      try {
+        const res = await fetch("/api/admin/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            username: data.login,
+            password: data.password,
+          }),
+        });
+        if (!res.ok) throw new Error("Login failed");
+        toast.success("Logged in as admin!");
+        setIsLoading(false);
+        router.push("/admin/dashboard");
+        return;
+      } catch (err: any) {
+        setIsLoading(false);
+        toast.error(err.message || "Login error");
+        return;
+      }
+    }
+  
     try {
       const response = await fetch(ApiLinks.login, {
         method: "POST",
