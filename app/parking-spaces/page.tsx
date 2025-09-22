@@ -178,9 +178,9 @@ useEffect(() => {
   <div className='w-[85%] ml-[10%] mr-[10%] h-[15%] mt-4 flex flex-row gap-4'>
 
     <div className="flex flex-col w-[60%] ">
-      <p className='text-left text-[#333446] text-xs mb-1'>Parking spot</p>
+      <p className='text-left text-base-content text-xs mb-1'>Parking spot</p>
       <Input
-        className='bg-[#333446] rounded-xl h-[50%] w-[100%]'
+        className='bg-base-200 rounded-xl h-[50%] w-[100%]'
         type="text"
         name="search"
         placeholder="Search parking spot..."
@@ -188,7 +188,7 @@ useEffect(() => {
         onChange={e => setSearch(e.target.value)}
       />
       {search && (
-        <div className="bg-[#333446] rounded-xl mt-2 max-h-40 overflow-y-auto shadow-lg">
+        <div className="bg-base-200 rounded-xl mt-2 max-h-40 overflow-y-auto shadow-lg">
           <ul>
             {filtered.map((spot) => (
               <li
@@ -209,9 +209,9 @@ useEffect(() => {
 
 
     <div className="flex flex-col w-[20%] ">
-      <p className='text-left text-[#333446] text-xs mb-1'>Check-in</p>
+      <p className='text-left text-base-content text-xs mb-1'>Check-in</p>
       <Input
-        className='bg-[#333446] rounded-xl h-[50%] w-[100%] placeholder:text-[#44465a]'
+        className='bg-base-200 rounded-xl h-[50%] w-[100%] placeholder:text-[#44465a]'
         type="date"
         name="check-in"
       />
@@ -219,9 +219,9 @@ useEffect(() => {
 
 
     <div className="flex flex-col w-[20%] ">
-      <p className='text-left text-[#333446] text-xs mb-1'>Check-out</p>
+      <p className='text-left text-base-content text-xs mb-1'>Check-out</p>
       <Input
-        className='bg-[#333446] rounded-xl h-[50%] w-[100%] placeholder:text-[#44465a]'
+        className='bg-base-200 rounded-xl h-[50%] w-[100%] placeholder:text-[#44465a]'
         type="date"
         name="check-out"
       />
@@ -232,12 +232,12 @@ useEffect(() => {
   <div className="flex flex-row w-[85%] ml-[10%] gap-4  mb-10">
 
 <div className="flex flex-col justify-center w-[35%] text-left text-white gap-4">
-  <div className="w-[100%] h-[15%] pt-1 bg-[#333446] rounded-xl shadow-lg text-white text-left px-3 flex items-center">
-    <span className="font-bold">Chosen space:&nbsp;</span>
+  <div className="w-[100%] h-[15%] pt-1 bg-base-200 rounded-xl shadow-lg text-white text-left px-3 flex items-center">
+    <span className="font-bold text-base-content">Chosen space:&nbsp;</span>
     <span>{chosen ? chosen.spot_number : <span className="text-gray-400">None</span>}</span>
   </div>
-  <div className="w-[100%] h-[50%] pt-1 bg-[#333446] rounded-xl shadow-lg text-white text-left px-3 flex flex-col justify-center">
-    <span className="font-bold mb-1">Details:</span>
+  <div className="w-[100%] h-[50%] pt-1 bg-base-200 rounded-xl shadow-lg text-white text-left px-3 flex flex-col justify-center">
+    <span className="font-bold mb-1 text-base-content">Details:</span>
     {chosen ? (
       <>
         <div>Floor: {chosen.floor}</div>

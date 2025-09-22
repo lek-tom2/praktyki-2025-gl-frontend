@@ -122,6 +122,7 @@ const ParkingSpotMap = ({ parkingSpots, level }: parkingSpotMapProps) => {
               name="searchSpot"
               onChange={(e) => setSearch(e.target.value)}
               value={search}
+              className="text-base-content bg-base-200 min-w-60 h-9"
               placeholder="Search by name..."
               background="bg-secondary"
             />
@@ -129,7 +130,7 @@ const ParkingSpotMap = ({ parkingSpots, level }: parkingSpotMapProps) => {
           <select
             value={filter}
             onChange={(e) => setFilter(e.target.value)}
-            className="select bg-secondary border-0 h-9 text-secondary-content hover:scale-105 focus:scale-105 duration-300 min-w-30"
+            className="select bg-base-200 border-0 h-9 text-base-content hover:scale-105 focus:scale-105 duration-300 min-w-30"
           >
             <option value="all">All</option>
             <option value="available">Available</option>
