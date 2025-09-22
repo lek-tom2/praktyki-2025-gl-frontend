@@ -13,17 +13,20 @@ import { useRouter } from "next/navigation";
 import { User } from "@/gl-types/user-types";
 import LoginComponent from "@/components/login/loginComponent";
 
+
 export default function AdminLogin() {
   return (
-    <div className="flex flex-col bg-primary w-[100vw] h-[100vh]" data-theme="gl-dark">
+    <div className="flex flex-col bg-primary min-h-screen w-full" data-theme="gl-dark">
       <AdminNavbarTemplate />
-      <main className="flex-1 bg-primary flex items-center justify-center">
-        <section className="w-[25%] h-[50%] bg-base-200 rounded-xl shadow-lg p-6 flex flex-col justify-center">
-          <p className="text-center mb-8 mt-4 text-3xl font-bold">
+      <main className="flex-1 bg-primary flex items-center justify-center p-2 sm:p-4">
+        <section
+          className="w-full max-w-[420px] sm:max-w-[420px] md:max-w-[420px] lg:max-w-[420px] bg-base-200 rounded-xl shadow-lg p-4 sm:p-6 flex flex-col justify-center"
+        >
+          <p className="text-center mb-8 mt-4 text-2xl sm:text-3xl font-bold">
             Sign in to your admin account
           </p>
           <div className="text-left text-[#5D657E] flex flex-col gap-4">
-            <LoginComponent adminMode />
+            <LoginComponent />
           </div>
         </section>
       </main>
