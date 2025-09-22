@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import PageTemplate from "@/templates/PageTemplate";
+import PageTemplateAfterLogin from "@/templates/PageTemplateAfterLogin";
 import Button from "@/components/button";
 import useUserContext from "@/gl-context/UserContextProvider";
 import ReportIssue from "@/components/report-issue/reportIssue";
@@ -95,7 +95,7 @@ const MyReservedParkingSpacePage = () => {
   };
 
   return (
-    <PageTemplate>
+    <PageTemplateAfterLogin>
       <div className="flex items-start justify-center mt-10 bg-base-100">
         <div className="flex gap-10">
           <div className="w-full max-w-[634px] pr-6 h-auto max-h-[723px] bg-base-200 flex flex-col pl-10 justify-start p-1 rounded-[0.5rem]">
@@ -141,7 +141,9 @@ const MyReservedParkingSpacePage = () => {
   </div>
 </section>
             <div className="flex justify-between w-[512px] mt-8 mb-8">
+
               <ReportIssue />
+
               <Button type="submit" className=" text-base-content bg-accent rounded-[0.5rem] h-10 w-50 " value="Change your reservation" />
             </div>
           </div>
@@ -175,7 +177,7 @@ const MyReservedParkingSpacePage = () => {
           </nav>
         </div>
       </div>
-    </PageTemplate>
+    </PageTemplateAfterLogin>
   );
 };
 

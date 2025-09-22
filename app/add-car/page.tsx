@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useRef, useState } from "react";
-import PageTemplate from "../../templates/PageTemplate";
+import PageTemplateAfterLogin from "../../templates/PageTemplateAfterLogin";
 import Input from "@/components/input/input";
 import Button from "@/components/button";
 
@@ -59,7 +59,7 @@ export default function AddCar() {
   };
 
   return (
-    <PageTemplate>
+    <PageTemplateAfterLogin>
       <div className="flex flex-col items-center justify-center min-h-[calc(100vh-64px-80px)]">
         <form
           className="w-full max-w-[420px] bg-base-200 rounded-xl shadow-lg p-4 sm:p-8 flex flex-col gap-6 overflow-y-auto max-h-[80vh]"
@@ -170,6 +170,6 @@ export default function AddCar() {
           />
         </form>
       </div>
-    </PageTemplate>
+    </PageTemplateAfterLogin>
   );
 }
