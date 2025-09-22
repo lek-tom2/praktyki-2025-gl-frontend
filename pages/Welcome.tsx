@@ -1,7 +1,8 @@
+"use server";
 import React from "react";
 import PageTemplate from "../templates/PageTemplate";
 
-const Welcome = () => {
+const Welcome = async () => {
   return (
     <>
       <PageTemplate>

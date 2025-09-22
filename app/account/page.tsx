@@ -37,6 +37,7 @@ import Button from "@/components/button";
 import { useState, useEffect } from "react";
 import useUserContext from "@/gl-context/UserContextProvider";
 import toast from "react-hot-toast";
+import { useRouter } from "next/navigation";
 type Vehicle = {
   registration_number: string;
   brand: string;
@@ -56,6 +57,7 @@ const validateFullName = (name: string) =>
 const validatePhone = (phone: string) =>
   /^\d{3}-\d{3}-\d{3}$/.test(phone.trim());
 export default function Home() {
+  const router = useRouter();
   const [loading, setLoading] = useState(false);
    const { User, UserDispatch } = useUserContext();
   const [email, setEmail] = useState("");
@@ -125,7 +127,7 @@ useEffect(() => {
    
         } else {
          setVehicles([
-  { registration_number: "KR12345", brand: "Toyota Corolla" },
+ // { registration_number: "KR12345", brand: "Toyota Corolla" },
  // { registration_number: "WX54321", brand: "Ford Focus" },
   //{ registration_number: "GD98765", brand: "Tesla Model 3" },
 ]);
@@ -133,7 +135,7 @@ useEffect(() => {
         }
       } catch {
         setVehicles([
-    { registration_number: "KR12345", brand: "Toyota Corolla" },
+   // { registration_number: "KR12345", brand: "Toyota Corolla" },
     //  { registration_number: "WX54321", brand: "Ford Focus" },
     //  { registration_number: "GD98765", brand: "Tesla Model 3" },
     ]);
@@ -600,6 +602,7 @@ const handleEditSave = async () => {
     <button
       type="button"
       className="border-2 border-dashed border-base-content rounded-[0.25rem] px-6 py-3 text-base-content flex items-center justify-center w-full"
+      onClick={() => router.push("/add-car")}
     >
       + Add New Vehicle
     </button>
