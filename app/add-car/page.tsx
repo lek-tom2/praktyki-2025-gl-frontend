@@ -1,7 +1,8 @@
 "use client";
 
 import React, { useRef, useState } from "react";
-import PageTemplate from "../../templates/PageTemplate";
+import toast from "react-hot-toast";
+import PageTemplateAfterLogin from "../../templates/PageTemplateAfterLogin";
 import Input from "@/components/input/input";
 import Button from "@/components/button";
 
@@ -11,7 +12,7 @@ export default function AddCar() {
     model: "",
     year: "",
     color: "",
-    plate: "",
+    registration_number: "",
   });
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
@@ -52,14 +53,37 @@ export default function AddCar() {
     alert("Photo uploaded!");
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: add car logic
-    alert("Car added!");
+    try {
+      const res = await fetch("/api/cars", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          registration_number: form.registration_number,
+          brand: form.brand,
+          model: form.model,
+          year: form.year,
+          color: form.color,
+        }),
+      });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data?.message || "Failed to add car");
+      }
+      toast.success("Car added!");
+      setForm({ brand: "", model: "", year: "", color: "", registration_number: "" });
+      setFile(null);
+      setPreview(null);
+    } catch (err: any) {
+      toast.error(err.message || "Error adding car");
+    }
   };
 
   return (
-    <PageTemplate>
+    <PageTemplateAfterLogin>
       <div className="flex flex-col items-center justify-center min-h-[calc(100vh-64px-80px)]">
         <form
           className="w-full max-w-[420px] bg-base-200 rounded-xl shadow-lg p-4 sm:p-8 flex flex-col gap-6 overflow-y-auto max-h-[80vh]"
@@ -117,13 +141,13 @@ export default function AddCar() {
             />
           </div>
           <div className="flex flex-col gap-1">
-            <label className="text-base-content font-semibold">License Plate Number</label>
+            <label className="text-base-content font-semibold">Registration Number</label>
             <Input
               className="rounded-md bg-primary w-full p-2 text-base-content"
               type="text"
-              name="plate"
-              placeholder="License Plate Number"
-              value={form.plate}
+              name="registration_number"
+              placeholder="Registration Number"
+              value={form.registration_number}
               onChange={inputChange}
               required
             />
@@ -170,6 +194,6 @@ export default function AddCar() {
           />
         </form>
       </div>
-    </PageTemplate>
+    </PageTemplateAfterLogin>
   );
 }

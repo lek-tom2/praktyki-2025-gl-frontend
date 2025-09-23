@@ -13,9 +13,8 @@ import FormErrorParahraph from "../FormError/formErrorParagraph";
 type formProps = {
   login: string | null;
   password: string | null;
+  remember: boolean;
 };
-
-  
 
 const LoginComponent = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -34,42 +33,74 @@ const LoginComponent = () => {
   const { User, UserDispatch } = useUserContext();
   const router = useRouter();
 
+  const isAdminPage =
+    typeof window !== "undefined" &&
+    window.location.pathname.includes("/admin");
+
   const onSubmit: SubmitHandler<formProps> = async (data) => {
     setIsLoading(true);
+    if (isAdminPage) {
+      try {
+        const res = await fetch("/api/admin/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            username: data.login,
+            password: data.password,
+          }),
+        });
+        if (!res.ok) throw new Error("Login failed");
+        toast.success("Logged in as admin!");
+        setIsLoading(false);
+        router.push("/admin/dashboard");
+        return;
+      } catch (err: any) {
+        setIsLoading(false);
+        toast.error(err.message || "Login error");
+        return;
+      }
+    }
+
     try {
-      const empRes = await fetch(`/api/employees/?email=${encodeURIComponent(getValues().login || "")}`);
-      if (!empRes.ok) {
-        toast.error("No employee found with this email", { duration: 5000 });
+      const response = await fetch(ApiLinks.login, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          username: getValues().login,
+          password: getValues().password,
+        }),
+      });
+      console.log(response);
+      if (!response.ok) {
+        const status = response.status;
+        if (status == 401) {
+          const err = await response.text();
+          toast.error("Invalid Credentials", { duration: 5000 });
+          return;
+        }
+
+        toast.error(`Login Failed \n Status: ${status}`, { duration: 5000 });
         setIsLoading(false);
-        return;
-      }
-      const empArr = await empRes.json();
-      if (!Array.isArray(empArr) || empArr.length === 0) {
-        toast.error("No employee found with this email", { duration: 5000 });
-        setIsLoading(false);
-        return;
-      }
-      const emp = empArr[0];
-      const userRes = await fetch(`/api/users/?employee=${emp.id}`);
-      if (!userRes.ok) {
-        toast.error("No user found for this employee", { duration: 5000 });
-        setIsLoading(false);
-        return;
-      }
-      const userArr = await userRes.json();
-      if (!Array.isArray(userArr) || userArr.length === 0) {
-        toast.error("No user found for this employee", { duration: 5000 });
-        setIsLoading(false);
-        return;
-      }
-      const user = userArr[0];
-      if (user.password !== getValues().password) {
-        toast.error("Invalid password", { duration: 5000 });
-        setIsLoading(false);
+        console.log(status);
         return;
       }
       setIsLoading(false);
-      UserDispatch({ type: "setUser", value: { ...user, languageIso2: "en" } });
+      const data = await response.json();
+      console.log("Login Data: ");
+      console.log(data);
+      const tempUser = data.detail.user as Omit<User, "languageIso2">;
+      const access = data.detail.access;
+      const refresh = data.detail.refresh;
+      localStorage.clear();
+      localStorage.setItem("refresh", refresh);
+      localStorage.setItem("access", access);
+      getValues().remember
+        ? localStorage.setItem("rememember", "true")
+        : localStorage.setItem("rememember", "false");
+
+      console.log(tempUser);
+      const user: User = { ...tempUser, languageIso2: "en" };
+      UserDispatch({ type: "setUser", value: user });
       toast.success("Login Successful");
       router.push("/");
       router.refresh();
@@ -100,9 +131,10 @@ const LoginComponent = () => {
               value: 6,
               message: "Username must be at least 6 characters long.",
             },
-              pattern: {
-                value: /^[a-zA-Z0-9_]+$/,
-                message: "Login can only contain letters, numbers and underscores",
+            pattern: {
+              value: /^[a-zA-Z0-9_]+$/,
+              message:
+                "Login can only contain letters, numbers and underscores",
             },
           })}
         />
@@ -116,18 +148,19 @@ const LoginComponent = () => {
           type="password"
           name="password"
           register={register("password", {
-                required: {
-                  value: true,
-                  message: "Password is required",
-                },
-                minLength: {
-                  value: 8,
-                  message: "Password must be at least 8 characters long",
-                },
-                pattern: {
-                  value: /^(?=.*[A-Z])(?=.*\d).+$/,
-                  message: "Password must contain at least one uppercase letter and one number",
-                },
+            required: {
+              value: true,
+              message: "Password is required",
+            },
+            minLength: {
+              value: 8,
+              message: "Password must be at least 8 characters long",
+            },
+            pattern: {
+              value: /^(?=.*[A-Z])(?=.*\d).+$/,
+              message:
+                "Password must contain at least one uppercase letter and one number",
+            },
           })}
         />
         <FormErrorParahraph errorObject={errors.password} />
@@ -135,7 +168,11 @@ const LoginComponent = () => {
 
       <section className="flex flex-row items-center justify-between">
         <div className="flex items-center flex-row  gap-2">
-          <input type="checkbox" className="bg-primary" />
+          <input
+            type="checkbox"
+            className="bg-primary"
+            {...register("remember")}
+          />
           <p className="text-base-content">Remember me</p>
         </div>
         <a
@@ -147,10 +184,11 @@ const LoginComponent = () => {
       </section>
 
       <Button
-        value="login"
+        value={isLoading ? "..." : "Login"}
         type="submit"
         customWidth="60%"
         hoverEffect={true}
+        disabled={isLoading}
       />
     </form>
   );

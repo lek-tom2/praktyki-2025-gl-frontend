@@ -15,12 +15,10 @@ import LoginComponent from "@/components/login/loginComponent";
 import RegisterComponent from "@/components/register/registerComponent";
 
 export default function LoginRegister() {
-
-
   const [active, setActive] = useState<"login" | "register">("login");
 
   return (
-    <PageTemplate>
+    <PageTemplate performAuthorization={false}>
       <div className="flex items-center justify-center min-h-[calc(100vh-64px-80px)] p-2 sm:p-4">
         <section className="w-full max-w-[420px] sm:max-w-[420px] md:max-w-[420px] lg:max-w-[420px] bg-base-200 rounded-xl shadow-lg p-4 sm:p-8 flex flex-col justify-center overflow-y-auto max-h-[80vh] pt-16 sm:pt-24">
           {active === "login" ? (

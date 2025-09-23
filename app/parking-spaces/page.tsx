@@ -1,5 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
+import useUserContext from "@/gl-context/UserContextProvider";
+import { toast } from "react-hot-toast";
 type Reservation = {
   id: number;
   start_date: string;
@@ -7,7 +9,7 @@ type Reservation = {
   user: number;
   spot: number;
 };
-import PageTemplate from "../../templates/PageTemplate";
+import PageTemplateAfterLogin from "../../templates/PageTemplateAfterLogin";
 import Input from "@/components/input/input";
 import Button from "@/components/button";
 import PopupOverlay from "@/components/popup/popup";
@@ -18,8 +20,13 @@ type ParkingSpot = {
   floor: number;
   status: string;
 };
-
+type Vechicle = {
+  registration_number: string;
+  brand: string;
+};
 export default function ParkingSpaces() {
+  const { User, UserDispatch } = useUserContext();
+
   const [parkingList, setParkingList] = useState<ParkingSpot[]>([]);
   const [search, setSearch] = useState("");
   const [filtered, setFiltered] = useState<ParkingSpot[]>([]);
@@ -77,7 +84,33 @@ export default function ParkingSpaces() {
     return `${year}/${month}/${day}`;
   };
 
+  const [vehicles, setVehicles] = useState<Vechicle[]>([]);
+  const [vehiclesError, setVehiclesError] = useState(false);
 
+  useEffect(() => {
+    const fetchVehicles = async () => {
+      try {
+        const res = await fetch(`/api/vehicles?userId=${User.userId}`);
+        if (res.ok) {
+          const data = await res.json();
+          if (data.vehicles && data.vehicles.length > 0) {
+            setVehicles(data.vehicles);
+            setVehiclesError(false);
+          } else {
+            setVehicles([]);
+            setVehiclesError(true);
+          }
+        } else {
+          setVehicles([]);
+          setVehiclesError(true);
+        }
+      } catch {
+        setVehicles([]);
+        setVehiclesError(true);
+      }
+    };
+    fetchVehicles();
+  }, [User.userId]);
   const formatTime24 = (timeString: string): string => {
     if (!timeString) return "";
 
@@ -100,30 +133,30 @@ export default function ParkingSpaces() {
       time: startTime24,
       timeEnd: endTime24,
       vehicle: form.vehicle,
-      spot: chosen?.id, // Assuming the spot ID should be sent
+      userId: User.userId,
+      spotId: chosen?.id,
     };
 
     try {
-      const response = await fetch("/api/reservations", {
+      const response = await fetch("/api/reservations/", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(reservationData),
       });
 
-      if (!response.ok) {
-        throw new Error(`Server error: ${response.status}`);
+      if (response.ok) {
+        toast.success("Reservation created successfully!");
+        setOpen(false);
+        setForm({ date: "", time: "", timeEnd: "", vehicle: "" });
+      } else {
+        const err = await response.text();
+        toast.error(`Error creating reservation: ${response.status}`);
       }
-
-      alert("Reservation sent successfully!");
-      setOpen(false);
-      setForm({ date: "", time: "", timeEnd: "", vehicle: "" });
-
     } catch (error) {
-      console.error("Failed to submit reservation:", error);
-      alert("Failed to send reservation. Please try again.");
+      toast.error("Unexpected error. Try again later.");
     }
-  };
 
+  };
   const getDuration = () => {
     if (!form.time || !form.timeEnd) return "0h";
     const [startH, startM] = form.time.split(":").map(Number);
@@ -141,12 +174,14 @@ export default function ParkingSpaces() {
   };
 
   return (
-    <PageTemplate>
+    <PageTemplateAfterLogin>
+
       <div className='w-[85%] ml-[10%] mr-[10%] h-[15%] mt-4 flex flex-row gap-4'>
+
         <div className="flex flex-col w-[60%] ">
-          <p className='text-left text-[#333446] text-xs mb-1'>Parking spot</p>
+          <p className='text-left text-base-content text-xs mb-1'>Parking spot</p>
           <Input
-            className='bg-[#333446] rounded-xl h-[50%] w-[100%]'
+            className='bg-base-200 rounded-xl h-[50%] w-[100%]'
             type="text"
             name="search"
             placeholder="Search parking spot..."
@@ -154,7 +189,7 @@ export default function ParkingSpaces() {
             onChange={e => setSearch(e.target.value)}
           />
           {search && (
-            <div className="bg-[#333446] rounded-xl mt-2 max-h-40 overflow-y-auto shadow-lg">
+            <div className="bg-base-200 rounded-xl mt-2 max-h-40 overflow-y-auto shadow-lg">
               <ul>
                 {filtered.map((spot) => (
                   <li
@@ -172,31 +207,38 @@ export default function ParkingSpaces() {
             </div>
           )}
         </div>
+
+
         <div className="flex flex-col w-[20%] ">
-          <p className='text-left text-[#333446] text-xs mb-1'>Check-in</p>
+          <p className='text-left text-base-content text-xs mb-1'>Check-in</p>
           <Input
-            className='bg-[#333446] rounded-xl h-[50%] w-[100%] placeholder:text-[#44465a]'
+            className='bg-base-200 rounded-xl h-[50%] w-[100%] placeholder:text-[#44465a]'
             type="date"
             name="check-in"
           />
         </div>
+
+
         <div className="flex flex-col w-[20%] ">
-          <p className='text-left text-[#333446] text-xs mb-1'>Check-out</p>
+          <p className='text-left text-base-content text-xs mb-1'>Check-out</p>
           <Input
-            className='bg-[#333446] rounded-xl h-[50%] w-[100%] placeholder:text-[#44465a]'
+            className='bg-base-200 rounded-xl h-[50%] w-[100%] placeholder:text-[#44465a]'
             type="date"
             name="check-out"
           />
         </div>
       </div>
+
+
       <div className="flex flex-row w-[85%] ml-[10%] gap-4  mb-10">
+
         <div className="flex flex-col justify-center w-[35%] text-left text-white gap-4">
-          <div className="w-[100%] h-[15%] pt-1 bg-[#333446] rounded-xl shadow-lg text-white text-left px-3 flex items-center">
-            <span className="font-bold">Chosen space:&nbsp;</span>
+          <div className="w-[100%] h-[15%] pt-1 bg-base-200 rounded-xl shadow-lg text-white text-left px-3 flex items-center">
+            <span className="font-bold text-base-content">Chosen space:&nbsp;</span>
             <span>{chosen ? chosen.spot_number : <span className="text-gray-400">None</span>}</span>
           </div>
-          <div className="w-[100%] h-[50%] pt-1 bg-[#333446] rounded-xl shadow-lg text-white text-left px-3 flex flex-col justify-center">
-            <span className="font-bold mb-1">Details:</span>
+          <div className="w-[100%] h-[50%] pt-1 bg-base-200 rounded-xl shadow-lg text-white text-left px-3 flex flex-col justify-center">
+            <span className="font-bold mb-1 text-base-content">Details:</span>
             {chosen ? (
               <>
                 <div>Floor: {chosen.floor}</div>
@@ -206,6 +248,7 @@ export default function ParkingSpaces() {
               <span className="text-gray-400">No details</span>
             )}
           </div>
+
           <Button
             customWidth='100%'
             type='button'
@@ -214,6 +257,8 @@ export default function ParkingSpaces() {
             onClick={() => setOpen(true)}
           />
         </div>
+
+
         <div className="flex flex-col justify-center w-[65%]">
           <img
             src="/2floor.png"
@@ -271,18 +316,32 @@ export default function ParkingSpaces() {
           <h4 className="text-base-content font-bold text-[1rem] mt-7 mb-3">
             Select Vehicle
           </h4>
-          <select
-            name="vehicle"
-            value={form.vehicle}
-            onChange={inputChange}
-            className="w-full bg-base-100 input input-bordered"
-            required
-          >
-            <option value="">Select vehicle</option>
-            <option value="audi">audi</option>
-            <option value="mercedes">mercedes</option>
-            <option value="ford">ford</option>
-          </select>
+          {vehiclesError || vehicles.length === 0 ? (
+            <div className="flex justify-center items-center w-full">
+              <Button
+                className=""
+                type="button"
+                value="Add Vehicle"
+                hoverEffect={true}
+
+              />
+            </div>
+          ) : (
+            <select
+              name="vehicle"
+              value={form.vehicle}
+              onChange={inputChange}
+              className="w-full bg-base-100 input input-bordered"
+              required
+            >
+              <option value="">Select vehicle</option>
+              {vehicles.map(v => (
+                <option key={v.registration_number} value={v.registration_number}>
+                  {v.brand} ({v.registration_number})
+                </option>
+              ))}
+            </select>
+          )}
           <h4 className="text-base-content font-bold text-[1rem] mt-7 mb-3">
             Reservation Duration
           </h4>
@@ -304,10 +363,11 @@ export default function ParkingSpaces() {
               type="submit"
               value="Create Reservation"
               hoverEffect={true}
+
             />
           </div>
         </form>
       </PopupOverlay>
-    </PageTemplate>
+    </PageTemplateAfterLogin>
   );
 }

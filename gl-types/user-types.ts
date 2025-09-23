@@ -1,16 +1,8 @@
-export type Vechicle = {
-  brand: string;
-  model: string;
-  year: string;
-  color: string;
-  licensePlateNumber: string;
-};
-
 export type User = {
   username: string | null;
   profilePicture: string | null;
   theme: string;
-  userId: string | number | null;
+  userId: string | null;
   email: string | null;
   accountVerified: boolean | null;
   passwordLength: number | null;
@@ -18,5 +10,4 @@ export type User = {
   accountNonLocked: boolean | null;
   token: string | null;
   languageIso2: string;
-  vechicles: Vechicle[] | null;
 };
