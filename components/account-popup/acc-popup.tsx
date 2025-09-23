@@ -1,8 +1,11 @@
 "use client";
 
+
 import React, { useState } from "react";
+import { useRouter } from "next/navigation";
 
 export default function IconWithPopup() {
+  const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
 
   const handleClickOutside = (event: React.MouseEvent<HTMLDivElement>) => {
@@ -30,7 +33,10 @@ export default function IconWithPopup() {
         >
           <div className="bg-secondary bg-opacity-25 shadow-lg text-white w-64 h-auto">
             <ul className="flex flex-col gap-3 p-4">
-              <li className="flex items-center gap-2 cursor-pointer hover:bg-gray-700 rounded p-1">
+              <li
+                className="flex items-center gap-2 cursor-pointer hover:bg-gray-700 rounded p-1"
+                onClick={() => router.push("/account")}
+              >
                 <img src="/setting.png" alt="account" className="w-5 h-5" />
                 <span>Account Management</span>
               </li>
@@ -42,14 +48,20 @@ export default function IconWithPopup() {
                 <img src="/night-mode.png" alt="theme" className="w-5 h-5" />
                 <span>Change Theme</span>
               </li>
-              <li className="flex items-center gap-2 cursor-pointer hover:bg-gray-700 rounded p-1">
+              <li
+                className="flex items-center gap-2 cursor-pointer hover:bg-gray-700 rounded p-1"
+                onClick={() => router.push("/my-reserved-parking-space")}
+              >
                 <img src="/booking.png" alt="reservations" className="w-5 h-5" />
                 <span>My Reservations</span>
               </li>
             </ul>
 
             <div className="flex justify-center p-4 border-t border-gray-700">
-              <button className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">
+              <button
+                className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
+                onClick={() => router.push("/login-register")}
+              >
                 Logout
               </button>
             </div>
@@ -59,4 +71,3 @@ export default function IconWithPopup() {
     </div>
   );
 }
-

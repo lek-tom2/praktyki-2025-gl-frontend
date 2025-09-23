@@ -102,7 +102,7 @@ const LoginComponent = () => {
       const user: User = { ...tempUser, languageIso2: "en" };
       UserDispatch({ type: "setUser", value: user });
       toast.success("Login Successful");
-      router.push("/");
+      router.push("/home");
       router.refresh();
     } catch (e) {
       setIsLoading(false);
