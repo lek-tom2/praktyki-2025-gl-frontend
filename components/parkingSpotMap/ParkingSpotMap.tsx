@@ -79,7 +79,7 @@ const ParkingSpotMap = ({
   };
 
   return (
-    <div className="w-full h-full flex flex-col items-center gap-12 overflow-y-auto p-4">
+    <div className="w-full h-full overflow-y-auto flex flex-col items-center overflow-x-hidden gap-12 p-4">
       {level === "PL2" && (
         <>
           {renderAisle("mainAisleLeft", "Main Aisle", "mainAisleRight")}
