@@ -1,70 +1,83 @@
 "use client";
 
-
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import LogoutButton from "../logoutButton/LogoutButton";
+import Themes from "@/gl-const/themes";
+import ThemeSwitcher from "../themeSwitcher/ThemeSwitcher";
 
 export default function IconWithPopup() {
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
+  const popupRef = useRef<HTMLDivElement>(null);
+  const buttonRef = useRef<HTMLButtonElement>(null);
 
-  const handleClickOutside = (event: React.MouseEvent<HTMLDivElement>) => {
-    const target = event.target as HTMLElement;
-
-    if (!target.closest("#popup") && !target.closest("#icon-btn")) {
-      setIsOpen(false);
+  // Close popup on outside click
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (
+        popupRef.current &&
+        !popupRef.current.contains(event.target as Node) &&
+        buttonRef.current &&
+        !buttonRef.current.contains(event.target as Node)
+      ) {
+        setIsOpen(false);
+      }
     }
-  };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   return (
-    <div onClick={handleClickOutside}>
-
-      <div className="flex justify-end mr-[15%] mt-4">
-        <button id="icon-btn" onClick={() => setIsOpen(!isOpen)}>
-          <img src="/people.png" alt="icon" className="w-8 h-8" />
-        </button>
-      </div>
-
+    <div className="relative mt-1">
+      <button
+        ref={buttonRef}
+        onClick={() => setIsOpen(!isOpen)}
+        className="w-6 h-6 rounded-full overflow-hidden"
+      >
+        <img
+          src="/people.png"
+          alt="icon"
+          className="w-full h-full object-cover"
+        />
+      </button>
 
       {isOpen && (
         <div
-          id="popup"
-          className="fixed top-[64px] right-0 mr-[15%] z-50 flex justify-end"
+          ref={popupRef}
+          className="absolute right-0 mt-2 w-64 bg-secondary shadow-lg rounded-lg z-50"
         >
-          <div className="bg-secondary bg-opacity-25 shadow-lg text-white w-64 h-auto">
-            <ul className="flex flex-col gap-3 p-4">
-              <li
-                className="flex items-center gap-2 cursor-pointer hover:bg-gray-700 rounded p-1"
-                onClick={() => router.push("/account")}
-              >
-                <img src="/setting.png" alt="account" className="w-5 h-5" />
-                <span>Account Management</span>
-              </li>
-              <li className="flex items-center gap-2 cursor-pointer hover:bg-gray-700 rounded p-1">
-                <img src="/change.png" alt="switch" className="w-5 h-5" />
-                <span>Switch Accounts</span>
-              </li>
-              <li className="flex items-center gap-2 cursor-pointer hover:bg-gray-700 rounded p-1">
-                <img src="/night-mode.png" alt="theme" className="w-5 h-5" />
-                <span>Change Theme</span>
-              </li>
-              <li
-                className="flex items-center gap-2 cursor-pointer hover:bg-gray-700 rounded p-1"
-                onClick={() => router.push("/my-reserved-parking-space")}
-              >
-                <img src="/booking.png" alt="reservations" className="w-5 h-5" />
-                <span>My Reservations</span>
-              </li>
-            </ul>
+          <ul className="flex flex-col gap-2 p-4">
+            <li
+              className="flex items-center gap-2 cursor-pointer hover:bg-gray-700 rounded p-1"
+              onClick={() => router.push("/account")}
+            >
+              <img src="/setting.png" alt="account" className="w-5 h-5" />
+              <span>Account Management</span>
+            </li>
+            <li className="flex items-center gap-2 cursor-pointer hover:bg-gray-700 rounded p-1">
+              <img src="/change.png" alt="switch" className="w-5 h-5" />
+              <span>Switch Accounts</span>
+            </li>
+            <li className="flex items-center gap-2 cursor-pointer hover:bg-gray-700 rounded p-1"></li>
+            {/* <li className="flex items-center gap-2 cursor-pointer hover:bg-gray-700 rounded p-1">
+              <img src="/night-mode.png" alt="theme" className="w-5 h-5" />
+              <span>Change Theme</span>
+            </li> */}
+            <li
+              className="flex items-center gap-2 cursor-pointer hover:bg-gray-700 rounded p-1"
+              onClick={() => router.push("/my-reserved-parking-space")}
+            >
+              <img src="/booking.png" alt="reservations" className="w-5 h-5" />
+              <span>My Reservations</span>
+            </li>
+          </ul>
 
-            <div className="flex justify-center p-4 border-t border-gray-700">
-              <button
-                className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
-                onClick={() => router.push("/login-register")}
-              >
-                Logout
-              </button>
-            </div>
+          <div className="flex flex-row gap-4 justify-center p-4 border-t border-gray-700">
+            <ThemeSwitcher />
+            <LogoutButton />
           </div>
         </div>
       )}

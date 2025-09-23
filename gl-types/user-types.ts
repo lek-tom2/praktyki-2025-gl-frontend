@@ -10,4 +10,7 @@ export type User = {
   accountNonLocked: boolean | null;
   token: string | null;
   languageIso2: string;
+  is_active: boolean;
+  is_staff: boolean;
+  phone_number: string | null;
 };

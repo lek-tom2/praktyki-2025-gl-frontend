@@ -54,9 +54,16 @@ export default function HomePage() {
       const access = localStorage.getItem("access");
       let url = ApiLinks.listParkingSpaces;
 
+      const toLocalISO = (dateString: string) => {
+        const date = new Date(dateString);
+        const offset = date.getTimezoneOffset(); // in minutes
+        const localDate = new Date(date.getTime() - offset * 60 * 1000);
+        return localDate.toISOString().slice(0, 19); // removes the Z
+      };
+
       if (checkIn && checkOut) {
-        const startISO = new Date(checkIn).toISOString();
-        const endISO = new Date(checkOut).toISOString();
+        const startISO = toLocalISO(checkIn);
+        const endISO = toLocalISO(checkOut);
         url += `?start_time=${startISO}&end_time=${endISO}`;
       }
 

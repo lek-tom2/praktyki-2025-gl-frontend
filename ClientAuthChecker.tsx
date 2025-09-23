@@ -5,7 +5,29 @@ import { ApiLinks } from "@/gl-const/api-links";
 import toast from "react-hot-toast";
 import useUserContext from "./gl-context/UserContextProvider";
 import { User } from "./gl-types/user-types";
-import logout from "./logout";
+import Languages from "./gl-const/languages";
+import Themes from "./gl-const/themes";
+
+const logout = () => {
+  const { User, UserDispatch } = useUserContext();
+  UserDispatch({
+    type: "setUser",
+    value: {
+      username: null,
+      profilePicture: null,
+      theme: Themes.glLight,
+      userId: null,
+      email: null,
+      accountVerified: null,
+      passwordLength: null,
+      authorities: null,
+      accountNonLocked: null,
+      token: null,
+      languageIso2: Languages.en,
+    },
+  });
+  localStorage.clear();
+};
 
 type ClientAuthCheckerProps = {
   children: ReactNode;

@@ -6,9 +6,32 @@ import Button from "@/components/button";
 import { useState, useEffect } from "react";
 import useUserContext from "@/gl-context/UserContextProvider";
 import toast from "react-hot-toast";
-import logout from "@/logout";
 import { Vehicle } from "@/gl-types/vehicle";
 import { Reservation } from "@/gl-types/reservation";
+import PageTemplate from "@/templates/PageTemplate";
+import Themes from "@/gl-const/themes";
+import Languages from "@/gl-const/languages";
+
+const logout = () => {
+  const { User, UserDispatch } = useUserContext();
+  UserDispatch({
+    type: "setUser",
+    value: {
+      username: null,
+      profilePicture: null,
+      theme: Themes.glLight,
+      userId: null,
+      email: null,
+      accountVerified: null,
+      passwordLength: null,
+      authorities: null,
+      accountNonLocked: null,
+      token: null,
+      languageIso2: Languages.en,
+    },
+  });
+  localStorage.clear();
+};
 
 const validateEmail = (email: string) =>
   /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -87,14 +110,30 @@ export default function Home() {
           UserDispatch({ type: "setVechicles", value: data.vehicles }); // <--- zapis do kontekstu
         } else {
           setVehicles([
-            { id: 1, spot: 1, registration_number: "KR12345", brand: "Toyota", model: "Corolla", year: 2020, color: "White" },
+            {
+              id: 1,
+              spot: 1,
+              registration_number: "KR12345",
+              brand: "Toyota",
+              model: "Corolla",
+              year: 2020,
+              color: "White",
+            },
             // { registration_number: "WX54321", brand: "Ford Focus" },
             //{ registration_number: "GD98765", brand: "Tesla Model 3" },
           ]);
         }
       } catch {
         setVehicles([
-          { id: 1, spot: 1, registration_number: "KR12345", brand: "Toyota", model: "Corolla", year: 2020, color: "White" },
+          {
+            id: 1,
+            spot: 1,
+            registration_number: "KR12345",
+            brand: "Toyota",
+            model: "Corolla",
+            year: 2020,
+            color: "White",
+          },
           //  { registration_number: "WX54321", brand: "Ford Focus" },
           //  { registration_number: "GD98765", brand: "Tesla Model 3" },
         ]);
@@ -372,7 +411,7 @@ export default function Home() {
   };
 
   return (
-    <PageTemplateAfterLogin>
+    <PageTemplate>
       <main className="overflow-auto flex flex-col items-center mb-4   ">
         <header className=" ml-[-34rem] mx-0 p-0 mb-4 mt-4">
           {/*<p className="text-sm text-gray-400">Current email in context: {User.email}</p>
@@ -651,8 +690,13 @@ export default function Home() {
                         </span>
                       </div>
                       <div>
-                        <span>User: {reservation.user.username || reservation.user.email || 'Unknown'}</span> |{" "}
-                        <span>Spot: {reservation.spot}</span>
+                        <span>
+                          User:{" "}
+                          {reservation.user.username ||
+                            reservation.user.email ||
+                            "Unknown"}
+                        </span>{" "}
+                        | <span>Spot: {reservation.spot}</span>
                       </div>
                     </div>
                   ))
@@ -670,6 +714,6 @@ export default function Home() {
           </nav>
         </div>
       </main>
-    </PageTemplateAfterLogin>
+    </PageTemplate>
   );
 }

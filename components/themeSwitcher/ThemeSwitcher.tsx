@@ -8,6 +8,8 @@ const ThemeSwitcher = () => {
   const { User, UserDispatch } = useUserContext();
 
   const changeTheme = () => {
+    console.log(User);
+    console.log(User.theme);
     if (User.theme === Themes.glDark)
       UserDispatch({
         type: "setTheme",
@@ -15,11 +17,13 @@ const ThemeSwitcher = () => {
       });
     else if (User.theme === Themes.glLight)
       UserDispatch({ type: "setTheme", value: Themes.glDark });
+
+    console.log("clik");
   };
 
   return (
     <div
-      className={`rounded-2xl w-22 h-10 cursor-pointer transition-colors duration-500 bg-secondary flex items-center relative`}
+      className={`rounded-2xl w-22 h-10 cursor-pointer transition-colors duration-500 bg-primary flex items-center relative`}
       onClick={changeTheme}
     >
       <div
