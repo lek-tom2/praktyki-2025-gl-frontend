@@ -1,11 +1,13 @@
 "use client";
 import { ParkingSpotPL2, ParkingSpotPL3 } from "@/gl-types/parkingSpot";
 import React, { useEffect, useState } from "react";
+import { useForm, Controller } from "react-hook-form";
 import ParkingSpotMap from "../parkingSpotMap/ParkingSpotMap";
 import ParkingSpotList from "../parkingSpotList/ParkingSpotList";
 import MapSwitch from "../switch/mapSwitch";
 import Input from "../input/input";
 import LevelSwitch from "../switch/parkingLevelSwitch";
+import toast from "react-hot-toast";
 
 type ParkingManagerProps = {
   pl2: ParkingSpotPL2[];
@@ -16,6 +18,11 @@ type ParkingManagerProps = {
   checkOut: string;
   setCheckIn: React.Dispatch<React.SetStateAction<string>>;
   setCheckOut: React.Dispatch<React.SetStateAction<string>>;
+};
+
+type FormValues = {
+  checkIn: string;
+  checkOut: string;
 };
 
 const ParkingManager = ({
@@ -37,6 +44,40 @@ const ParkingManager = ({
   >([]);
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState("all");
+
+  const { control, watch, setValue } = useForm<FormValues>({
+    defaultValues: {
+      checkIn,
+      checkOut,
+    },
+  });
+
+  const watchCheckIn = watch("checkIn");
+  const watchCheckOut = watch("checkOut");
+
+  useEffect(() => {
+    if (watchCheckIn && watchCheckOut) {
+      const checkInDate = new Date(watchCheckIn);
+      const checkOutDate = new Date(watchCheckOut);
+
+      if (checkOutDate < checkInDate) {
+        const newCheckOut = new Date(checkInDate.getTime() + 86400000)
+          .toISOString()
+          .split("T")[0];
+
+        toast.error(
+          "Check-out cannot be before check-in, auto-corrected to next day!"
+        );
+        setValue("checkOut", newCheckOut);
+        setCheckOut(newCheckOut);
+        setCheckIn(watchCheckIn);
+        return;
+      }
+
+      setCheckIn(watchCheckIn);
+      setCheckOut(watchCheckOut);
+    }
+  }, [watchCheckIn, watchCheckOut, setCheckIn, setCheckOut, setValue]);
 
   useEffect(() => {
     setParkingSpots(selectedParkingLevel === "PL2" ? pl2 : pl3);
@@ -68,27 +109,34 @@ const ParkingManager = ({
         {/* Check-in/out */}
         <div className="flex flex-col gap-2">
           <label htmlFor="checkin">Check-in</label>
-          <Input
-            type="date"
-            value={checkIn ?? ""}
-            onChange={(e) => setCheckIn(e.target.value)}
-            name="checkin"
-            width="w-full"
-            id="checkin"
-          />
-        </div>
-        <div className="flex flex-col gap-2">
-          <label htmlFor="checkout">Check-out</label>
-          <Input
-            type="date"
-            value={checkOut ?? ""}
-            onChange={(e) => setCheckOut(e.target.value)}
-            name="checkout"
-            width="w-full"
-            id="checkout"
+          <Controller
+            name="checkIn"
+            control={control}
+            rules={{ required: true }}
+            render={({ field }) => (
+              <Input type="date" {...field} width="w-full" id="checkin" />
+            )}
           />
         </div>
 
+        <div className="flex flex-col gap-2">
+          <label htmlFor="checkout">Check-out</label>
+          <Controller
+            name="checkOut"
+            control={control}
+            rules={{
+              required: true,
+              validate: (value) =>
+                new Date(value) >= new Date(watchCheckIn) ||
+                "Check-out must be after check-in",
+            }}
+            render={({ field }) => (
+              <Input type="date" {...field} width="w-full" id="checkout" />
+            )}
+          />
+        </div>
+
+        {/* Parking Level */}
         <div className="flex flex-col gap-2">
           <label>Switch Parking Level</label>
           <LevelSwitch
@@ -103,6 +151,7 @@ const ParkingManager = ({
           <MapSwitch value={viewMode} onChange={setViewMode} />
         </div>
 
+        {/* Search */}
         <div className="flex flex-col gap-2">
           <label>Search Parking</label>
           <Input
@@ -115,6 +164,8 @@ const ParkingManager = ({
             width="w-full"
           />
         </div>
+
+        {/* Filter */}
         <div className="flex flex-col gap-2">
           <label>Filter Parking</label>
           <select
@@ -122,14 +173,14 @@ const ParkingManager = ({
             onChange={(e) => setFilter(e.target.value)}
             className="select bg-primary border-0 h-9 text-base-content hover:scale-105 focus:scale-105 duration-300 w-full"
           >
-            {" "}
-            <option value="all">All</option>{" "}
-            <option value="available">Available</option>{" "}
-            <option value="occupied">Occupied</option>{" "}
-            <option value="reserved">Reserved</option>{" "}
-            <option value="yours">Yours</option>{" "}
+            <option value="all">All</option>
+            <option value="available">Available</option>
+            <option value="occupied">Occupied</option>
+            <option value="reserved">Reserved</option>
+            <option value="yours">Yours</option>
           </select>
         </div>
+
         <div className="flex flex-col gap-2">
           <div className="text-sm mt-2">
             <p>Total spots: {parkingSpots.length}</p>

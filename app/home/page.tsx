@@ -15,6 +15,8 @@ import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
 export default function HomePage() {
+  const today = new Date().toISOString().split("T")[0];
+  const tomorrow = new Date(Date.now() + 86400000).toISOString().split("T")[0];
   const [parkingListPrototype, setParkingListPrototype] = useState<
     ParkingSpotBackend[]
   >([]);
@@ -24,8 +26,8 @@ export default function HomePage() {
   const [availableCount, setAvailableCount] = useState(0);
   const [occupiedCount, setOccupiedCount] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
-  const [checkIn, setCheckIn] = useState<string | null>(null);
-  const [checkOut, setCheckOut] = useState<string | null>(null);
+  const [checkIn, setCheckIn] = useState<string>(today);
+  const [checkOut, setCheckOut] = useState<string>(tomorrow);
   const [access, setAccess] = useState<string | null>(null);
 
   const mapToStatus = (status: BackendSpotStatus): SpotStatus => {
