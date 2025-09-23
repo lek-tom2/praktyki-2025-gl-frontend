@@ -136,7 +136,7 @@ export default function Home() {
 
   setLoading(true);
   try {
-    const token = localStorage.getItem("access"); // lub pobierz z kontekstu
+    const token = localStorage.getItem("access"); 
     if (!token) {
       toast.error("No token found. Please log in.");
       setLoading(false);
@@ -150,7 +150,7 @@ export default function Home() {
       changedFields.push("Email");
     }
     if (fullName.trim()) {
-      payload.full_name = fullName; // pole zgodne z backendem
+      payload.full_name = fullName; 
       changedFields.push("Full name");
     }
     if (phone.trim()) {
@@ -182,66 +182,61 @@ export default function Home() {
   }
 };
 
-  const handlePasswordSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+ const handlePasswordSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
 
-    if (!currentPassword.trim()) {
-      toast.error("Current password is required.", {
-        duration: 5000,
-      });
-      return;
-    }
-    if (!newPassword.trim()) {
-      toast.error("New password is required.", {
-        duration: 5000,
-      });
-      return;
-    }
-    if (newPassword.length < 6) {
-      toast.error("New password must be at least 6 characters.", {
-        duration: 5000,
-      });
-      return;
-    }
-    if (newPassword !== confirmNewPassword) {
-      toast.error("New password and confirmation must match!", {
-        duration: 5000,
-      });
-      return;
-    }
+  if (!currentPassword.trim() || !newPassword.trim() || !confirmNewPassword.trim()) {
+    toast.error("All password fields are required.", { duration: 5000 });
+    return;
+  }
 
-    setLoading(true);
-    try {
-      const response = await fetch("/api/changePassword", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          currentPassword,
-          newPassword,
-          confirmNewPassword,
-        }),
-      });
+  if (newPassword !== confirmNewPassword) {
+    toast.error("New passwords do not match.", { duration: 5000 });
+    return;
+  }
 
-      if (response.ok) {
-        toast.success("Password changed successfully!", {
-          duration: 5000,
-        });
-        setCurrentPassword("");
-        setNewPassword("");
-        setConfirmNewPassword("");
-      } else {
-        toast.error("Failed to change password. Try again later.", {
-          duration: 5000,
-        });
-      }
-    } catch (error) {
-      toast.error("Unexpected error. Try again later.", {
-        duration: 5000,
-      });
-    } finally {
+  if (newPassword.length < 6) {
+    toast.error("New password must be at least 6 characters long.", { duration: 5000 });
+    return;
+  }
+
+  setLoading(true);
+  try {
+    const token = localStorage.getItem("access"); 
+    if (!token) {
+      toast.error("No token found. Please log in.");
       setLoading(false);
+      return;
     }
-  };
+
+    const response = await fetch("http://localhost:8000/api/user/update/", { 
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`, 
+      },
+      body: JSON.stringify({
+        current_password: currentPassword,
+        new_password: newPassword,
+      }),
+    });
+
+    const data = await response.json().catch(() => ({}));
+    
+    if (response.ok) {
+      toast.success(data.detail || "Password updated successfully!", { duration: 5000 });
+      setCurrentPassword("");
+      setNewPassword("");
+      setConfirmNewPassword("");
+    } else {
+      toast.error(data.detail || data?.messages?.message || "Failed to update password.", { duration: 5000 });
+    }
+  } catch (error) {
+    toast.error("Unexpected error. Try again later.", { duration: 5000 });
+  } finally {
+    setLoading(false);
+  }
+};
 
   const handleDeleteAccount = async (e: React.FormEvent) => {
     e.preventDefault();
