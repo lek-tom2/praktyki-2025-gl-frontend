@@ -136,7 +136,7 @@ export default function Home() {
 
   setLoading(true);
   try {
-    const token = localStorage.getItem("token"); // lub pobierz z kontekstu
+    const token = localStorage.getItem("access"); // lub pobierz z kontekstu
     if (!token) {
       toast.error("No token found. Please log in.");
       setLoading(false);
