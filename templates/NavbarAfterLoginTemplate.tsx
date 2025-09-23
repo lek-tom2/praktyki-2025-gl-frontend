@@ -2,14 +2,11 @@ import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 import IconWithPopup from "@/components/account-popup/acc-popup";
-//import { useUserContext } from "@/gl-context/UserContextProvider";
+import useUserContext from "@/gl-context/UserContextProvider";
 
 const NavbarAfterLoginTemplate = () => {
-  // You may want to get the user's name from context
-  // For now, fallback to "User"
-  // const { User } = useUserContext();
-  // const userName = User?.username || "User";
-  const userName = "User";
+  const { User } = useUserContext();
+  const userName = User?.username || User?.email || "User";
 
   return (
   <nav className="bg-secondary h-16 w-full flex flex-row items-center justify-between text-neutral px-6">
