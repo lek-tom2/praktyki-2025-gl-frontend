@@ -4,7 +4,7 @@ import useUserContext from "@/gl-context/UserContextProvider";
 import { useRouter } from "next/navigation";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { ApiLinks } from "@/gl-const/api-links";
-import { User } from "@/gl-types/user-types";
+import { User, UserBackend } from "@/gl-types/user-types";
 import toast from "react-hot-toast";
 import Button from "../button";
 import FormErrorWrap from "../FormError/formErrorWrap";
@@ -52,7 +52,7 @@ const LoginComponent = () => {
 
       if (response.ok) {
         const data = await response.json();
-        const tempUser = data.detail.user as Omit<User, "languageIso2">;
+        const tempUser = data.detail.user as UserBackend;
         const access = data.detail.access;
         const refresh = data.detail.refresh;
 
@@ -63,6 +63,14 @@ const LoginComponent = () => {
           ...tempUser,
           languageIso2: "en",
           theme: theme,
+          is_active: false,
+          is_staff: false,
+          profilePicture: null,
+          accountVerified: null,
+          passwordLength: null,
+          authorities: null,
+          accountNonLocked: null,
+          token: null,
         };
         UserDispatch({ type: "setUser", value: user });
         toast.success("Automatycznie zalogowano!");

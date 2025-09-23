@@ -92,6 +92,7 @@ export const UserContextProvider = ({ children }: UserContextProviderProps) => {
     is_active: false,
     is_staff: false,
     phone_number: null,
+    full_name: null,
   };
   const [User, UserDispatch] = useReducer(UserReducer, initialUser);
 

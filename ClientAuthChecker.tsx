@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { ApiLinks } from "@/gl-const/api-links";
 import toast from "react-hot-toast";
 import useUserContext from "./gl-context/UserContextProvider";
-import { User } from "./gl-types/user-types";
+import { User, UserBackend } from "./gl-types/user-types";
 import Languages from "./gl-const/languages";
 import Themes from "./gl-const/themes";
 
@@ -24,6 +24,10 @@ const logout = () => {
       accountNonLocked: null,
       token: null,
       languageIso2: Languages.en,
+      phone_number: null,
+      is_active: false,
+      is_staff: false,
+      full_name: null,
     },
   });
   localStorage.clear();
@@ -111,9 +115,25 @@ export default function ClientAuthChecker({
 
         if (!checkAuth) {
           const body = await response.json();
-          console.log("bdy", body);
-          const user = body.detail.user as User;
-          UserDispatch({ type: "setUser", value: { ...user } });
+          const prefersDark = window.matchMedia(
+            "(prefers-color-scheme: dark)"
+          ).matches;
+          const theme = prefersDark ? Themes.glDark : Themes.glLight;
+          const tempUser = body.detail.user as UserBackend;
+          const user: User = {
+            ...tempUser,
+            languageIso2: "en",
+            theme: theme,
+            is_active: false,
+            is_staff: false,
+            profilePicture: null,
+            accountVerified: null,
+            passwordLength: null,
+            authorities: null,
+            accountNonLocked: null,
+            token: null,
+          };
+          UserDispatch({ type: "setUser", value: user });
         }
       } catch (err) {
         console.error(err);

@@ -61,7 +61,7 @@ export default function IconWithPopup() {
               <img src="/change.png" alt="switch" className="w-5 h-5" />
               <span>Switch Accounts</span>
             </li>
-            <li className="flex items-center gap-2 cursor-pointer hover:bg-gray-700 rounded p-1"></li>
+            {/* <li className="flex items-center gap-2 cursor-pointer hover:bg-gray-700 rounded p-1"></li> */}
             {/* <li className="flex items-center gap-2 cursor-pointer hover:bg-gray-700 rounded p-1">
               <img src="/night-mode.png" alt="theme" className="w-5 h-5" />
               <span>Change Theme</span>

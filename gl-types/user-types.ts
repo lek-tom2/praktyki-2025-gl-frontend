@@ -13,4 +13,15 @@ export type User = {
   is_active: boolean;
   is_staff: boolean;
   phone_number: string | null;
+  full_name: string | null;
+};
+
+export type UserBackend = {
+  username: string | null;
+  userId: string | null;
+  full_name: string | null;
+  email: string | null;
+  is_active: boolean;
+  is_staff: boolean;
+  phone_number: string | null;
 };

@@ -24,6 +24,10 @@ const LogoutButton = () => {
         accountNonLocked: null,
         token: null,
         languageIso2: Languages.en,
+        phone_number: null,
+        is_active: false,
+        is_staff: false,
+        full_name: null,
       },
     });
     localStorage.clear();
