@@ -84,33 +84,33 @@ export default function ParkingSpaces() {
     return `${year}/${month}/${day}`;
   };
 
-const [vehicles, setVehicles] = useState<Vechicle[]>([]);
-const [vehiclesError, setVehiclesError] = useState(false);
+  const [vehicles, setVehicles] = useState<Vechicle[]>([]);
+  const [vehiclesError, setVehiclesError] = useState(false);
 
-useEffect(() => {
-  const fetchVehicles = async () => {
-    try {
-      const res = await fetch(`/api/vehicles?userId=${User.userId}`);
-      if (res.ok) {
-        const data = await res.json();
-        if (data.vehicles && data.vehicles.length > 0) {
-          setVehicles(data.vehicles);
-          setVehiclesError(false);
+  useEffect(() => {
+    const fetchVehicles = async () => {
+      try {
+        const res = await fetch(`/api/vehicles?userId=${User.userId}`);
+        if (res.ok) {
+          const data = await res.json();
+          if (data.vehicles && data.vehicles.length > 0) {
+            setVehicles(data.vehicles);
+            setVehiclesError(false);
+          } else {
+            setVehicles([]);
+            setVehiclesError(true);
+          }
         } else {
           setVehicles([]);
           setVehiclesError(true);
         }
-      } else {
+      } catch {
         setVehicles([]);
         setVehiclesError(true);
       }
-    } catch {
-      setVehicles([]);
-      setVehiclesError(true);
-    }
-  };
-  fetchVehicles();
-}, [User.userId]);
+    };
+    fetchVehicles();
+  }, [User.userId]);
   const formatTime24 = (timeString: string): string => {
     if (!timeString) return "";
 
@@ -122,41 +122,41 @@ useEffect(() => {
   };
 
   const submitRes = async (e: React.FormEvent) => {
-  e.preventDefault();
+    e.preventDefault();
 
-  const formattedDate = formatDate(form.date);
-  const startTime24 = formatTime24(form.time);
-  const endTime24 = formatTime24(form.timeEnd);
+    const formattedDate = formatDate(form.date);
+    const startTime24 = formatTime24(form.time);
+    const endTime24 = formatTime24(form.timeEnd);
 
-  const reservationData = {
-    date: formattedDate,
-    time: startTime24,
-    timeEnd: endTime24,
-    vehicle: form.vehicle,
-    userId: User.userId,
-    spotId: chosen?.id,
-  };
+    const reservationData = {
+      date: formattedDate,
+      time: startTime24,
+      timeEnd: endTime24,
+      vehicle: form.vehicle,
+      userId: User.userId,
+      spotId: chosen?.id,
+    };
 
-  try {
-    const response = await fetch("/api/reservations/", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(reservationData),
-    });
+    try {
+      const response = await fetch("/api/reservations/", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(reservationData),
+      });
 
-    if (response.ok) {
-      toast.success("Reservation created successfully!");
-      setOpen(false);
-      setForm({ date: "", time: "", timeEnd: "", vehicle: "" });
-    } else {
-      const err = await response.text();
-      toast.error(`Error creating reservation: ${response.status}`);
+      if (response.ok) {
+        toast.success("Reservation created successfully!");
+        setOpen(false);
+        setForm({ date: "", time: "", timeEnd: "", vehicle: "" });
+      } else {
+        const err = await response.text();
+        toast.error(`Error creating reservation: ${response.status}`);
+      }
+    } catch (error) {
+      toast.error("Unexpected error. Try again later.");
     }
-  } catch (error) {
-    toast.error("Unexpected error. Try again later.");
-  }
 
-};
+  };
   const getDuration = () => {
     if (!form.time || !form.timeEnd) return "0h";
     const [startH, startM] = form.time.split(":").map(Number);
@@ -172,102 +172,103 @@ useEffect(() => {
     const minutes = diff % 60;
     return minutes === 0 ? `${hours}h` : `${hours}h ${minutes}m`;
   };
+
   return (
     <PageTemplateAfterLogin>
 
-  <div className='w-[85%] ml-[10%] mr-[10%] h-[15%] mt-4 flex flex-row gap-4'>
+      <div className='w-[85%] ml-[10%] mr-[10%] h-[15%] mt-4 flex flex-row gap-4'>
 
-    <div className="flex flex-col w-[60%] ">
-      <p className='text-left text-base-content text-xs mb-1'>Parking spot</p>
-      <Input
-        className='bg-base-200 rounded-xl h-[50%] w-[100%]'
-        type="text"
-        name="search"
-        placeholder="Search parking spot..."
-        value={search}
-        onChange={e => setSearch(e.target.value)}
-      />
-      {search && (
-        <div className="bg-base-200 rounded-xl mt-2 max-h-40 overflow-y-auto shadow-lg">
-          <ul>
-            {filtered.map((spot) => (
-              <li
-                key={spot.id}
-                className="cursor-pointer hover:bg-[#7F8CAA] px-3 py-2 rounded transition"
-                onClick={() => setChosen(spot)}
-              >
-                {spot.spot_number}
-              </li>
-            ))}
-            {filtered.length === 0 && (
-              <li className="text-gray-400 px-3 py-2">No results</li>
-            )}
-          </ul>
+        <div className="flex flex-col w-[60%] ">
+          <p className='text-left text-base-content text-xs mb-1'>Parking spot</p>
+          <Input
+            className='bg-base-200 rounded-xl h-[50%] w-[100%]'
+            type="text"
+            name="search"
+            placeholder="Search parking spot..."
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+          />
+          {search && (
+            <div className="bg-base-200 rounded-xl mt-2 max-h-40 overflow-y-auto shadow-lg">
+              <ul>
+                {filtered.map((spot) => (
+                  <li
+                    key={spot.id}
+                    className="cursor-pointer hover:bg-[#7F8CAA] px-3 py-2 rounded transition"
+                    onClick={() => setChosen(spot)}
+                  >
+                    {spot.spot_number}
+                  </li>
+                ))}
+                {filtered.length === 0 && (
+                  <li className="text-gray-400 px-3 py-2">No results</li>
+                )}
+              </ul>
+            </div>
+          )}
         </div>
-      )}
-    </div>
 
 
-    <div className="flex flex-col w-[20%] ">
-      <p className='text-left text-base-content text-xs mb-1'>Check-in</p>
-      <Input
-        className='bg-base-200 rounded-xl h-[50%] w-[100%] placeholder:text-[#44465a]'
-        type="date"
-        name="check-in"
-      />
-    </div>
+        <div className="flex flex-col w-[20%] ">
+          <p className='text-left text-base-content text-xs mb-1'>Check-in</p>
+          <Input
+            className='bg-base-200 rounded-xl h-[50%] w-[100%] placeholder:text-[#44465a]'
+            type="date"
+            name="check-in"
+          />
+        </div>
 
 
-    <div className="flex flex-col w-[20%] ">
-      <p className='text-left text-base-content text-xs mb-1'>Check-out</p>
-      <Input
-        className='bg-base-200 rounded-xl h-[50%] w-[100%] placeholder:text-[#44465a]'
-        type="date"
-        name="check-out"
-      />
-    </div>
-  </div>
+        <div className="flex flex-col w-[20%] ">
+          <p className='text-left text-base-content text-xs mb-1'>Check-out</p>
+          <Input
+            className='bg-base-200 rounded-xl h-[50%] w-[100%] placeholder:text-[#44465a]'
+            type="date"
+            name="check-out"
+          />
+        </div>
+      </div>
 
 
-  <div className="flex flex-row w-[85%] ml-[10%] gap-4  mb-10">
+      <div className="flex flex-row w-[85%] ml-[10%] gap-4  mb-10">
 
-<div className="flex flex-col justify-center w-[35%] text-left text-white gap-4">
-  <div className="w-[100%] h-[15%] pt-1 bg-base-200 rounded-xl shadow-lg text-white text-left px-3 flex items-center">
-    <span className="font-bold text-base-content">Chosen space:&nbsp;</span>
-    <span>{chosen ? chosen.spot_number : <span className="text-gray-400">None</span>}</span>
-  </div>
-  <div className="w-[100%] h-[50%] pt-1 bg-base-200 rounded-xl shadow-lg text-white text-left px-3 flex flex-col justify-center">
-    <span className="font-bold mb-1 text-base-content">Details:</span>
-    {chosen ? (
-      <>
-        <div>Floor: {chosen.floor}</div>
-        <div>Status: {chosen.status}</div>
-      </>
-    ) : (
-      <span className="text-gray-400">No details</span>
-    )}
-  </div>
+        <div className="flex flex-col justify-center w-[35%] text-left text-white gap-4">
+          <div className="w-[100%] h-[15%] pt-1 bg-base-200 rounded-xl shadow-lg text-white text-left px-3 flex items-center">
+            <span className="font-bold text-base-content">Chosen space:&nbsp;</span>
+            <span>{chosen ? chosen.spot_number : <span className="text-gray-400">None</span>}</span>
+          </div>
+          <div className="w-[100%] h-[50%] pt-1 bg-base-200 rounded-xl shadow-lg text-white text-left px-3 flex flex-col justify-center">
+            <span className="font-bold mb-1 text-base-content">Details:</span>
+            {chosen ? (
+              <>
+                <div>Floor: {chosen.floor}</div>
+                <div>Status: {chosen.status}</div>
+              </>
+            ) : (
+              <span className="text-gray-400">No details</span>
+            )}
+          </div>
 
-  <Button
-    customWidth='100%'
-    type='button'
-    value='Create Reservation'
-    hoverEffect={true}
-    onClick={() => setOpen(true)}
-  />
-</div>
+          <Button
+            customWidth='100%'
+            type='button'
+            value='Create Reservation'
+            hoverEffect={true}
+            onClick={() => setOpen(true)}
+          />
+        </div>
 
 
-    <div className="flex flex-col justify-center w-[65%]">
-      <img
-        src="/2floor.png"
-        alt="2nd floor"
-        width={600}
-        height={600}
-        style={{ width: '83%', height: '83%', borderRadius: '0.75rem'}}
-      />
-    </div>
-  </div>
+        <div className="flex flex-col justify-center w-[65%]">
+          <img
+            src="/2floor.png"
+            alt="2nd floor"
+            width={600}
+            height={600}
+            style={{ width: '83%', height: '83%', borderRadius: '0.75rem' }}
+          />
+        </div>
+      </div>
       <PopupOverlay
         open={open}
         onOpenChange={setOpen}
@@ -315,32 +316,32 @@ useEffect(() => {
           <h4 className="text-base-content font-bold text-[1rem] mt-7 mb-3">
             Select Vehicle
           </h4>
-         {vehiclesError || vehicles.length === 0 ? (
-  <div className="flex justify-center items-center w-full">
-   <Button
-              className=""
-              type="button"
-              value="Add Vehicle"
-              hoverEffect={true}
-             
-            />
-  </div>
-) : (
-  <select
-    name="vehicle"
-    value={form.vehicle}
-    onChange={inputChange}
-    className="w-full bg-base-100 input input-bordered"
-    required
-  >
-    <option value="">Select vehicle</option>
-    {vehicles.map(v => (
-      <option key={v.registration_number} value={v.registration_number}>
-        {v.brand} ({v.registration_number})
-      </option>
-    ))}
-  </select>
-)}
+          {vehiclesError || vehicles.length === 0 ? (
+            <div className="flex justify-center items-center w-full">
+              <Button
+                className=""
+                type="button"
+                value="Add Vehicle"
+                hoverEffect={true}
+
+              />
+            </div>
+          ) : (
+            <select
+              name="vehicle"
+              value={form.vehicle}
+              onChange={inputChange}
+              className="w-full bg-base-100 input input-bordered"
+              required
+            >
+              <option value="">Select vehicle</option>
+              {vehicles.map(v => (
+                <option key={v.registration_number} value={v.registration_number}>
+                  {v.brand} ({v.registration_number})
+                </option>
+              ))}
+            </select>
+          )}
           <h4 className="text-base-content font-bold text-[1rem] mt-7 mb-3">
             Reservation Duration
           </h4>
@@ -357,17 +358,16 @@ useEffect(() => {
               className="w-30 flex justify-start border-[2px] border-green-800 rounded-[1rem] h-9 "
               onClick={() => setOpen(false)}
             />
-
             <Button
               className=""
               type="submit"
               value="Create Reservation"
               hoverEffect={true}
-             
+
             />
           </div>
         </form>
       </PopupOverlay>
-  </PageTemplateAfterLogin>
+    </PageTemplateAfterLogin>
   );
 }

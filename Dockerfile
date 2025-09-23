@@ -1,48 +1,48 @@
 # Stage 1: Build the React application
-# Use a Node.js base image for building the frontend.
-FROM node:18-alpine AS builder
+# Use a more robust Debian-based Node.js image
+FROM --platform=$BUILDPLATFORM node:18-slim AS builder
 
-# Set the working directory inside the container
+# Set the working directory
 WORKDIR /app
 
-# Copy package.json and package-lock.json first to cache dependencies
+# Copy package dependency files
 COPY package.json .
 COPY package-lock.json .
 
 # --- Instructions to add the certificate ---
-# Switch to the root user to modify the truststore
 USER root
 
+# On Debian, we must first update the package list, then install the package
+RUN apt-get update && apt-get install -y ca-certificates
+
+# Give the 'node' user ownership of the /app directory
+RUN chown -R node:node /app
+
 # Copy your certificate into the container
-COPY github.crt /usr/local/share/ca-certificates/github.crt
+COPY github.crt /usr/local/share/ca-certificates/
 
-# Update the certificate store and fix permissions
+# Run the certificate update command
 RUN update-ca-certificates
-
-# Switch back to the node user for security
 USER node
-# --- End of new instructions ---
+# --- End of instructions ---
 
 # Install Node.js dependencies
 RUN npm install
 
-# Copy all other project files into the container
+# Copy all other project files
 COPY . .
 
-# Build the React application for production
-# This command generates the static files and output in the `.next` directory.
+# Build the React application
 RUN npm run build
 
-# Stage 2: Create a lightweight production image with Nginx
-# Use a lightweight Nginx base image to serve the static files.
+# Stage 2: Create the production image with Nginx
 FROM nginx:alpine
 
 # Copy the built React app from the builder stage
-# IMPORTANT: Next.js outputs its production build to the `.next` folder, not `build`.
 COPY --from=builder /app/.next /usr/share/nginx/html
 
-# Expose the port Nginx will be listening on
+# Expose the correct port
 EXPOSE 80
 
-# The command to start Nginx in the foreground
+# Start Nginx
 CMD ["nginx", "-g", "daemon off;"]
