@@ -24,6 +24,9 @@ export default function HomePage() {
   const [availableCount, setAvailableCount] = useState(0);
   const [occupiedCount, setOccupiedCount] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
+  const [checkIn, setCheckIn] = useState<string | null>(null);
+  const [checkOut, setCheckOut] = useState<string | null>(null);
+  const [access, setAccess] = useState<string | null>(null);
 
   const mapToStatus = (status: BackendSpotStatus): SpotStatus => {
     if (status === "FREE") return "available";
@@ -43,41 +46,55 @@ export default function HomePage() {
     aisle: spot.aisle as ParkingSpotPL3["aisle"],
   });
 
+  const fetchParking = async () => {
+    setIsLoading(true);
+    try {
+      const access = localStorage.getItem("access");
+      let url = ApiLinks.listParkingSpaces;
+
+      if (checkIn && checkOut) {
+        const startISO = new Date(checkIn).toISOString();
+        const endISO = new Date(checkOut).toISOString();
+        url += `?start_time=${startISO}&end_time=${endISO}`;
+      }
+
+      const res = await fetch(url, {
+        headers: { Authorization: `Bearer ${access}` },
+      });
+      if (!res.ok) throw new Error(`Error: ${res.status}`);
+      const data = (await res.json()) as ParkingSpotBackend[];
+      setParkingListPrototype(data);
+      toast.success("Parking spots loaded");
+    } catch (err) {
+      toast.error("Failed to fetch parking spots");
+    }
+    setIsLoading(false);
+  };
+
+  const fetchReservations = async () => {
+    try {
+      const res = await fetch(ApiLinks.listReservations, {
+        headers: { Authorization: `Bearer ${access}` },
+      });
+      if (!res.ok) throw new Error(`Error: ${res.status}`);
+      const data = (await res.json()).detail as Reservation[];
+      setReservations(data);
+      toast.success("Reservations loaded");
+    } catch (err) {
+      toast.error("Failed to fetch reservations");
+    }
+  };
+
   useEffect(() => {
     const access = localStorage.getItem("access");
-    const fetchParking = async () => {
-      setIsLoading(true);
-      try {
-        const res = await fetch(ApiLinks.listParkingSpaces, {
-          headers: { Authorization: `Bearer ${access}` },
-        });
-        if (!res.ok) throw new Error(`Error: ${res.status}`);
-        const data = (await res.json()) as ParkingSpotBackend[];
-        setParkingListPrototype(data);
-        toast.success("Parking spots loaded");
-      } catch (err) {
-        toast.error("Failed to fetch parking spots");
-      }
-      setIsLoading(false);
-    };
-
-    const fetchReservations = async () => {
-      try {
-        const res = await fetch(ApiLinks.listReservations, {
-          headers: { Authorization: `Bearer ${access}` },
-        });
-        if (!res.ok) throw new Error(`Error: ${res.status}`);
-        const data = (await res.json()).detail as Reservation[];
-        setReservations(data);
-        toast.success("Reservations loaded");
-      } catch (err) {
-        toast.error("Failed to fetch reservations");
-      }
-    };
-
+    setAccess(access);
     fetchParking();
     fetchReservations();
   }, []);
+
+  useEffect(() => {
+    fetchParking();
+  }, [checkIn, checkOut]);
 
   // Map backend spots to PL2/PL3
   useEffect(() => {
@@ -111,6 +128,10 @@ export default function HomePage() {
             pl3={parkingListPL3}
             availableCount={availableCount}
             occupiedCount={occupiedCount}
+            checkIn={checkIn}
+            checkOut={checkOut}
+            setCheckIn={setCheckIn}
+            setCheckOut={setCheckOut}
           />
         )}
       </div>

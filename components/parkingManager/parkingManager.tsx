@@ -12,6 +12,10 @@ type ParkingManagerProps = {
   pl3: ParkingSpotPL3[];
   availableCount: number;
   occupiedCount: number;
+  checkIn: string;
+  checkOut: string;
+  setCheckIn: React.Dispatch<React.SetStateAction<string>>;
+  setCheckOut: React.Dispatch<React.SetStateAction<string>>;
 };
 
 const ParkingManager = ({
@@ -19,6 +23,10 @@ const ParkingManager = ({
   pl3,
   availableCount,
   occupiedCount,
+  checkIn,
+  checkOut,
+  setCheckIn,
+  setCheckOut,
 }: ParkingManagerProps) => {
   const [selectedParkingLevel, setSelectedParkingLevel] = useState<
     "PL2" | "PL3"
@@ -29,8 +37,6 @@ const ParkingManager = ({
   >([]);
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState("all");
-  const [checkIn, setCheckIn] = useState("");
-  const [checkOut, setCheckOut] = useState("");
 
   useEffect(() => {
     setParkingSpots(selectedParkingLevel === "PL2" ? pl2 : pl3);
@@ -64,7 +70,7 @@ const ParkingManager = ({
           <label htmlFor="checkin">Check-in</label>
           <Input
             type="date"
-            value={checkIn}
+            value={checkIn ?? ""}
             onChange={(e) => setCheckIn(e.target.value)}
             name="checkin"
             width="w-full"
@@ -75,7 +81,7 @@ const ParkingManager = ({
           <label htmlFor="checkout">Check-out</label>
           <Input
             type="date"
-            value={checkOut}
+            value={checkOut ?? ""}
             onChange={(e) => setCheckOut(e.target.value)}
             name="checkout"
             width="w-full"
