@@ -1,24 +1,15 @@
 "use client";
 
-import PageTemplate from "@/templates/PageTemplate";
+import PageTemplateAfterLogin from "@/templates/PageTemplateAfterLogin";
 import Input from "@/components/input/input";
 import Button from "@/components/button";
 import { useState, useEffect } from "react";
 import useUserContext from "@/gl-context/UserContextProvider";
 import toast from "react-hot-toast";
 import logout from "@/logout";
-type Vehicle = {
-  registration_number: string;
-  brand: string;
-};
+import { Vehicle } from "@/gl-types/vehicle";
+import { Reservation } from "@/gl-types/reservation";
 
-type Reservation = {
-  id: number;
-  start_date: string;
-  end_date: string;
-  user: number;
-  spot: number;
-};
 const validateEmail = (email: string) =>
   /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 const validateFullName = (name: string) =>
@@ -96,14 +87,14 @@ export default function Home() {
           UserDispatch({ type: "setVechicles", value: data.vehicles }); // <--- zapis do kontekstu
         } else {
           setVehicles([
-            { registration_number: "KR12345", brand: "Toyota Corolla" },
+            { id: 1, spot: 1, registration_number: "KR12345", brand: "Toyota", model: "Corolla", year: 2020, color: "White" },
             // { registration_number: "WX54321", brand: "Ford Focus" },
             //{ registration_number: "GD98765", brand: "Tesla Model 3" },
           ]);
         }
       } catch {
         setVehicles([
-          { registration_number: "KR12345", brand: "Toyota Corolla" },
+          { id: 1, spot: 1, registration_number: "KR12345", brand: "Toyota", model: "Corolla", year: 2020, color: "White" },
           //  { registration_number: "WX54321", brand: "Ford Focus" },
           //  { registration_number: "GD98765", brand: "Tesla Model 3" },
         ]);
@@ -115,72 +106,84 @@ export default function Home() {
   }, []);
 
   const handleInfoSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
+    e.preventDefault();
 
-  if (!fullName.trim() && !email.trim() && !phone.trim()) {
-    toast.success("No changes made.", { duration: 5000 });
-    return;
-  }
-  if (fullName.trim() && !validateFullName(fullName)) {
-    toast.error("Full name must be in format: 'John Doe'", { duration: 5000 });
-    return;
-  }
-  if (email.trim() && !validateEmail(email)) {
-    toast.error("Invalid email format.", { duration: 5000 });
-    return;
-  }
-  if (phone.trim() && !validatePhone(phone)) {
-    toast.error("Phone number must be in format: 123-456-789", { duration: 5000 });
-    return;
-  }
+    if (!fullName.trim() && !email.trim() && !phone.trim()) {
+      toast.success("No changes made.", {
+        duration: 5000,
+      });
 
-  setLoading(true);
-  try {
-    const token = localStorage.getItem("access"); // lub pobierz z kontekstu
-    if (!token) {
-      toast.error("No token found. Please log in.");
-      setLoading(false);
       return;
     }
-    const payload: any = {};
-    let changedFields: string[] = [];
+    if (fullName.trim() && !validateFullName(fullName)) {
+      toast.error("Full name must be in format: 'John Doe'", {
+        duration: 5000,
+      });
+      return;
+    }
+    if (email.trim() && !validateEmail(email)) {
+      toast.error("Invalid email format.", {
+        duration: 5000,
+      });
+      return;
+    }
+    if (phone.trim() && !validatePhone(phone)) {
+      toast.error("Phone number must be in format: 123-456-789", {
+        duration: 5000,
+      });
+      return;
+    }
 
-    if (email.trim()) {
-      payload.email = email;
-      changedFields.push("Email");
-    }
-    if (fullName.trim()) {
-      payload.full_name = fullName; // pole zgodne z backendem
-      changedFields.push("Full name");
-    }
-    if (phone.trim()) {
-      payload.phone = phone;
-      changedFields.push("Phone number");
-    }
+    setLoading(true);
+    try {
+      const payload: any = {};
+      let changedFields: string[] = [];
 
-    const response = await fetch("http://localhost:8000/api/user/update/", {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${token}`,
-      },
-      body: JSON.stringify(payload),
-    });
+      if (email.trim()) {
+        payload.email = email;
+        changedFields.push("Email");
+      }
+      if (fullName.trim()) {
+        payload.fullName = fullName;
+        changedFields.push("Full name");
+      }
+      if (phone.trim()) {
+        payload.phone = phone;
+        changedFields.push("Phone number");
+      }
 
-    const data = await response.json().catch(() => ({}));
-    if (response.ok) {
-      if (email.trim()) UserDispatch({ type: "setEmail", value: email });
-      if (fullName.trim()) UserDispatch({ type: "setUsername", value: fullName });
-      toast.success(data.detail || `Updated: ${changedFields.join(", ")}`, { duration: 5000 });
-    } else {
-      toast.error(data.detail || data?.messages?.message || "Failed to update information.", { duration: 5000 });
+      const response = await fetch("/api/updateInfo", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      if (response.ok) {
+        if (email.trim()) UserDispatch({ type: "setEmail", value: email });
+        if (fullName.trim())
+          UserDispatch({ type: "setUsername", value: fullName });
+        if (changedFields.length > 0) {
+          toast.success(`Updated: ${changedFields.join(", ")}`, {
+            duration: 5000,
+          });
+        } else {
+          toast.success("No changes made.", {
+            duration: 5000,
+          });
+        }
+      } else {
+        toast.error("Failed to update information. Try again later.", {
+          duration: 5000,
+        });
+      }
+    } catch (error) {
+      toast.error("Unexpected error. Try again later.", {
+        duration: 5000,
+      });
+    } finally {
+      setLoading(false);
     }
-  } catch (error) {
-    toast.error("Unexpected error. Try again later.", { duration: 5000 });
-  } finally {
-    setLoading(false);
-  }
-};
+  };
 
   const handlePasswordSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -319,9 +322,14 @@ export default function Home() {
 
     setLoading(true);
     try {
-      const updatedVehicle = {
+      const updatedVehicle: Vehicle = {
+        id: vehicles[editIdx!].id,
+        spot: vehicles[editIdx!].spot,
         registration_number: editRegNum,
         brand: editBrand,
+        model: vehicles[editIdx!].model,
+        year: vehicles[editIdx!].year,
+        color: vehicles[editIdx!].color,
       };
 
       const response = await fetch(
@@ -364,7 +372,7 @@ export default function Home() {
   };
 
   return (
-    <PageTemplate>
+    <PageTemplateAfterLogin>
       <main className="overflow-auto flex flex-col items-center mb-4   ">
         <header className=" ml-[-34rem] mx-0 p-0 mb-4 mt-4">
           {/*<p className="text-sm text-gray-400">Current email in context: {User.email}</p>
@@ -643,7 +651,7 @@ export default function Home() {
                         </span>
                       </div>
                       <div>
-                        <span>User: {reservation.user}</span> |{" "}
+                        <span>User: {reservation.user.username || reservation.user.email || 'Unknown'}</span> |{" "}
                         <span>Spot: {reservation.spot}</span>
                       </div>
                     </div>
@@ -662,6 +670,6 @@ export default function Home() {
           </nav>
         </div>
       </main>
-    </PageTemplate>
+    </PageTemplateAfterLogin>
   );
 }

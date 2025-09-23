@@ -11,7 +11,7 @@ export default function NotFound() {
             403
           </h1>
           <h1 className="text-6xl font-bold text-center text-base-content mb-8">
-            Forbbiden
+            Forbidden
           </h1>
           <p className="text-center text-white mb-12">
             You’re not authorized to view this page.
