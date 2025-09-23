@@ -280,32 +280,47 @@ export default function Home() {
   };
 
   const handleDeleteVehicle = async (registration_number: string) => {
-    setLoading(true);
-    try {
-      const response = await fetch(`/api/vehicles/${registration_number}`, {
-        method: "DELETE",
-      });
+  setLoading(true);
+  try {
+    const token = localStorage.getItem("access");
+    if (!token) {
+      toast.error("No token found. Please log in.");
+      setLoading(false);
+      return;
+    }
 
-      if (response.ok) {
-        setVehicles((prev) =>
-          prev.filter((v) => v.registration_number !== registration_number)
-        );
-        toast.success("Vehicle has been removed from your account.", {
-          duration: 5000,
-        });
-      } else {
-        toast.error("Failed to delete vehicle. Try again later.", {
-          duration: 5000,
-        });
-      }
-    } catch (error) {
-      toast.error("Unexpected error. Try again later.", {
+    const response = await fetch("http://localhost:8000/api/vehicles/", {
+      method: "DELETE",
+      headers: {
+        "Authorization": `Bearer ${token}`,
+      },
+    });
+
+    console.log('Delete response status:', response.status);
+    const data = await response.json().catch(() => ({}));
+    console.log('Delete response data:', data);
+
+    if (response.ok) {
+      setVehicles((prev) =>
+        prev.filter((v) => v.registration_number !== registration_number)
+      );
+      toast.success("Vehicle has been removed from your account.", {
         duration: 5000,
       });
-    } finally {
-      setLoading(false);
+    } else {
+      toast.error(data.detail || `Failed to delete vehicle. Status: ${response.status}`, {
+        duration: 5000,
+      });
     }
-  };
+  } catch (error) {
+    console.error('Delete error:', error);
+    toast.error("Unexpected error. Try again later.", {
+      duration: 5000,
+    });
+  } finally {
+    setLoading(false);
+  }
+};
   const handleEditClick = (idx: number) => {
     setEditIdx(idx);
     setEditBrand(vehicles[idx].brand);
