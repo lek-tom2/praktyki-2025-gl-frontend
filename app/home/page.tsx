@@ -3,12 +3,14 @@ import PageTemplateAfterLogin from "../../templates/PageTemplateAfterLogin";
 import Input from "@/components/input/input";
 import ParkingManager from "@/components/parkingManager/parkingManager";
 import React, { useEffect, useState } from "react";
+import { Reservation } from "@/gl-types/reservation";
+import { ParkingSpotBackend } from "@/gl-types/parkingSpot";
 
 import toast from "react-hot-toast";
 
 export default function HomePage() {
-	const [parkingList, setParkingList] = useState([]);
-	const [reservations, setReservations] = useState([]);
+	const [parkingList, setParkingList] = useState<ParkingSpotBackend[]>([]);
+	const [reservations, setReservations] = useState<Reservation[]>([]);
 	const [checkIn, setCheckIn] = useState("");
 	const [checkOut, setCheckOut] = useState("");
 	const [availableCount, setAvailableCount] = useState(0);
@@ -69,7 +71,7 @@ export default function HomePage() {
 			let occupied = 0;
 			parkingList.forEach((spot) => {
 				const overlapping = reservations.some((r) => {
-					if (r.spot !== spot.id) return false;
+					if (r.spot !== parseInt(spot.spot_number)) return false;
 					const resStart = new Date(r.start_date);
 					const resEnd = new Date(r.end_date);
 					return (checkInDate < resEnd && checkOutDate > resStart);
