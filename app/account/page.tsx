@@ -7,6 +7,7 @@ import { useState, useEffect } from "react";
 import useUserContext from "@/gl-context/UserContextProvider";
 import toast from "react-hot-toast";
 import logout from "@/logout";
+import { useRouter } from "next/navigation";
 type Vehicle = {
   registration_number: string;
   brand: string;
@@ -26,6 +27,7 @@ const validateFullName = (name: string) =>
 const validatePhone = (phone: string) =>
   /^\d{3}-\d{3}-\d{3}$/.test(phone.trim());
 export default function Home() {
+    const router = useRouter()
   const [loading, setLoading] = useState(false);
   const { User, UserDispatch } = useUserContext();
   const [email, setEmail] = useState("");
@@ -41,6 +43,10 @@ export default function Home() {
   const [editBrand, setEditBrand] = useState("");
   const [editRegNum, setEditRegNum] = useState("");
   const [reservations, setReservations] = useState<Reservation[]>([]);
+  const handleAddNewVehicle = () => {
+    router.push("/add-car");
+  };
+
   const handleFullNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFullName(e.target.value);
   };
@@ -73,47 +79,50 @@ export default function Home() {
   }, [User.email]);
 
   useEffect(() => {
-    const fetchReservations = async () => {
-      try {
-        const res = await fetch("/api/reservations");
-        if (res.ok) {
-          const data = await res.json();
-          setReservations(data.reservations);
-        } else {
-          setReservations([]);
-        }
-      } catch {
+  const fetchReservations = async () => {
+    try {
+      const res = await fetch("/api/reservations");
+      if (res.ok) {
+        const data = await res.json();
+        setReservations(data.reservations);
+      } else {
         setReservations([]);
       }
-    };
+    } catch {
+      setReservations([]);
+    }
+  };
 
-    const fetchVehicles = async () => {
-      try {
-        const res = await fetch("/api/vehicles");
-        if (res.ok) {
-          const data = await res.json();
-          setVehicles(data.vehicles);
-          UserDispatch({ type: "setVechicles", value: data.vehicles }); // <--- zapis do kontekstu
-        } else {
-          setVehicles([
-            { registration_number: "KR12345", brand: "Toyota Corolla" },
-            // { registration_number: "WX54321", brand: "Ford Focus" },
-            //{ registration_number: "GD98765", brand: "Tesla Model 3" },
-          ]);
-        }
-      } catch {
-        setVehicles([
-          { registration_number: "KR12345", brand: "Toyota Corolla" },
-          //  { registration_number: "WX54321", brand: "Ford Focus" },
-          //  { registration_number: "GD98765", brand: "Tesla Model 3" },
-        ]);
+  const fetchVehicles = async () => {
+    try {
+      const token = localStorage.getItem("access");
+      if (!token) {
+        setVehicles([]);
+        return;
       }
-    };
+      
+      const res = await fetch("http://localhost:8000/api/vehicles/", {
+        method: "GET",
+        headers: {
+          "Authorization": `Bearer ${token}`,
+        },
+      });
+      
+      if (res.ok) {
+        const data = await res.json();
+        setVehicles(data || []);
+        UserDispatch({ type: "setVechicles", value: data || [] });
+      } else {
+        setVehicles([]);
+      }
+    } catch {
+      setVehicles([]);
+    }
+  };
 
-    fetchReservations();
-    fetchVehicles();
-  }, []);
-
+  fetchReservations();
+  fetchVehicles();
+}, []);
   const handleInfoSubmit = async (e: React.FormEvent) => {
   e.preventDefault();
 
@@ -572,6 +581,7 @@ export default function Home() {
               <div className="flex flex-col col-span-2 gap-y-2">
                 <button
                   type="button"
+                   onClick={handleAddNewVehicle}
                   className="border-2 border-dashed border-base-content rounded-[0.25rem] px-6 py-3 text-base-content flex items-center justify-center w-full"
                 >
                   + Add New Vehicle
