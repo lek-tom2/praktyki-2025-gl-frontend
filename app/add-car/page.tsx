@@ -1,199 +1,190 @@
 "use client";
 
-import React, { useRef, useState } from "react";
+import React from "react";
+import { useForm, SubmitHandler } from "react-hook-form";
 import toast from "react-hot-toast";
-import PageTemplateAfterLogin from "../../templates/PageTemplateAfterLogin";
+import PageTemplate from "@/templates/PageTemplate";
 import Input from "@/components/input/input";
 import Button from "@/components/button";
+import FormErrorWrap from "@/components/FormError/formErrorWrap";
+import FormErrorParagraph from "@/components/FormError/formErrorParagraph";
+
+type CarFormProps = {
+  brand: string;
+  model: string;
+  year: number;
+  color: string;
+  registration_number: string;
+};
 
 export default function AddCar() {
-  const [form, setForm] = useState({
-    brand: "",
-    model: "",
-    year: "",
-    color: "",
-    registration_number: "",
+  const {
+    register,
+    handleSubmit,
+    setError,
+    reset,
+    formState: { errors, isSubmitting },
+  } = useForm<CarFormProps>({
+    mode: "onTouched",
+    reValidateMode: "onChange",
   });
-  const [file, setFile] = useState<File | null>(null);
-  const [preview, setPreview] = useState<string | null>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const inputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
-
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const f = e.target.files?.[0] || null;
-    setFile(f);
-    if (f) {
-      setPreview(URL.createObjectURL(f));
-    } else {
-      setPreview(null);
-    }
-  };
-
-  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    const f = e.dataTransfer.files?.[0] || null;
-    if (f && (f.type === "image/jpeg" || f.type === "image/png")) {
-      setFile(f);
-      setPreview(URL.createObjectURL(f));
-    }
-  };
-
-  const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-  };
-
-  const handleUpload = () => {
-    if (!file) return;
-    // TODO: upload logic
-    alert("Photo uploaded!");
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const onSubmit: SubmitHandler<CarFormProps> = async (data) => {
+    const token = localStorage.getItem("access");
     try {
-      const res = await fetch("/api/cars", {
+      const res = await fetch("http://localhost:8000/api/vehicles/", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({
-          registration_number: form.registration_number,
-          brand: form.brand,
-          model: form.model,
-          year: form.year,
-          color: form.color,
-        }),
+        body: JSON.stringify(data),
       });
+
       if (!res.ok) {
-        const data = await res.json().catch(() => ({}));
-        throw new Error(data?.message || "Failed to add car");
+        const errData = await res.json();
+        console.log("Backend errors:", errData);
+
+        Object.entries(errData).forEach(([field, message]) => {
+          if (field in data) {
+            let msg = Array.isArray(message) ? message[0] : String(message);
+
+            if (msg === "This field must be unique.") {
+              msg =
+                field === "registration_number"
+                  ? "This registration plate already exists"
+                  : "This value already exists";
+            }
+
+            setError(field as keyof CarFormProps, {
+              type: "server",
+              message: msg,
+            });
+          }
+        });
+        throw new Error(
+          errData?.detail || "Failed to add vehicle. Check errors above."
+        );
       }
-      toast.success("Car added!");
-      setForm({ brand: "", model: "", year: "", color: "", registration_number: "" });
-      setFile(null);
-      setPreview(null);
+
+      toast.success("Vehicle added!");
+      reset(); // clears form
     } catch (err: any) {
-      toast.error(err.message || "Error adding car");
+      toast.error(err.message || "Error adding vehicle");
     }
   };
 
   return (
-    <PageTemplateAfterLogin>
+    <PageTemplate>
       <div className="flex flex-col items-center justify-center min-h-[calc(100vh-64px-80px)]">
         <form
           className="w-full max-w-[420px] bg-base-200 rounded-xl shadow-lg p-4 sm:p-8 flex flex-col gap-6 overflow-y-auto max-h-[80vh]"
-          onSubmit={handleSubmit}
+          onSubmit={handleSubmit(onSubmit)}
+          noValidate
         >
-          <h2 className="text-3xl font-bold text-center text-base-content mb-2">Add a Car</h2>
-          <div className="flex flex-col gap-1">
+          <h2 className="text-3xl font-bold text-center text-base-content mb-2">
+            Add a Car
+          </h2>
+
+          {/* Brand */}
+          <FormErrorWrap>
             <label className="text-base-content font-semibold">Brand</label>
             <Input
               className="rounded-md bg-primary w-full p-2 text-base-content"
               type="text"
-              name="brand"
               placeholder="Brand"
-              value={form.brand}
-              onChange={inputChange}
-              required
+              {...register("brand", {
+                required: "Brand is required",
+                minLength: {
+                  value: 2,
+                  message: "Brand must be at least 2 characters",
+                },
+              })}
             />
-          </div>
-          <div className="flex flex-col gap-1">
+            <FormErrorParagraph errorObject={errors.brand} />
+          </FormErrorWrap>
+
+          {/* Model */}
+          <FormErrorWrap>
             <label className="text-base-content font-semibold">Model</label>
             <Input
               className="rounded-md bg-primary w-full p-2 text-base-content"
               type="text"
-              name="model"
               placeholder="Model"
-              value={form.model}
-              onChange={inputChange}
-              required
+              {...register("model", {
+                required: "Model is required",
+              })}
             />
-          </div>
-          <div className="flex flex-col gap-1">
+            <FormErrorParagraph errorObject={errors.model} />
+          </FormErrorWrap>
+
+          {/* Year */}
+          <FormErrorWrap>
             <label className="text-base-content font-semibold">Year</label>
             <Input
               className="rounded-md bg-primary w-full p-2 text-base-content"
               type="number"
-              name="year"
               placeholder="Year"
-              value={form.year}
-              onChange={inputChange}
-              min="1900"
-              max={new Date().getFullYear()}
-              required
+              {...register("year", {
+                required: "Year is required",
+                min: {
+                  value: 1900,
+                  message: "Year must be 1900 or later",
+                },
+                max: {
+                  value: new Date().getFullYear(),
+                  message: `Year cannot be after ${new Date().getFullYear()}`,
+                },
+              })}
             />
-          </div>
-          <div className="flex flex-col gap-1">
+            <FormErrorParagraph errorObject={errors.year} />
+          </FormErrorWrap>
+
+          {/* Color */}
+          <FormErrorWrap>
             <label className="text-base-content font-semibold">Color</label>
             <Input
               className="rounded-md bg-primary w-full p-2 text-base-content"
               type="text"
-              name="color"
               placeholder="Color"
-              value={form.color}
-              onChange={inputChange}
-              required
+              {...register("color", {
+                required: "Color is required",
+              })}
             />
-          </div>
-          <div className="flex flex-col gap-1">
-            <label className="text-base-content font-semibold">Registration Number</label>
+            <FormErrorParagraph errorObject={errors.color} />
+          </FormErrorWrap>
+
+          {/* Registration Number */}
+          <FormErrorWrap>
+            <label className="text-base-content font-semibold">
+              Registration Number
+            </label>
             <Input
               className="rounded-md bg-primary w-full p-2 text-base-content"
               type="text"
-              name="registration_number"
               placeholder="Registration Number"
-              value={form.registration_number}
-              onChange={inputChange}
-              required
+              {...register("registration_number", {
+                required: "Registration number is required",
+                minLength: {
+                  value: 4,
+                  message: "Registration number must be at least 4 characters",
+                },
+              })}
             />
-          </div>
+            <FormErrorParagraph errorObject={errors.registration_number} />
+          </FormErrorWrap>
 
-          <div
-            className="flex flex-col items-center gap-2 border-2 border-dashed border-[#7F8CAA] rounded-xl bg-primary py-6 px-4 mt-2 mb-2 cursor-pointer"
-            onDrop={handleDrop}
-            onDragOver={handleDragOver}
-            onClick={() => fileInputRef.current?.click()}
-          >
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept="image/jpeg,image/png"
-              className="hidden"
-              onChange={handleFileChange}
-            />
-            {preview ? (
-              <img
-                src={preview}
-                alt="Car preview"
-                className="w-40 h-28 object-cover rounded-lg border border-[#7F8CAA]"
-              />
-            ) : (
-              <span className="text-base-content text-center">
-                Drag & drop a car photo (JPG/PNG) here or click to select
-              </span>
-            )}
+          {/* Submit */}
+          <div className="mx-auto">
             <Button
-              type="button"
-              value="Upload Photo"
-              customWidth="60%"
+              value={isSubmitting ? "Adding..." : "Add a Car"}
+              type="submit"
               hoverEffect={true}
-              onClick={handleUpload}
+              disabled={isSubmitting}
             />
           </div>
-
-          <Button
-            value="Add a Car"
-            type="submit"
-            customWidth="100%"
-            hoverEffect={true}
-          />
         </form>
       </div>
-    </PageTemplateAfterLogin>
+    </PageTemplate>
   );
 }
