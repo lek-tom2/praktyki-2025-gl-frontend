@@ -42,7 +42,7 @@ FROM nginx:alpine
 COPY --from=builder /app/.next /usr/share/nginx/html
 
 # Expose the correct port
-EXpose 80
+EXPOSE 80
 
 # Start Nginx
 CMD ["nginx", "-g", "daemon off;"]
