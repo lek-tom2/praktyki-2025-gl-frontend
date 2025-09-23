@@ -26,7 +26,8 @@ export type ParkingSpotPL3 = {
 export type ParkingSpotBackend = {
   spot_number: string;
   floor: number;
-  status: SpotStatus;
+  status: BackendSpotStatus;
   aisle: string;
 };
 export type SpotStatus = "available" | "reserved" | "occupied" | "yours";
+export type BackendSpotStatus = "FREE" | "OCCUPIED";

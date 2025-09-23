@@ -9,12 +9,17 @@ import ParkingSpotList from "../parkingSpotList/ParkingSpotList";
 import MapSwitch from "../switch/mapSwitch";
 import { spotsPL2 } from "@/gl-const/parking-spots-test-data";
 
+type ParkingManagerProps = {
+  pl2: ParkingSpotPL2[];
+  pl3: ParkingSpotPL3[];
+};
+
 const LevelSwitch = ({
   value,
   onChange,
 }: {
   value: "PL2" | "PL3";
-  onChange: (val: "PL2" | "PL3") => void;
+  onChange: React.Dispatch<React.SetStateAction<"PL2" | "PL3">>;
 }) => {
   const baseBtnClasses =
     "flex items-center justify-center w-[97px] h-[40px] rounded-full transition-colors text-white font-medium";
@@ -41,7 +46,7 @@ const LevelSwitch = ({
   );
 };
 
-const ParkingManager = () => {
+const ParkingManager = ({ pl2, pl3 }: ParkingManagerProps) => {
   const { User } = useUserContext();
   const [loading, setLoading] = useState(false);
   const [parkingSpots, setParkingSpots] = useState<
@@ -52,50 +57,9 @@ const ParkingManager = () => {
   >("PL2");
   const [viewMode, setViewMode] = useState<"map" | "list">("map");
 
-  const listParkingSpots = async () => {
-    try {
-      setLoading(true);
-      const response = await fetch(ApiLinks.listParkingSpaces, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          user_id: User.userId,
-          level: selectedParkingLevel,
-        }),
-      });
-
-      if (!response.ok) {
-        const status = response.status;
-        const err = await response.text();
-        toast.error(`Error fetching spots: ${response.status}`, {
-          duration: 5000,
-        });
-        toast.error(`Error fetching spots: ${response.status}`, {
-          duration: 5000,
-        });
-        return;
-      }
-
-      const spots =
-        selectedParkingLevel === "PL2"
-          ? ((await response.json()) as ParkingSpotPL2[])
-          : ((await response.json()) as ParkingSpotPL3[]);
-      setParkingSpots(spots);
-    } catch (error) {
-      console.error(error);
-      toast.error("Something went wrong while fetching spots", {
-        duration: 5000,
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
-    listParkingSpots();
-    // uncomment if you want to test
-    setParkingSpots(spotsPL2);
-  }, [selectedParkingLevel]);
+    setParkingSpots(selectedParkingLevel === "PL2" ? pl2 : pl3);
+  }, [selectedParkingLevel, pl2, pl3]);
 
   return (
     <div className="flex flex-col gap-6 w-full max-w-screen-xl mx-auto p-4 ">
