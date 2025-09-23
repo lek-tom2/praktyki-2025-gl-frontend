@@ -1,51 +1,30 @@
-"use client";
-import React, { useState } from "react";
-
 type LevelSwitchProps = {
-  value?: "PL2" | "PL3";
-  onChange?: (value: "PL2" | "PL3") => void;
-  className?: string;
+  value: "PL2" | "PL3";
+  onChange: React.Dispatch<React.SetStateAction<"PL2" | "PL3">>;
 };
 
-const LevelSwitch = ({ value, onChange, className }: LevelSwitchProps) => {
-  const [internalValue, setInternalValue] = useState<"PL2" | "PL3">("PL2");
-  const isControlled = value !== undefined && onChange !== undefined;
-  const currentValue = isControlled ? value : internalValue;
-
-  const handleSwitch = (newValue: "PL2" | "PL3") => {
-    if (isControlled) {
-      onChange?.(newValue);
-    } else {
-      setInternalValue(newValue);
-    }
-  };
-
+const LevelSwitch = ({ value, onChange }: LevelSwitchProps) => {
+  const baseBtnClasses =
+    "flex items-center justify-center w-1/2 h-10 rounded-4xl transition-colors text-white font-medium";
   return (
-    <div
-      className={`flex items-center bg-base-200 p-1 rounded-full w-[200px] h-[48px] ${
-        className ?? ""
-      }`}
-    >
+    <div className="flex items-center bg-primary p-1 rounded-4xl w-full gap-1 h-12 ">
       <button
-        type="button"
-        className={`flex items-center justify-center w-[97px] h-[40px] rounded-full transition-colors text-white font-medium ${
-          currentValue === "PL2" ? "bg-accent" : "bg-transparent"
+        className={`${baseBtnClasses} ${
+          value === "PL2" ? "bg-accent" : "bg-transparent"
         }`}
-        onClick={() => handleSwitch("PL2")}
+        onClick={() => onChange("PL2")}
       >
         PL-2
       </button>
       <button
-        type="button"
-        className={`flex items-center justify-center w-[97px] h-[40px] rounded-full transition-colors text-white font-medium ${
-          currentValue === "PL3" ? "bg-accent" : "bg-transparent"
+        className={`${baseBtnClasses} ${
+          value === "PL3" ? "bg-accent" : "bg-transparent"
         }`}
-        onClick={() => handleSwitch("PL3")}
+        onClick={() => onChange("PL3")}
       >
         PL-3
       </button>
     </div>
   );
 };
-
 export default LevelSwitch;

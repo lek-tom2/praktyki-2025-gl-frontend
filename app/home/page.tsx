@@ -1,129 +1,142 @@
 "use client";
-import PageTemplateAfterLogin from "../../templates/PageTemplateAfterLogin";
+import PageTemplate from "@/templates/PageTemplate";
 import Input from "@/components/input/input";
 import ParkingManager from "@/components/parkingManager/parkingManager";
-import React, { useEffect, useState } from "react";
+import { ApiLinks } from "@/gl-const/api-links";
+import {
+  BackendSpotStatus,
+  ParkingSpotBackend,
+  ParkingSpotPL2,
+  ParkingSpotPL3,
+  SpotStatus,
+} from "@/gl-types/parkingSpot";
 import { Reservation } from "@/gl-types/reservation";
-import { ParkingSpotBackend } from "@/gl-types/parkingSpot";
-
+import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
 export default function HomePage() {
-	const [parkingList, setParkingList] = useState<ParkingSpotBackend[]>([]);
-	const [reservations, setReservations] = useState<Reservation[]>([]);
-	const [checkIn, setCheckIn] = useState("");
-	const [checkOut, setCheckOut] = useState("");
-	const [availableCount, setAvailableCount] = useState(0);
-	const [occupiedCount, setOccupiedCount] = useState(0);
+  const today = new Date().toISOString().split("T")[0];
+  const tomorrow = new Date(Date.now() + 86400000).toISOString().split("T")[0];
+  const [parkingListPrototype, setParkingListPrototype] = useState<
+    ParkingSpotBackend[]
+  >([]);
+  const [reservations, setReservations] = useState<Reservation[]>([]);
+  const [parkingListPL2, setParkingListPL2] = useState<ParkingSpotPL2[]>([]);
+  const [parkingListPL3, setParkingListPL3] = useState<ParkingSpotPL3[]>([]);
+  const [availableCount, setAvailableCount] = useState(0);
+  const [occupiedCount, setOccupiedCount] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
+  const [checkIn, setCheckIn] = useState<string>(today);
+  const [checkOut, setCheckOut] = useState<string>(tomorrow);
+  const [access, setAccess] = useState<string | null>(null);
 
+  const mapToStatus = (status: BackendSpotStatus): SpotStatus => {
+    if (status === "FREE") return "available";
+    if (status === "OCCUPIED") return "occupied";
+    return "occupied";
+  };
 
-		useEffect(() => {
-			fetch("/api/parking/")
-				.then((res) => res.json())
-				.then((data) => setParkingList(data));
-			fetch("/api/reservations/")
-				.then((res) => res.json())
-				.then((data) => setReservations(data));
-		}, []);
+  const mapToPL2 = (spot: ParkingSpotBackend): ParkingSpotPL2 => ({
+    name: spot.spot_number,
+    aviability: mapToStatus(spot.status),
+    aisle: spot.aisle as ParkingSpotPL2["aisle"],
+  });
 
-			useEffect(() => {
-				const fetchParking = async () => {
-					try {
-						const res = await fetch("/api/parking/");
-						if (!res.ok) {
-							toast.error(`Error fetching parking spots: ${res.status}`);
-							return;
-						}
-						const data = await res.json();
-						setParkingList(data);
-						toast.success("Parking spots loaded");
-					} catch (error) {
-						toast.error("Failed to fetch parking spots");
-					}
-				};
-				const fetchReservations = async () => {
-					try {
-						const res = await fetch("/api/reservations/");
-						if (!res.ok) {
-							toast.error(`Error fetching reservations: ${res.status}`);
-							return;
-						}
-						const data = await res.json();
-						setReservations(data);
-						toast.success("Reservations loaded");
-					} catch (error) {
-						toast.error("Failed to fetch reservations");
-					}
-				};
-				fetchParking();
-				fetchReservations();
-			}, []);
+  const mapToPL3 = (spot: ParkingSpotBackend): ParkingSpotPL3 => ({
+    name: spot.spot_number,
+    aviability: mapToStatus(spot.status),
+    aisle: spot.aisle as ParkingSpotPL3["aisle"],
+  });
 
-		useEffect(() => {
-			if (!checkIn || !checkOut) {
-				setAvailableCount(0);
-				setOccupiedCount(0);
-				return;
-			}
-			const checkInDate = new Date(checkIn);
-			const checkOutDate = new Date(checkOut);
-			let available = 0;
-			let occupied = 0;
-			parkingList.forEach((spot) => {
-				const overlapping = reservations.some((r) => {
-					if (r.spot !== parseInt(spot.spot_number)) return false;
-					const resStart = new Date(r.start_date);
-					const resEnd = new Date(r.end_date);
-					return (checkInDate < resEnd && checkOutDate > resStart);
-				});
-				if (overlapping) {
-					occupied++;
-				} else {
-					available++;
-				}
-			});
-			setAvailableCount(available);
-			setOccupiedCount(occupied);
-		}, [checkIn, checkOut, parkingList, reservations]);
+  const fetchParking = async () => {
+    setIsLoading(true);
+    try {
+      const access = localStorage.getItem("access");
+      let url = ApiLinks.listParkingSpaces;
 
-	return (
-    <PageTemplateAfterLogin>
-			<div className="flex flex-col items-center w-full bg-white min-h-screen pb-8">
-				<div className="w-full flex flex-row justify-center mt-8 gap-8">
-					<div className="flex flex-col w-[25%] min-w-[220px] max-w-[340px]">
-						<p className='text-left text-base-content text-base mb-2'>Check-in</p>
-									<Input
-										className='bg-base-200 rounded-xl h-[56px] text-lg w-full px-6 placeholder:text-[#44465a]'
-										type="date"
-										name="check-in"
-										value={checkIn}
-										onChange={e => setCheckIn(e.target.value)}
-									/>
-					</div>
-					<div className="flex flex-col w-[25%] min-w-[220px] max-w-[340px]">
-						<p className='text-left text-base-content text-base mb-2'>Check-out</p>
-									<Input
-										className='bg-base-200 rounded-xl h-[56px] text-lg w-full px-6 placeholder:text-[#44465a]'
-										type="date"
-										name="check-out"
-										value={checkOut}
-										onChange={e => setCheckOut(e.target.value)}
-									/>
-					</div>
-				</div>
-						<div className="mt-4 text-gray-500 text-sm">
-							Parking spots: {parkingList.length} | Reservations: {reservations.length}<br />
-							<span className="text-green-600 font-semibold">Available: {availableCount}</span> | <span className="text-red-600 font-semibold">Occupied: {occupiedCount}</span>
-						</div>
-				<div
-					className="w-full flex justify-center mt-10 flex-grow overflow-hidden"
-					style={{
-						maxHeight: 'calc(100vh - 220px)', 
-					}}
-				>
-					<ParkingManager />
-				</div>
-			</div>
-    </PageTemplateAfterLogin>
-	);
+      if (checkIn && checkOut) {
+        const startISO = new Date(checkIn).toISOString();
+        const endISO = new Date(checkOut).toISOString();
+        url += `?start_time=${startISO}&end_time=${endISO}`;
+      }
+
+      const res = await fetch(url, {
+        headers: { Authorization: `Bearer ${access}` },
+      });
+      if (!res.ok) throw new Error(`Error: ${res.status}`);
+      const data = (await res.json()) as ParkingSpotBackend[];
+      setParkingListPrototype(data);
+      toast.success("Parking spots loaded");
+    } catch (err) {
+      toast.error("Failed to fetch parking spots");
+    }
+    setIsLoading(false);
+  };
+
+  const fetchReservations = async () => {
+    try {
+      const res = await fetch(ApiLinks.listReservations, {
+        headers: { Authorization: `Bearer ${access}` },
+      });
+      if (!res.ok) throw new Error(`Error: ${res.status}`);
+      const data = (await res.json()).detail as Reservation[];
+      setReservations(data);
+      toast.success("Reservations loaded");
+    } catch (err) {
+      toast.error("Failed to fetch reservations");
+    }
+  };
+
+  useEffect(() => {
+    const access = localStorage.getItem("access");
+    setAccess(access);
+    fetchParking();
+    fetchReservations();
+  }, []);
+
+  useEffect(() => {
+    fetchParking();
+  }, [checkIn, checkOut]);
+
+  // Map backend spots to PL2/PL3
+  useEffect(() => {
+    const pl2Spots = parkingListPrototype
+      .filter((s) => s.floor === -2)
+      .map(mapToPL2);
+    const pl3Spots = parkingListPrototype
+      .filter((s) => s.floor === -3)
+      .map(mapToPL3);
+    setParkingListPL2(pl2Spots);
+    setParkingListPL3(pl3Spots);
+
+    let available = 0;
+    let occupied = 0;
+    parkingListPrototype.forEach((spot) => {
+      if (spot.status === "FREE") available++;
+      else occupied++;
+    });
+    setAvailableCount(available);
+    setOccupiedCount(occupied);
+  }, [parkingListPrototype]);
+
+  return (
+    <PageTemplate>
+      <div className="flex flex-col items-center w-full bg-primary text-base-content h-full">
+        {isLoading ? (
+          <p>Loading parking...</p>
+        ) : (
+          <ParkingManager
+            pl2={parkingListPL2}
+            pl3={parkingListPL3}
+            availableCount={availableCount}
+            occupiedCount={occupiedCount}
+            checkIn={checkIn}
+            checkOut={checkOut}
+            setCheckIn={setCheckIn}
+            setCheckOut={setCheckOut}
+          />
+        )}
+      </div>
+    </PageTemplate>
+  );
 }

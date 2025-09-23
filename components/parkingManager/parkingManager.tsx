@@ -1,133 +1,194 @@
 "use client";
-import { ApiLinks } from "@/gl-const/api-links";
-import useUserContext from "@/gl-context/UserContextProvider";
 import { ParkingSpotPL2, ParkingSpotPL3 } from "@/gl-types/parkingSpot";
 import React, { useEffect, useState } from "react";
-import toast from "react-hot-toast";
+import { useForm, Controller } from "react-hook-form";
 import ParkingSpotMap from "../parkingSpotMap/ParkingSpotMap";
 import ParkingSpotList from "../parkingSpotList/ParkingSpotList";
 import MapSwitch from "../switch/mapSwitch";
-import { spotsPL2 } from "@/gl-const/parking-spots-test-data";
+import Input from "../input/input";
+import LevelSwitch from "../switch/parkingLevelSwitch";
+import toast from "react-hot-toast";
 
-const LevelSwitch = ({
-  value,
-  onChange,
-}: {
-  value: "PL2" | "PL3";
-  onChange: (val: "PL2" | "PL3") => void;
-}) => {
-  const baseBtnClasses =
-    "flex items-center justify-center w-[97px] h-[40px] rounded-full transition-colors text-white font-medium";
-
-  return (
-    <div className="flex items-center bg-base-200 p-1 rounded-full w-[200px] h-[48px]">
-      <button
-        className={`${baseBtnClasses} ${
-          value === "PL2" ? "bg-accent" : "bg-transparent"
-        }`}
-        onClick={() => onChange("PL2")}
-      >
-        PL-2
-      </button>
-      <button
-        className={`${baseBtnClasses} ${
-          value === "PL3" ? "bg-accent" : "bg-transparent"
-        }`}
-        onClick={() => onChange("PL3")}
-      >
-        PL-3
-      </button>
-    </div>
-  );
+type ParkingManagerProps = {
+  pl2: ParkingSpotPL2[];
+  pl3: ParkingSpotPL3[];
+  availableCount: number;
+  occupiedCount: number;
+  checkIn: string;
+  checkOut: string;
+  setCheckIn: React.Dispatch<React.SetStateAction<string>>;
+  setCheckOut: React.Dispatch<React.SetStateAction<string>>;
 };
 
-const ParkingManager = () => {
-  const { User } = useUserContext();
-  const [loading, setLoading] = useState(false);
-  const [parkingSpots, setParkingSpots] = useState<
-    ParkingSpotPL2[] | ParkingSpotPL3[]
-  >([]);
+type FormValues = {
+  checkIn: string;
+  checkOut: string;
+};
+
+const ParkingManager = ({
+  pl2,
+  pl3,
+  availableCount,
+  occupiedCount,
+  checkIn,
+  checkOut,
+  setCheckIn,
+  setCheckOut,
+}: ParkingManagerProps) => {
   const [selectedParkingLevel, setSelectedParkingLevel] = useState<
     "PL2" | "PL3"
   >("PL2");
   const [viewMode, setViewMode] = useState<"map" | "list">("map");
+  const [parkingSpots, setParkingSpots] = useState<
+    ParkingSpotPL2[] | ParkingSpotPL3[]
+  >([]);
+  const [search, setSearch] = useState("");
+  const [filter, setFilter] = useState("all");
 
-  const listParkingSpots = async () => {
-    try {
-      setLoading(true);
-      const response = await fetch(ApiLinks.listParkingSpaces, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          user_id: User.userId,
-          level: selectedParkingLevel,
-        }),
-      });
+  const { control, watch, setValue } = useForm<FormValues>({
+    defaultValues: {
+      checkIn,
+      checkOut,
+    },
+  });
 
-      if (!response.ok) {
-        const status = response.status;
-        const err = await response.text();
-        toast.error(`Error fetching spots: ${response.status}`, {
-          duration: 5000,
-        });
-        toast.error(`Error fetching spots: ${response.status}`, {
-          duration: 5000,
-        });
+  const watchCheckIn = watch("checkIn");
+  const watchCheckOut = watch("checkOut");
+
+  useEffect(() => {
+    if (watchCheckIn && watchCheckOut) {
+      const checkInDate = new Date(watchCheckIn);
+      const checkOutDate = new Date(watchCheckOut);
+
+      if (checkOutDate < checkInDate) {
+        const newCheckOut = new Date(checkInDate.getTime() + 86400000)
+          .toISOString()
+          .split("T")[0];
+
+        toast.error(
+          "Check-out cannot be before check-in, auto-corrected to next day!"
+        );
+        setValue("checkOut", newCheckOut);
+        setCheckOut(newCheckOut);
+        setCheckIn(watchCheckIn);
         return;
       }
 
-      const spots =
-        selectedParkingLevel === "PL2"
-          ? ((await response.json()) as ParkingSpotPL2[])
-          : ((await response.json()) as ParkingSpotPL3[]);
-      setParkingSpots(spots);
-    } catch (error) {
-      console.error(error);
-      toast.error("Something went wrong while fetching spots", {
-        duration: 5000,
-      });
-    } finally {
-      setLoading(false);
+      setCheckIn(watchCheckIn);
+      setCheckOut(watchCheckOut);
     }
-  };
+  }, [watchCheckIn, watchCheckOut, setCheckIn, setCheckOut, setValue]);
 
   useEffect(() => {
-    listParkingSpots();
-    // uncomment if you want to test
-    setParkingSpots(spotsPL2);
-  }, [selectedParkingLevel]);
+    setParkingSpots(selectedParkingLevel === "PL2" ? pl2 : pl3);
+  }, [selectedParkingLevel, pl2, pl3]);
 
   return (
-    <div className="flex flex-col gap-6 w-full max-w-screen-xl mx-auto p-4 ">
-      <div className="flex flex-row items-center justify-between">
-        <p className="text-2xl font-semibold">
-          Found {parkingSpots.length} spots on level{" "}
-          {selectedParkingLevel === "PL2" ? "-2" : "-3"}
-        </p>
+    <div className="w-3/4 h-full flex flex-row items-center justify-center gap-6">
+      {/* Map/List Center */}
+      <div className="h-[90%] w-3/4 flex justify-center items-start">
+        {viewMode === "map" ? (
+          <ParkingSpotMap
+            parkingSpots={parkingSpots}
+            level={selectedParkingLevel}
+            search={search}
+            filter={filter}
+          />
+        ) : (
+          <ParkingSpotList
+            parkingSpots={parkingSpots}
+            level={selectedParkingLevel}
+            search={search}
+            filter={filter}
+          />
+        )}
+      </div>
 
-        <div className="flex gap-4">
+      {/* Right-side control panel */}
+      <div className="w-1/4 flex flex-col gap-6 bg-secondary h-[90%] overflow-y-auto overflow-x-hidden p-6 rounded-xl shadow-lg justify-center">
+        {/* Check-in/out */}
+        <div className="flex flex-col gap-2">
+          <label htmlFor="checkin">Check-in</label>
+          <Controller
+            name="checkIn"
+            control={control}
+            rules={{ required: true }}
+            render={({ field }) => (
+              <Input type="date" {...field} width="w-full" id="checkin" />
+            )}
+          />
+        </div>
+
+        <div className="flex flex-col gap-2">
+          <label htmlFor="checkout">Check-out</label>
+          <Controller
+            name="checkOut"
+            control={control}
+            rules={{
+              required: true,
+              validate: (value) =>
+                new Date(value) >= new Date(watchCheckIn) ||
+                "Check-out must be after check-in",
+            }}
+            render={({ field }) => (
+              <Input type="date" {...field} width="w-full" id="checkout" />
+            )}
+          />
+        </div>
+
+        {/* Parking Level */}
+        <div className="flex flex-col gap-2">
+          <label>Switch Parking Level</label>
           <LevelSwitch
             value={selectedParkingLevel}
             onChange={setSelectedParkingLevel}
           />
+        </div>
 
+        {/* View mode */}
+        <div className="flex flex-col gap-2">
+          <label>Switch View Mode</label>
           <MapSwitch value={viewMode} onChange={setViewMode} />
         </div>
-      </div>
 
-      {loading ? (
-        <p>Loading spots...</p>
-      ) : viewMode === "map" ? (
-        <ParkingSpotMap
-          parkingSpots={parkingSpots}
-          level={selectedParkingLevel}
-        />
-      ) : (
-        <ParkingSpotList
-          parkingSpots={parkingSpots}
-          level={selectedParkingLevel}
-        />
-      )}
+        {/* Search */}
+        <div className="flex flex-col gap-2">
+          <label>Search Parking</label>
+          <Input
+            type="search"
+            placeholder="Search parking spot..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            name="search"
+            background="bg-primary"
+            width="w-full"
+          />
+        </div>
+
+        {/* Filter */}
+        <div className="flex flex-col gap-2">
+          <label>Filter Parking</label>
+          <select
+            value={filter}
+            onChange={(e) => setFilter(e.target.value)}
+            className="select bg-primary border-0 h-9 text-base-content hover:scale-105 focus:scale-105 duration-300 w-full"
+          >
+            <option value="all">All</option>
+            <option value="available">Available</option>
+            <option value="occupied">Occupied</option>
+            <option value="reserved">Reserved</option>
+            <option value="yours">Yours</option>
+          </select>
+        </div>
+
+        <div className="flex flex-col gap-2">
+          <div className="text-sm mt-2">
+            <p>Total spots: {parkingSpots.length}</p>
+            <p>Available: {availableCount}</p>
+            <p>Occupied: {occupiedCount}</p>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
