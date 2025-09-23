@@ -145,7 +145,7 @@ export default function Home() {
 
   setLoading(true);
   try {
-    const token = localStorage.getItem("access"); // lub pobierz z kontekstu
+    const token = localStorage.getItem("access"); 
     if (!token) {
       toast.error("No token found. Please log in.");
       setLoading(false);
@@ -159,7 +159,7 @@ export default function Home() {
       changedFields.push("Email");
     }
     if (fullName.trim()) {
-      payload.full_name = fullName; // pole zgodne z backendem
+      payload.full_name = fullName; 
       changedFields.push("Full name");
     }
     if (phone.trim()) {
