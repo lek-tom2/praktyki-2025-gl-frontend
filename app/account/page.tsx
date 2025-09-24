@@ -337,18 +337,66 @@ export default function Home() {
     }
   };
 
-  const handleDeleteVehicle = async (registration_number: string) => {
-    setLoading(true);
-    try {
-      const response = await fetch(`/api/vehicles/${registration_number}`, {
-        method: "DELETE",
+  const handleDeleteVehicle = async (vehicleId: number) => {
+  setLoading(true);
+  try {
+    // Pobierz token z localStorage
+    const token = localStorage.getItem('access');
+    if (!token) {
+      toast.error("Authentication required. Please log in again.", {
+        duration: 5000,
       });
+      return;
+    }
 
-      if (response.ok) {
+    console.log("Deleting vehicle ID:", vehicleId);
+
+    const response = await fetch(`http://localhost:8000/api/vehicles/${vehicleId}/`, {
+      method: "DELETE",
+      headers: {
+        "Authorization": `Bearer ${token}`,
+        "Content-Type": "application/json"
+      },
+    });
+
+    console.log("Delete response status:", response.status);
+
+    if (response.ok) {
+      // Usuń pojazd z lokalnego stanu
+      setVehicles((prev) =>
+        prev.filter((v) => v.id !== vehicleId)
+      );
+      toast.success("Vehicle has been removed from your account.", {
+        duration: 5000,
+      });
+    } else {
+      const errorData = await response.json();
+      console.log("Delete vehicle error:", errorData);
+      
+      // Sprawdź czy to błąd autentyfikacji
+      if (response.status === 401) {
+        toast.error("Session expired. Please log in again.", {
+          duration: 5000,
+        });
+        localStorage.removeItem('access');
+        return;
+      }
+      
+      // Sprawdź czy pojazd nie istnieje
+      if (response.status === 404) {
+        toast.error("Vehicle not found. It may have been already deleted.", {
+          duration: 5000,
+        });
+        // Usuń z lokalnego stanu nawet jeśli backend zwraca 404
         setVehicles((prev) =>
-          prev.filter((v) => v.registration_number !== registration_number)
+          prev.filter((v) => v.id !== vehicleId)
         );
-        toast.success("Vehicle has been removed from your account.", {
+        return;
+      }
+      
+      // Obsługa innych błędów
+      if (errorData.detail) {
+        toast.error(errorData.detail, {
           duration: 5000,
         });
       } else {
@@ -356,14 +404,16 @@ export default function Home() {
           duration: 5000,
         });
       }
-    } catch (error) {
-      toast.error("Unexpected error. Try again later.", {
-        duration: 5000,
-      });
-    } finally {
-      setLoading(false);
     }
-  };
+  } catch (error) {
+    console.error("Delete vehicle error:", error);
+    toast.error("Network error. Please try again later.", {
+      duration: 5000,
+    });
+  } finally {
+    setLoading(false);
+  }
+};
   const handleEditClick = (idx: number) => {
     setEditIdx(idx);
     setEditBrand(vehicles[idx].brand);
@@ -686,14 +736,12 @@ const handleEditSave = async () => {
                               className="w-6 h-6 mr-2 cursor-pointer"
                               onClick={() => handleEditClick(idx)}
                             />
-                            <img
-                              src="/bin.png"
-                              alt="delete"
-                              className="w-6 h-6 mr-6 cursor-pointer"
-                              onClick={() =>
-                                handleDeleteVehicle(vehicle.registration_number)
-                              }
-                            />
+                          <img
+  src="/bin.png"
+  alt="delete"
+  className="w-6 h-6 mr-6 cursor-pointer"
+  onClick={() => handleDeleteVehicle(vehicle.id)} 
+/>
                           </div>
                         </>
                       )}
