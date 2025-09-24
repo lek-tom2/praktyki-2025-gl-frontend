@@ -1,18 +1,18 @@
 "use client";
-import Rseact, { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useForm, SubmitHandler } from "react-hook-form";
+import toast from "react-hot-toast";
 import useUserContext from "@/gl-context/UserContextProvider";
-import { toast } from "react-hot-toast";
-import { useParams } from "next/navigation";
-
-import PageTemplateAfterLogin from "../../../templates/PageTemplateAfterLogin";
+import { useParams, useRouter } from "next/navigation";
+import PageTemplateAfterLogin from "@/templates/PageTemplateAfterLogin";
 import Input from "@/components/input/input";
 import Button from "@/components/button";
 import PopupOverlay from "@/components/popup/popup";
-import { ParkingSpotBackend } from "@/gl-types/parkingSpot";
-import { Vehicle } from "@/gl-types/vehicle";
 import { ApiLinks } from "@/gl-const/api-links";
-import PageTemplate from "@/templates/PageTemplate";
 import Image from "next/image";
+import PageTemplate from "@/templates/PageTemplate";
+import FormErrorParagraph from "@/components/FormError/formErrorParagraph";
+import { Vehicle } from "@/gl-types/vehicle";
 
 type Params = {
   id: string | string[];
@@ -49,28 +49,45 @@ export type ParkingSpotReservationDetails = {
   next_reservation: ReservationDetail | null; // upcoming reservation
 };
 
+type ReservationFormInputs = {
+  start_date: string; // YYYY-MM-DD
+  end_date: string; // YYYY-MM-DD
+  vehicle: number;
+};
+
 export default function ParkingSpaces() {
   const { User } = useUserContext();
   const params = useParams() as Params;
   const spotId = Array.isArray(params.id) ? params.id[0] : params.id;
+  const [vehicles, setVehicles] = useState<Vehicle[]>([]);
+  const [vehiclesError, setVehiclesError] = useState(false);
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+    reset,
+    getValues,
+  } = useForm<ReservationFormInputs>({
+    mode: "onTouched",
+  });
+
+  const router = useRouter();
 
   const [parkingSpotBackend, setParkingSpotBackend] =
     useState<ParkingSpotReservationDetails | null>(null);
   const [open, setOpen] = useState(false);
-
+  const token = localStorage.getItem("access");
   // Fetch parking spot + reservations info
   useEffect(() => {
     const fetchParkingSpot = async () => {
-      const token = localStorage.getItem("access");
       if (!token) return;
-
       try {
         const res = await fetch(ApiLinks.listParkingDetails(spotId ?? "-1"), {
           headers: { Authorization: `Bearer ${token}` },
         });
         if (!res.ok) throw new Error(`Error: ${res.status}`);
         const data = await res.json();
-        console.log("Parking spot data:", data);
         setParkingSpotBackend(data);
       } catch (err) {
         toast.error("Failed to load parking spot info");
@@ -78,9 +95,56 @@ export default function ParkingSpaces() {
       }
     };
     fetchParkingSpot();
+
+    const fetchVehicles = async () => {
+      if (!token) return;
+      try {
+        const res = await fetch(ApiLinks.listVehicles, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (!res.ok) throw new Error(`Error: ${res.status}`);
+        const data = (await res.json()) as Vehicle[];
+        console.log(data);
+        setVehicles(data);
+      } catch (err) {
+        toast.error("Failed to load parking spot info");
+        console.error(err);
+      }
+    };
+    fetchParkingSpot();
+    fetchVehicles();
   }, [spotId]);
 
   // Fetch vehicles for user
+
+  const onSubmit = () => {
+    const createReservation = async () => {
+      try {
+        const req = JSON.stringify({
+          start_date: getValues().start_date,
+          end_date: getValues().end_date,
+          spot: spotId,
+          vehicle_id: getValues().vehicle,
+        });
+        console.log(req);
+        const res = await fetch(ApiLinks.createReservation, {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: req,
+        });
+        if (!res.ok) throw new Error(`Error: ${res.status}`);
+        const data = await res.json();
+        console.log(data);
+      } catch (err) {
+        toast.error("Failed to create reservation");
+        console.error(err);
+      }
+    };
+    createReservation();
+  };
 
   return (
     <PageTemplate>
@@ -196,6 +260,7 @@ export default function ParkingSpaces() {
                 type="button"
                 value="Create Reservation"
                 hoverEffect={true}
+                customWidth={"w-full"}
                 onClick={() => setOpen(true)}
               />
             </div>
@@ -205,14 +270,78 @@ export default function ParkingSpaces() {
         </div>
       </div>
 
+      {/* Your PopupOverlay reservation form */}
       <PopupOverlay
         open={open}
         onOpenChange={setOpen}
         title="Create Reservation"
-        description={`Spot: ${parkingSpotBackend?.spot_number}`}
+        description="Fill in your reservation details"
         boxClassName="bg-base-200"
       >
-        {/* Reservation form code stays the same */}
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+          {/* Start Date */}
+          <label htmlFor="start_date" className="flex flex-col">
+            <div>Checkin</div>
+            <Input
+              type="date"
+              placeholder="Start Date"
+              {...register("start_date", {
+                required: "Start date is required",
+              })}
+              width="w-full"
+            />
+            <FormErrorParagraph errorObject={errors.start_date} />
+          </label>
+
+          {/* End Date */}
+          <label htmlFor="end_date" className="flex flex-col">
+            <div>Checkout</div>
+            <Input
+              type="date"
+              placeholder="End Date"
+              width="w-full"
+              {...register("end_date", { required: "End date is required" })}
+            />
+            <FormErrorParagraph errorObject={errors.end_date} />
+          </label>
+
+          {/* Vehicle Selection */}
+          <label htmlFor="vehicle" className="flex flex-col">
+            <div>Select Vehicle</div>
+            {vehiclesError || vehicles.length === 0 ? (
+              <Button
+                type="button"
+                value="Add Vehicle"
+                hoverEffect
+                onClick={() => {
+                  router.push("/account");
+                }}
+              />
+            ) : (
+              <select
+                {...register("vehicle", { required: "Vehicle is required" })}
+                className="select text-base-content bg-primary select-bordered w-full"
+              >
+                <option value="">Select vehicle</option>
+                {vehicles.map((v) => (
+                  <option key={v.registration_number} value={v.id}>
+                    {v.brand} ({v.registration_number})
+                  </option>
+                ))}
+              </select>
+            )}
+            <FormErrorParagraph errorObject={errors.vehicle} />
+          </label>
+
+          {/* Submit */}
+          <div className="flex justify-center gap-4">
+            <Button
+              type="submit"
+              value={isSubmitting ? "Creating..." : "Create Reservation"}
+              hoverEffect
+            />
+          </div>
+        </form>
       </PopupOverlay>
     </PageTemplate>
   );

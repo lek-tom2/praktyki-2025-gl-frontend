@@ -10,5 +10,7 @@ export const ApiLinks = {
   listParkingDetails: (id: string) => {
     return host + "/api/parking/" + id;
   },
+  listVehicles: host + "/api/vehicles/",
   listReservations: host + "/api/reservations/list/",
+  createReservation: host + "/api/reservations/create/",
 } as const;
