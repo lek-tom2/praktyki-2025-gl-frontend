@@ -311,31 +311,132 @@ export default function Home() {
   };
 
   const handleDeleteAccount = async (e: React.FormEvent) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    setLoading(true);
-    try {
-      const response = await fetch("/api/deleteAccount", {
-        method: "DELETE",
-      });
+  // Dodaj potwierdzenie przed usunięciem konta
+  const confirmed = window.confirm(
+    "Are you sure you want to delete your account? This action is permanent and cannot be undone."
+  );
+  
+  if (!confirmed) {
+    return;
+  }
 
-      if (response.ok) {
-        toast.success("Your account has been permanently deleted.", {
-          duration: 5000,
-        });
-      } else {
-        toast.error("Failed to delete account. Try again later.", {
-          duration: 5000,
-        });
-      }
-    } catch (error) {
-      toast.error("Unexpected error. Try again later.", {
+  setLoading(true);
+  try {
+    // Pobierz token z localStorage
+    const token = localStorage.getItem('access');
+    if (!token) {
+      toast.error("Authentication required. Please log in again.", {
         duration: 5000,
       });
-    } finally {
-      setLoading(false);
+      return;
     }
-  };
+
+    console.log("Deleting user account...");
+
+    const response = await fetch("http://localhost:8000/api/user/delete/", {
+      method: "DELETE",
+      headers: {
+        "Authorization": `Bearer ${token}`,
+        "Content-Type": "application/json"
+      },
+    });
+
+    console.log("Delete account response status:", response.status);
+
+    if (response.ok) {
+      // Nie próbuj czytać response.json() jeśli serwer nie zwraca danych
+      console.log("Account deleted successfully");
+      
+      toast.success("Your account has been permanently deleted.", {
+        duration: 5000,
+      });
+      
+      // Wyloguj użytkownika i wyczyść dane RĘCZNIE zamiast używać logout()
+      UserDispatch({
+        type: "setUser",
+        value: {
+          username: null,
+          profilePicture: null,
+          theme: User.theme,
+          userId: null,
+          email: null,
+          accountVerified: null,
+          passwordLength: null,
+          authorities: null,
+          accountNonLocked: null,
+          token: null,
+          languageIso2: User.languageIso2,
+          is_activated: false,
+          is_staff: false,
+          phone_number: null,
+          full_name: null,
+        },
+      });
+      
+      // Wyczyść localStorage
+      localStorage.removeItem('access');
+      localStorage.removeItem('refresh');
+      
+      // Przekieruj na stronę główną
+      setTimeout(() => {
+        router.push('/');
+      }, 2000);
+      
+    } else {
+      let errorMessage = "Failed to delete account. Try again later.";
+      
+      try {
+        const errorData = await response.json();
+        console.log("Delete account error:", errorData);
+        
+        if (errorData.detail) {
+          errorMessage = errorData.detail;
+        }
+      } catch (jsonError) {
+        console.log("Could not parse error response as JSON");
+      }
+      
+      // Sprawdź specyficzne kody błędów
+      if (response.status === 401) {
+        toast.error("Session expired. Please log in again.", {
+          duration: 5000,
+        });
+        localStorage.removeItem('access');
+        return;
+      }
+      
+      if (response.status === 403) {
+        toast.error("You don't have permission to delete this account.", {
+          duration: 5000,
+        });
+        return;
+      }
+      
+      if (response.status === 404) {
+        toast.error("Account not found. It may have been already deleted.", {
+          duration: 5000,
+        });
+        // Wyloguj nawet jeśli konto nie istnieje
+        localStorage.removeItem('access');
+        router.push('/');
+        return;
+      }
+      
+      toast.error(errorMessage, {
+        duration: 5000,
+      });
+    }
+  } catch (error) {
+    console.error("Delete account network error:", error);
+    toast.error("Network error. Please check your connection and try again.", {
+      duration: 5000,
+    });
+  } finally {
+    setLoading(false);
+  }
+};
 
   const handleDeleteVehicle = async (vehicleId: number) => {
   setLoading(true);
