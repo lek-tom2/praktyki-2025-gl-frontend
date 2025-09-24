@@ -4,6 +4,7 @@ import useUserContext from "@/gl-context/UserContextProvider";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
+import ThemeSwitcher from "@/components/themeSwitcher/ThemeSwitcher";
 
 const NavbarTemplate = () => {
   // logged user
@@ -38,6 +39,7 @@ const NavbarTemplate = () => {
           {/* </label> */}
         </div>
         <div className="mr-20 flex flex-row gap-4 items-center ml-10 pl-6 pr-6 pt-2 pb-2 bg-primary rounded-4xl">
+          <ThemeSwitcher />
           {User.username}
           <div className="avatar relative w-8 h-8 bg-gray-300 rounded-full ml-6">
             <Image src={"/defaultUser.png"} fill={true} alt={"G"}></Image>

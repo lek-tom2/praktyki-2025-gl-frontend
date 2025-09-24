@@ -19,7 +19,11 @@ const ThemeSwitcher = () => {
 
   return (
     <div
-      className={`rounded-2xl w-22 h-10 cursor-pointer transition-colors duration-500 bg-secondary flex items-center relative`}
+      className={`rounded-2xl w-22 h-10 cursor-pointer transition-colors duration-500 flex items-center relative ${
+        User.theme === Themes.glDark 
+          ? "bg-base-300"  // szary dla dark mode z globals.css
+          : "bg-white"  // szary dla light mode z globals.css
+      }`}
       onClick={changeTheme}
     >
       <div
