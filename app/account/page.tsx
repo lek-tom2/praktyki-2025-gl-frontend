@@ -370,49 +370,83 @@ export default function Home() {
     setEditRegNum(vehicles[idx].registration_number);
   };
 
-  const handleEditSave = async () => {
-    if (!editBrand.trim()) {
-      toast.error("Brand is required.", {
-        duration: 5000,
-      });
-      return;
-    }
-    if (!editRegNum.trim()) {
-      toast.error("Registration number is required.", {
+const handleEditSave = async () => {
+  if (!editBrand.trim()) {
+    toast.error("Brand is required.", {
+      duration: 5000,
+    });
+    return;
+  }
+  if (!editRegNum.trim()) {
+    toast.error("Registration number is required.", {
+      duration: 5000,
+    });
+    return;
+  }
+
+  setLoading(true);
+  try {
+    // Pobierz token z localStorage
+    const token = localStorage.getItem('access');
+    if (!token) {
+      toast.error("Authentication required. Please log in again.", {
         duration: 5000,
       });
       return;
     }
 
-    setLoading(true);
-    try {
-      const updatedVehicle: Vehicle = {
-        id: vehicles[editIdx!].id,
-        spot: vehicles[editIdx!].spot,
+    // Użyj endpointu z ID pojazdu
+    const response = await fetch(`http://localhost:8000/api/vehicles/${vehicles[editIdx!].id}/`, {
+      method: "PUT",
+      headers: { 
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`
+      },
+      body: JSON.stringify({
         registration_number: editRegNum,
         brand: editBrand,
         model: vehicles[editIdx!].model,
-        year: vehicles[editIdx!].year,
+        year: vehicles[editIdx!].year, // Użyj "year" małymi literami
         color: vehicles[editIdx!].color,
+      }),
+    });
+
+    if (response.ok) {
+      const responseData = await response.json();
+      console.log("Update vehicle response:", responseData);
+      
+      // Aktualizuj pojazd w stanie
+      const updatedVehicle = {
+        ...vehicles[editIdx!],
+        registration_number: editRegNum,
+        brand: editBrand,
       };
-
-      const response = await fetch(
-        `/api/vehicles/${vehicles[editIdx!].registration_number}`,
-        {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(updatedVehicle),
-        }
+      
+      setVehicles((prev) =>
+        prev.map((v, idx) => (idx === editIdx ? updatedVehicle : v))
       );
-
-      if (response.ok) {
-        setVehicles((prev) =>
-          prev.map((v, idx) => (idx === editIdx ? updatedVehicle : v))
-        );
-        setEditIdx(null);
-        setEditBrand("");
-        setEditRegNum("");
-        toast.success("Vehicle details have been updated!", {
+      setEditIdx(null);
+      setEditBrand("");
+      setEditRegNum("");
+      toast.success("Vehicle details have been updated!", {
+        duration: 5000,
+      });
+    } else {
+      const errorData = await response.json();
+      console.log("Update vehicle error:", errorData);
+      
+      // Sprawdź czy to błąd autentyfikacji
+      if (response.status === 401) {
+        toast.error("Session expired. Please log in again.", {
+          duration: 5000,
+        });
+        localStorage.removeItem('access');
+        return;
+      }
+      
+      // Obsługa błędów z API
+      if (errorData.detail) {
+        toast.error(errorData.detail, {
           duration: 5000,
         });
       } else {
@@ -420,14 +454,16 @@ export default function Home() {
           duration: 5000,
         });
       }
-    } catch (error) {
-      toast.error("Unexpected error. Try again later.", {
-        duration: 5000,
-      });
-    } finally {
-      setLoading(false);
     }
-  };
+  } catch (error) {
+    console.error("Vehicle update error:", error);
+    toast.error("Unexpected error. Try again later.", {
+      duration: 5000,
+    });
+  } finally {
+    setLoading(false);
+  }
+};
 
   const handleEditCancel = () => {
     setEditIdx(null);
