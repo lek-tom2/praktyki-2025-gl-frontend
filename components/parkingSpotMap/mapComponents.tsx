@@ -25,14 +25,11 @@ export const Separator = ({ text }: separatorProps) => {
 export const ParkingSpot = ({
   name,
   aviability,
-  visible = true,
   grayed = false,
   onClick = undefined,
 }: parkingSpotProps) => {
-  if (!visible) return null;
-
   const bgClass = grayed
-    ? "bg-gray-600"
+    ? "bg-gray-600 opacity-50"
     : aviability === "occupied"
     ? "bg-rose-800"
     : aviability === "available"

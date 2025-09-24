@@ -17,10 +17,14 @@ const ParkingSpotMap = ({
   search,
   filter,
 }: ParkingSpotMapProps) => {
+  const exactMatchPattern = /^[A-Za-z]\d{3}$/;
+  const isExactSearch = exactMatchPattern.test(search.trim());
+
   const filteredSpots = parkingSpots.map((spot) => {
     const matchesSearch = spot.name
       .toLowerCase()
       .includes(search.toLowerCase());
+
     const matchesFilter =
       filter === "all" ||
       (filter === "available" && spot.aviability === "available") ||
@@ -28,10 +32,12 @@ const ParkingSpotMap = ({
       (filter === "reserved" && spot.aviability === "reserved") ||
       (filter === "yours" && spot.aviability === "yours");
 
+    const matchesAll = matchesSearch && matchesFilter;
+
     return {
       ...spot,
-      visible: matchesSearch && matchesFilter,
-      grayed: !(matchesSearch && matchesFilter),
+      visible: matchesAll,
+      grayed: !matchesAll,
     };
   });
 
@@ -40,9 +46,16 @@ const ParkingSpotMap = ({
     label: string,
     addBottom?: string
   ) => {
-    const aisleSpots = filteredSpots.filter(
-      (spot) => spot.aisle === aisleName && spot.visible
-    );
+    if (isExactSearch) {
+      const searchedSpot = filteredSpots.find(
+        (spot) => spot.name.toLowerCase() === search.toLowerCase()
+      );
+      if (!searchedSpot || searchedSpot.aisle !== aisleName) {
+        return null;
+      }
+    }
+
+    const aisleSpots = filteredSpots.filter((spot) => spot.aisle === aisleName);
     if (!aisleSpots.length) return null;
 
     return (
@@ -53,8 +66,7 @@ const ParkingSpotMap = ({
               key={spot.name + "-" + i}
               name={spot.name}
               aviability={spot.aviability}
-              visible={spot.visible}
-              grayed={spot.grayed}
+              grayed={spot.grayed && !isExactSearch}
             />
           ))}
         </Aisle>
@@ -68,8 +80,7 @@ const ParkingSpotMap = ({
                   key={spot.name + "-" + addBottom + "-" + i}
                   name={spot.name}
                   aviability={spot.aviability}
-                  visible={spot.visible}
-                  grayed={spot.grayed}
+                  grayed={spot.grayed && !isExactSearch}
                 />
               ))}
           </Aisle>
