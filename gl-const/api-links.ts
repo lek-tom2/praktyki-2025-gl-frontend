@@ -7,5 +7,8 @@ export const ApiLinks = {
   jwtLogin: host + "/api/token/login/",
   refresh: host + "/api/token/refresh/",
   listParkingSpaces: host + "/api/parking/",
+  listParkingDetails: (id: string) => {
+    return host + "/api/parking/" + id;
+  },
   listReservations: host + "/api/reservations/list/",
 } as const;

@@ -1,4 +1,5 @@
 export type ParkingSpotPL2 = {
+  id: string;
   name: string;
   aviability: SpotStatus;
   buildingPhoto?: string;
@@ -12,6 +13,7 @@ export type ParkingSpotPL2 = {
     | "tunnel";
 };
 export type ParkingSpotPL3 = {
+  id: string;
   name: string;
   aviability: SpotStatus;
   buildingPhoto?: string;
@@ -24,6 +26,7 @@ export type ParkingSpotPL3 = {
 };
 
 export type ParkingSpotBackend = {
+  id: string;
   spot_number: string;
   floor: number;
   status: BackendSpotStatus;

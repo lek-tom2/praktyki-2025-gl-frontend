@@ -67,6 +67,7 @@ const ParkingSpotMap = ({
               name={spot.name}
               aviability={spot.aviability}
               grayed={spot.grayed && !isExactSearch}
+              id={spot.id}
             />
           ))}
         </Aisle>
@@ -81,6 +82,7 @@ const ParkingSpotMap = ({
                   name={spot.name}
                   aviability={spot.aviability}
                   grayed={spot.grayed && !isExactSearch}
+                  id={spot.id}
                 />
               ))}
           </Aisle>
