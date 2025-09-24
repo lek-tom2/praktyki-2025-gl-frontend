@@ -1,36 +1,54 @@
 "use client";
 
-import React, { useState } from "react";
+
+import React, { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import logout from "@/logout";
+import LogoutButton from "../logoutButton/LogoutButton";
+import Themes from "@/gl-const/themes";
 import ThemeSwitcher from "../themeSwitcher/ThemeSwitcher";
 
 export default function IconWithPopup() {
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
+  const popupRef = useRef<HTMLDivElement>(null);
+  const buttonRef = useRef<HTMLButtonElement>(null);
 
-  const handleClickOutside = (event: React.MouseEvent<HTMLDivElement>) => {
-    const target = event.target as HTMLElement;
-
-    if (!target.closest("#popup") && !target.closest("#icon-btn")) {
-      setIsOpen(false);
+  // Close popup on outside click
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (
+        popupRef.current &&
+        !popupRef.current.contains(event.target as Node) &&
+        buttonRef.current &&
+        !buttonRef.current.contains(event.target as Node)
+      ) {
+        setIsOpen(false);
+      }
     }
-  };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   return (
-    <div onClick={handleClickOutside}>
-
-      <div className="flex justify-end mr-[15%] mt-4">
-        <button id="icon-btn" onClick={() => setIsOpen(!isOpen)}>
-          <img src="/people.png" alt="icon" className="w-8 h-8" />
-        </button>
-      </div>
-
+    <div className="relative mt-1">
+      <button
+        ref={buttonRef}
+        onClick={() => setIsOpen(!isOpen)}
+        className="w-6 h-6 rounded-full overflow-hidden"
+      >
+        <img
+          src="/people.png"
+          alt="icon"
+          className="w-full h-full object-cover"
+        />
+      </button>
 
       {isOpen && (
         <div
-          id="popup"
-          className="fixed top-[64px] right-0 mr-[15%] z-50 flex justify-end"
+          ref={popupRef}
+          className="absolute right-0 mt-2 w-64 bg-secondary shadow-lg rounded-lg z-50"
         >
           <div className="bg-secondary bg-opacity-25 shadow-lg text-white w-64 h-auto">
             <ul className="flex flex-col gap-3 p-4">
@@ -66,6 +84,7 @@ export default function IconWithPopup() {
                 Logout
               </button>
             </div>
+
           </div>
         </div>
       )}

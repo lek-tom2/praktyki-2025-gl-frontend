@@ -5,6 +5,7 @@ export const ApiLinks = {
   register: host + "/api/register/",
   jwtVerify: host + "/api/token/access/",
   jwtLogin: host + "/api/token/login/",
-  listParkingSpaces: host + "/api/parking/list/",
   refresh: host + "/api/token/refresh/",
+  listParkingSpaces: host + "/api/parking/",
+  listReservations: host + "/api/reservations/list/",
 } as const;

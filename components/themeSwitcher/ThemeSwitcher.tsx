@@ -8,6 +8,8 @@ const ThemeSwitcher = () => {
   const { User, UserDispatch } = useUserContext();
 
   const changeTheme = () => {
+    console.log(User);
+    console.log(User.theme);
     if (User.theme === Themes.glDark)
       UserDispatch({
         type: "setTheme",
@@ -15,6 +17,8 @@ const ThemeSwitcher = () => {
       });
     else if (User.theme === Themes.glLight)
       UserDispatch({ type: "setTheme", value: Themes.glDark });
+
+    console.log("clik");
   };
 
   return (
@@ -24,6 +28,7 @@ const ThemeSwitcher = () => {
           ? "bg-base-300"  // szary dla dark mode z globals.css
           : "bg-white"  // szary dla light mode z globals.css
       }`}
+
       onClick={changeTheme}
     >
       <div

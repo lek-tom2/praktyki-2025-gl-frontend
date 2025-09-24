@@ -2,7 +2,7 @@
 
 import Languages from "@/gl-const/languages";
 import Themes from "@/gl-const/themes";
-import { User as UserEntityType, Vechicle } from "@/gl-types/user-types";
+import { User as UserEntityType } from "@/gl-types/user-types";
 import React, {
   ReactNode,
   createContext,
@@ -41,10 +41,6 @@ type UserAction =
       value: string;
     }
   | {
-      type: "setVechicles";
-      value: Vechicle[] | null;
-    }
-  | {
       type: "setUser";
       value: UserEntityType;
     };
@@ -66,8 +62,6 @@ const UserReducer = (
       return { ...state, userId: action.value };
     case "setLanguageIso2":
       return { ...state, languageIso2: action.value };
-    case "setVechicles":
-      return { ...state, vechicles: action.value };
     case "setUser":
       return { ...action.value };
     default:
@@ -95,7 +89,10 @@ export const UserContextProvider = ({ children }: UserContextProviderProps) => {
     accountNonLocked: null,
     token: null,
     languageIso2: Languages.en,
-    vechicles: null,
+    is_active: false,
+    is_staff: false,
+    phone_number: null,
+    full_name: null,
   };
   const [User, UserDispatch] = useReducer(UserReducer, initialUser);
 

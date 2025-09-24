@@ -6,9 +6,12 @@ import Button from "@/components/button";
 import { useState, useEffect } from "react";
 import useUserContext from "@/gl-context/UserContextProvider";
 import toast from "react-hot-toast";
-import logout from "@/logout";
 import { Vehicle } from "@/gl-types/vehicle";
 import { Reservation } from "@/gl-types/reservation";
+import PageTemplate from "@/templates/PageTemplate";
+import Themes from "@/gl-const/themes";
+import Languages from "@/gl-const/languages";
+import { useRouter } from "next/navigation"; 
 
 const validateEmail = (email: string) =>
   /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -17,6 +20,8 @@ const validateFullName = (name: string) =>
 const validatePhone = (phone: string) =>
   /^\d{3}-\d{3}-\d{3}$/.test(phone.trim());
 export default function Home() {
+    const router = useRouter(); 
+
   const [loading, setLoading] = useState(false);
   const { User, UserDispatch } = useUserContext();
   const [email, setEmail] = useState("");
@@ -32,6 +37,9 @@ export default function Home() {
   const [editBrand, setEditBrand] = useState("");
   const [editRegNum, setEditRegNum] = useState("");
   const [reservations, setReservations] = useState<Reservation[]>([]);
+  const handleAddNewVehicle = () => {
+    router.push('/add-car'); 
+  };
   const handleFullNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFullName(e.target.value);
   };
@@ -64,227 +72,493 @@ export default function Home() {
   }, [User.email]);
 
   useEffect(() => {
-    const fetchReservations = async () => {
-      try {
-        const res = await fetch("/api/reservations");
-        if (res.ok) {
-          const data = await res.json();
-          setReservations(data.reservations);
-        } else {
-          setReservations([]);
-        }
-      } catch {
+  const fetchReservations = async () => {
+    try {
+      const res = await fetch("/api/reservations");
+      if (res.ok) {
+        const data = await res.json();
+        setReservations(data.reservations);
+      } else {
         setReservations([]);
       }
-    };
+    } catch {
+      setReservations([]);
+    }
+  };
 
-    const fetchVehicles = async () => {
-      try {
-        const res = await fetch("/api/vehicles");
-        if (res.ok) {
-          const data = await res.json();
-          setVehicles(data.vehicles);
-          UserDispatch({ type: "setVechicles", value: data.vehicles }); // <--- zapis do kontekstu
-        } else {
-          setVehicles([
-            { id: 1, spot: 1, registration_number: "KR12345", brand: "Toyota", model: "Corolla", year: 2020, color: "White" },
-            // { registration_number: "WX54321", brand: "Ford Focus" },
-            //{ registration_number: "GD98765", brand: "Tesla Model 3" },
-          ]);
-        }
-      } catch {
-        setVehicles([
-          { id: 1, spot: 1, registration_number: "KR12345", brand: "Toyota", model: "Corolla", year: 2020, color: "White" },
-          //  { registration_number: "WX54321", brand: "Ford Focus" },
-          //  { registration_number: "GD98765", brand: "Tesla Model 3" },
-        ]);
+  const fetchVehicles = async () => {
+    try {
+      
+      const token = localStorage.getItem('access');
+      if (!token) {
+        console.log("No token found, cannot fetch vehicles");
+        setVehicles([]);
+        return;
       }
-    };
 
-    fetchReservations();
-    fetchVehicles();
-  }, []);
+      const res = await fetch("http://localhost:8000/api/vehicles/", {
+        method: "GET",
+        headers: {
+          "Authorization": `Bearer ${token}`,
+          "Content-Type": "application/json"
+        }
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        console.log("Vehicles data from backend:", data);
+      
+        setVehicles(data.vehicles || data || []);
+      } else {
+        console.log("Failed to fetch vehicles, status:", res.status);
+        setVehicles([]);
+      }
+    } catch (error) {
+      console.error("Error fetching vehicles:", error);
+      setVehicles([]);
+    }
+  };
+
+  fetchReservations();
+  fetchVehicles();
+}, []);
 
   const handleInfoSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    if (!fullName.trim() && !email.trim() && !phone.trim()) {
-      toast.success("No changes made.", {
+  if (!fullName.trim() && !email.trim() && !phone.trim()) {
+    toast.success("No changes made.", {
+      duration: 5000,
+    });
+    return;
+  }
+  
+  if (fullName.trim() && !validateFullName(fullName)) {
+    toast.error("Full name must be in format: 'John Doe'", {
+      duration: 5000,
+    });
+    return;
+  }
+  
+  if (email.trim() && !validateEmail(email)) {
+    toast.error("Invalid email format.", {
+      duration: 5000,
+    });
+    return;
+  }
+  
+  if (phone.trim() && !validatePhone(phone)) {
+    toast.error("Phone number must be in format: 123-456-789", {
+      duration: 5000,
+    });
+    return;
+  }
+
+  setLoading(true);
+  try {
+    const payload: any = {};
+    let changedFields: string[] = [];
+
+    if (email.trim()) {
+      payload.email = email;
+      changedFields.push("Email");
+    }
+    if (fullName.trim()) {
+      payload.full_name = fullName;
+      changedFields.push("Full name");
+    }
+    if (phone.trim()) {
+      payload.phone_number = phone;
+      changedFields.push("Phone number");
+    }
+
+ 
+    const token = localStorage.getItem('access');
+    if (!token) {
+      toast.error("Authentication required. Please log in again.", {
         duration: 5000,
       });
-
-      return;
-    }
-    if (fullName.trim() && !validateFullName(fullName)) {
-      toast.error("Full name must be in format: 'John Doe'", {
-        duration: 5000,
-      });
-      return;
-    }
-    if (email.trim() && !validateEmail(email)) {
-      toast.error("Invalid email format.", {
-        duration: 5000,
-      });
-      return;
-    }
-    if (phone.trim() && !validatePhone(phone)) {
-      toast.error("Phone number must be in format: 123-456-789", {
-        duration: 5000,
-      });
       return;
     }
 
-    setLoading(true);
-    try {
-      const payload: any = {};
-      let changedFields: string[] = [];
+    const response = await fetch("http://localhost:8000/api/user/update/", {
+      method: "PUT",
+      headers: { 
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`
+      },
+      body: JSON.stringify(payload),
+    });
 
-      if (email.trim()) {
-        payload.email = email;
-        changedFields.push("Email");
+    if (response.ok) {
+      const data = await response.json();
+      
+     
+      if (email.trim()) UserDispatch({ type: "setEmail", value: email });
+      if (fullName.trim()) UserDispatch({ type: "setUsername", value: fullName });
+      
+      
+      setFullName("");
+      setEmail("");
+      setPhone("");
+      
+      toast.success(data.detail || `Updated: ${changedFields.join(", ")}`, {
+        duration: 5000,
+      });
+    } else {
+      const errorData = await response.json();
+      
+    
+      if (response.status === 401) {
+        toast.error("Session expired. Please log in again.", {
+          duration: 5000,
+        });
+        localStorage.removeItem('access'); 
+        return;
       }
-      if (fullName.trim()) {
-        payload.fullName = fullName;
-        changedFields.push("Full name");
-      }
-      if (phone.trim()) {
-        payload.phone = phone;
-        changedFields.push("Phone number");
-      }
-
-      const response = await fetch("/api/updateInfo", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-
-      if (response.ok) {
-        if (email.trim()) UserDispatch({ type: "setEmail", value: email });
-        if (fullName.trim())
-          UserDispatch({ type: "setUsername", value: fullName });
-        if (changedFields.length > 0) {
-          toast.success(`Updated: ${changedFields.join(", ")}`, {
+      
+   
+      if (errorData.detail) {
+        toast.error(errorData.detail, {
+          duration: 5000,
+        });
+      } else {
+      
+        const fieldErrors = [];
+        if (errorData.email) fieldErrors.push(`Email: ${errorData.email[0]}`);
+        if (errorData.full_name) fieldErrors.push(`Full name: ${errorData.full_name[0]}`);
+        if (errorData.phone_number) fieldErrors.push(`Phone: ${errorData.phone_number[0]}`);
+        
+        if (fieldErrors.length > 0) {
+          toast.error(fieldErrors.join(", "), {
             duration: 5000,
           });
         } else {
-          toast.success("No changes made.", {
+          toast.error("Failed to update information. Try again later.", {
             duration: 5000,
           });
         }
-      } else {
-        toast.error("Failed to update information. Try again later.", {
-          duration: 5000,
-        });
       }
-    } catch (error) {
-      toast.error("Unexpected error. Try again later.", {
-        duration: 5000,
-      });
-    } finally {
-      setLoading(false);
     }
-  };
-
+  } catch (error) {
+    console.error("Update error:", error);
+    toast.error("Unexpected error. Try again later.", {
+      duration: 5000,
+    });
+  } finally {
+    setLoading(false);
+  }
+};
   const handlePasswordSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    if (!currentPassword.trim()) {
-      toast.error("Current password is required.", {
-        duration: 5000,
-      });
-      return;
-    }
-    if (!newPassword.trim()) {
-      toast.error("New password is required.", {
-        duration: 5000,
-      });
-      return;
-    }
-    if (newPassword.length < 6) {
-      toast.error("New password must be at least 6 characters.", {
-        duration: 5000,
-      });
-      return;
-    }
-    if (newPassword !== confirmNewPassword) {
-      toast.error("New password and confirmation must match!", {
+  if (!currentPassword.trim()) {
+    toast.error("Current password is required.", {
+      duration: 5000,
+    });
+    return;
+  }
+  if (!newPassword.trim()) {
+    toast.error("New password is required.", {
+      duration: 5000,
+    });
+    return;
+  }
+  if (newPassword.length < 8) {
+    toast.error("New password must be at least 8 characters.", {
+      duration: 5000,
+    });
+    return;
+  }
+  if (newPassword !== confirmNewPassword) {
+    toast.error("New password and confirmation must match!", {
+      duration: 5000,
+    });
+    return;
+  }
+
+  setLoading(true);
+  try {
+   
+    const token = localStorage.getItem('access');
+    if (!token) {
+      toast.error("Authentication required. Please log in again.", {
         duration: 5000,
       });
       return;
     }
 
-    setLoading(true);
-    try {
-      const response = await fetch("/api/changePassword", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          currentPassword,
-          newPassword,
-          confirmNewPassword,
-        }),
-      });
+    console.log("Sending password change request..."); 
 
-      if (response.ok) {
-        toast.success("Password changed successfully!", {
+    const response = await fetch("http://localhost:8000/api/user/update/", {
+      method: "PUT",
+      headers: { 
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`
+      },
+      body: JSON.stringify({
+        old_password: currentPassword,
+        password: newPassword,
+        password2: confirmNewPassword,
+      }),
+    });
+
+    console.log("Response status:", response.status); 
+
+    if (response.ok) {
+      const data = await response.json();
+      console.log("Password change success:", data);
+
+      toast.success(data.detail || "Password changed successfully!", {
+        duration: 5000,
+      });
+      
+      
+      setCurrentPassword("");
+      setNewPassword("");
+      setConfirmNewPassword("");
+    } else {
+      const errorData = await response.json();
+      console.log("Password change error response:", errorData); 
+      
+      
+      if (response.status === 401) {
+        toast.error("Session expired. Please log in again.", {
           duration: 5000,
         });
-        setCurrentPassword("");
-        setNewPassword("");
-        setConfirmNewPassword("");
-      } else {
-        toast.error("Failed to change password. Try again later.", {
-          duration: 5000,
-        });
+        localStorage.removeItem('access');
+        return;
       }
-    } catch (error) {
-      toast.error("Unexpected error. Try again later.", {
-        duration: 5000,
-      });
-    } finally {
-      setLoading(false);
+      
+    
+      if (errorData.detail) {
+        toast.error(errorData.detail, {
+          duration: 5000,
+        });
+      } else {
+        
+        const fieldErrors = [];
+        if (errorData.old_password) {
+          const oldPasswordError = Array.isArray(errorData.old_password) ? errorData.old_password[0] : errorData.old_password;
+          fieldErrors.push(`Current password: ${oldPasswordError}`);
+        }
+        if (errorData.password) {
+          const passwordError = Array.isArray(errorData.password) ? errorData.password[0] : errorData.password;
+          fieldErrors.push(`New password: ${passwordError}`);
+        }
+        if (errorData.password2) {
+          const password2Error = Array.isArray(errorData.password2) ? errorData.password2[0] : errorData.password2;
+          fieldErrors.push(`Confirm password: ${password2Error}`);
+        }
+        
+        if (fieldErrors.length > 0) {
+          toast.error(fieldErrors.join(", "), {
+            duration: 5000,
+          });
+        } else {
+          toast.error("Failed to change password. Try again later.", {
+            duration: 5000,
+          });
+        }
+      }
     }
-  };
-
+  } catch (error) {
+    console.error("Password change error:", error);
+    toast.error("Network error. Please try again later.", {
+      duration: 5000,
+    });
+  } finally {
+    setLoading(false);
+  }
+};
   const handleDeleteAccount = async (e: React.FormEvent) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    setLoading(true);
-    try {
-      const response = await fetch("/api/deleteAccount", {
-        method: "DELETE",
-      });
+  
+  const confirmed = window.confirm(
+    "Are you sure you want to delete your account? This action is permanent and cannot be undone."
+  );
+  
+  if (!confirmed) {
+    return;
+  }
 
-      if (response.ok) {
-        toast.success("Your account has been permanently deleted.", {
-          duration: 5000,
-        });
-      } else {
-        toast.error("Failed to delete account. Try again later.", {
-          duration: 5000,
-        });
-      }
-    } catch (error) {
-      toast.error("Unexpected error. Try again later.", {
+  setLoading(true);
+  try {
+   
+    const token = localStorage.getItem('access');
+    if (!token) {
+      toast.error("Authentication required. Please log in again.", {
         duration: 5000,
       });
-    } finally {
-      setLoading(false);
+      return;
     }
-  };
 
-  const handleDeleteVehicle = async (registration_number: string) => {
-    setLoading(true);
-    try {
-      const response = await fetch(`/api/vehicles/${registration_number}`, {
-        method: "DELETE",
+    console.log("Deleting user account...");
+
+    const response = await fetch("http://localhost:8000/api/user/delete/", {
+      method: "DELETE",
+      headers: {
+        "Authorization": `Bearer ${token}`,
+        "Content-Type": "application/json"
+      },
+    });
+
+    console.log("Delete account response status:", response.status);
+
+    if (response.ok) {
+     
+      console.log("Account deleted successfully");
+      
+      toast.success("Your account has been permanently deleted.", {
+        duration: 5000,
       });
+      
+   
+      UserDispatch({
+        type: "setUser",
+        value: {
+          username: null,
+          profilePicture: null,
+          theme: User.theme,
+          userId: null,
+          email: null,
+          accountVerified: null,
+          passwordLength: null,
+          authorities: null,
+          accountNonLocked: null,
+          token: null,
+          languageIso2: User.languageIso2,
+          is_activated: false,
+          is_staff: false,
+          phone_number: null,
+          full_name: null,
+        },
+      });
+      
+    
+      localStorage.removeItem('access');
+      localStorage.removeItem('refresh');
+      
+     
+      setTimeout(() => {
+        router.push('/');
+      }, 2000);
+      
+    } else {
+      let errorMessage = "Failed to delete account. Try again later.";
+      
+      try {
+        const errorData = await response.json();
+        console.log("Delete account error:", errorData);
+        
+        if (errorData.detail) {
+          errorMessage = errorData.detail;
+        }
+      } catch (jsonError) {
+        console.log("Could not parse error response as JSON");
+      }
+      
+      
+      if (response.status === 401) {
+        toast.error("Session expired. Please log in again.", {
+          duration: 5000,
+        });
+        localStorage.removeItem('access');
+        return;
+      }
+      
+      if (response.status === 403) {
+        toast.error("You don't have permission to delete this account.", {
+          duration: 5000,
+        });
+        return;
+      }
+      
+      if (response.status === 404) {
+        toast.error("Account not found. It may have been already deleted.", {
+          duration: 5000,
+        });
+       
+        localStorage.removeItem('access');
+        router.push('/');
+        return;
+      }
+      
+      toast.error(errorMessage, {
+        duration: 5000,
+      });
+    }
+  } catch (error) {
+    console.error("Delete account network error:", error);
+    toast.error("Network error. Please check your connection and try again.", {
+      duration: 5000,
+    });
+  } finally {
+    setLoading(false);
+  }
+};
 
-      if (response.ok) {
+  const handleDeleteVehicle = async (vehicleId: number) => {
+  setLoading(true);
+  try {
+  
+    const token = localStorage.getItem('access');
+    if (!token) {
+      toast.error("Authentication required. Please log in again.", {
+        duration: 5000,
+      });
+      return;
+    }
+
+    console.log("Deleting vehicle ID:", vehicleId);
+
+    const response = await fetch(`http://localhost:8000/api/vehicles/${vehicleId}/`, {
+      method: "DELETE",
+      headers: {
+        "Authorization": `Bearer ${token}`,
+        "Content-Type": "application/json"
+      },
+    });
+
+    console.log("Delete response status:", response.status);
+
+    if (response.ok) {
+   
+      setVehicles((prev) =>
+        prev.filter((v) => v.id !== vehicleId)
+      );
+      toast.success("Vehicle has been removed from your account.", {
+        duration: 5000,
+      });
+    } else {
+      const errorData = await response.json();
+      console.log("Delete vehicle error:", errorData);
+      
+    
+      if (response.status === 401) {
+        toast.error("Session expired. Please log in again.", {
+          duration: 5000,
+        });
+        localStorage.removeItem('access');
+        return;
+      }
+      
+    
+      if (response.status === 404) {
+        toast.error("Vehicle not found. It may have been already deleted.", {
+          duration: 5000,
+        });
+   
         setVehicles((prev) =>
-          prev.filter((v) => v.registration_number !== registration_number)
+          prev.filter((v) => v.id !== vehicleId)
         );
-        toast.success("Vehicle has been removed from your account.", {
+        return;
+      }
+      
+     
+      if (errorData.detail) {
+        toast.error(errorData.detail, {
           duration: 5000,
         });
       } else {
@@ -292,63 +566,99 @@ export default function Home() {
           duration: 5000,
         });
       }
-    } catch (error) {
-      toast.error("Unexpected error. Try again later.", {
-        duration: 5000,
-      });
-    } finally {
-      setLoading(false);
     }
-  };
+  } catch (error) {
+    console.error("Delete vehicle error:", error);
+    toast.error("Network error. Please try again later.", {
+      duration: 5000,
+    });
+  } finally {
+    setLoading(false);
+  }
+};
   const handleEditClick = (idx: number) => {
     setEditIdx(idx);
     setEditBrand(vehicles[idx].brand);
     setEditRegNum(vehicles[idx].registration_number);
   };
 
-  const handleEditSave = async () => {
-    if (!editBrand.trim()) {
-      toast.error("Brand is required.", {
-        duration: 5000,
-      });
-      return;
-    }
-    if (!editRegNum.trim()) {
-      toast.error("Registration number is required.", {
+const handleEditSave = async () => {
+  if (!editBrand.trim()) {
+    toast.error("Brand is required.", {
+      duration: 5000,
+    });
+    return;
+  }
+  if (!editRegNum.trim()) {
+    toast.error("Registration number is required.", {
+      duration: 5000,
+    });
+    return;
+  }
+
+  setLoading(true);
+  try {
+ 
+    const token = localStorage.getItem('access');
+    if (!token) {
+      toast.error("Authentication required. Please log in again.", {
         duration: 5000,
       });
       return;
     }
 
-    setLoading(true);
-    try {
-      const updatedVehicle: Vehicle = {
-        id: vehicles[editIdx!].id,
-        spot: vehicles[editIdx!].spot,
+
+    const response = await fetch(`http://localhost:8000/api/vehicles/${vehicles[editIdx!].id}/`, {
+      method: "PUT",
+      headers: { 
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`
+      },
+      body: JSON.stringify({
         registration_number: editRegNum,
         brand: editBrand,
         model: vehicles[editIdx!].model,
-        year: vehicles[editIdx!].year,
+        year: vehicles[editIdx!].year, 
         color: vehicles[editIdx!].color,
+      }),
+    });
+
+    if (response.ok) {
+      const responseData = await response.json();
+      console.log("Update vehicle response:", responseData);
+      
+     
+      const updatedVehicle = {
+        ...vehicles[editIdx!],
+        registration_number: editRegNum,
+        brand: editBrand,
       };
-
-      const response = await fetch(
-        `/api/vehicles/${vehicles[editIdx!].registration_number}`,
-        {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(updatedVehicle),
-        }
+      
+      setVehicles((prev) =>
+        prev.map((v, idx) => (idx === editIdx ? updatedVehicle : v))
       );
-
-      if (response.ok) {
-        setVehicles((prev) =>
-          prev.map((v, idx) => (idx === editIdx ? updatedVehicle : v))
-        );
-        setEditIdx(null);
-        setEditBrand("");
-        setEditRegNum("");
-        toast.success("Vehicle details have been updated!", {
+      setEditIdx(null);
+      setEditBrand("");
+      setEditRegNum("");
+      toast.success("Vehicle details have been updated!", {
+        duration: 5000,
+      });
+    } else {
+      const errorData = await response.json();
+      console.log("Update vehicle error:", errorData);
+      
+     
+      if (response.status === 401) {
+        toast.error("Session expired. Please log in again.", {
+          duration: 5000,
+        });
+        localStorage.removeItem('access');
+        return;
+      }
+      
+    
+      if (errorData.detail) {
+        toast.error(errorData.detail, {
           duration: 5000,
         });
       } else {
@@ -356,14 +666,16 @@ export default function Home() {
           duration: 5000,
         });
       }
-    } catch (error) {
-      toast.error("Unexpected error. Try again later.", {
-        duration: 5000,
-      });
-    } finally {
-      setLoading(false);
     }
-  };
+  } catch (error) {
+    console.error("Vehicle update error:", error);
+    toast.error("Unexpected error. Try again later.", {
+      duration: 5000,
+    });
+  } finally {
+    setLoading(false);
+  }
+};
 
   const handleEditCancel = () => {
     setEditIdx(null);
@@ -371,8 +683,32 @@ export default function Home() {
     setEditRegNum("");
   };
 
+  const logout = () => {
+    UserDispatch({
+      type: "setUser",
+      value: {
+        username: null,
+        profilePicture: null,
+        theme: Themes.glLight,
+        userId: null,
+        email: null,
+        accountVerified: null,
+        passwordLength: null,
+        authorities: null,
+        accountNonLocked: null,
+        token: null,
+        languageIso2: Languages.en,
+        is_active: false,
+        is_staff: false,
+        phone_number: null,
+        full_name: null,
+      },
+    });
+    localStorage.clear();
+  };
+
   return (
-    <PageTemplateAfterLogin>
+    <PageTemplate>
       <main className="overflow-auto flex flex-col items-center mb-4   ">
         <header className=" ml-[-34rem] mx-0 p-0 mb-4 mt-4">
           {/*<p className="text-sm text-gray-400">Current email in context: {User.email}</p>
@@ -562,14 +898,12 @@ export default function Home() {
                               className="w-6 h-6 mr-2 cursor-pointer"
                               onClick={() => handleEditClick(idx)}
                             />
-                            <img
-                              src="/bin.png"
-                              alt="delete"
-                              className="w-6 h-6 mr-6 cursor-pointer"
-                              onClick={() =>
-                                handleDeleteVehicle(vehicle.registration_number)
-                              }
-                            />
+                          <img
+  src="/bin.png"
+  alt="delete"
+  className="w-6 h-6 mr-6 cursor-pointer"
+  onClick={() => handleDeleteVehicle(vehicle.id)} 
+/>
                           </div>
                         </>
                       )}
@@ -579,6 +913,7 @@ export default function Home() {
               )}
               <div className="flex flex-col col-span-2 gap-y-2">
                 <button
+                 onClick={handleAddNewVehicle}
                   type="button"
                   className="border-2 border-dashed border-base-content rounded-[0.25rem] px-6 py-3 text-base-content flex items-center justify-center w-full"
                 >
@@ -651,8 +986,13 @@ export default function Home() {
                         </span>
                       </div>
                       <div>
-                        <span>User: {reservation.user.username || reservation.user.email || 'Unknown'}</span> |{" "}
-                        <span>Spot: {reservation.spot}</span>
+                        <span>
+                          User:{" "}
+                          {reservation.user.username ||
+                            reservation.user.email ||
+                            "Unknown"}
+                        </span>{" "}
+                        | <span>Spot: {reservation.spot}</span>
                       </div>
                     </div>
                   ))
@@ -670,6 +1010,6 @@ export default function Home() {
           </nav>
         </div>
       </main>
-    </PageTemplateAfterLogin>
+    </PageTemplate>
   );
 }

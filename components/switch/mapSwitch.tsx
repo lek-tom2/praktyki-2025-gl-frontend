@@ -26,9 +26,6 @@ const MapSwitch = ({
     }
   };
 
-  const baseBtnClasses =
-    "flex items-center gap-2 px-4 py-2 rounded-full transition-colors text-white";
-
   const iconSize = 14;
 
   const MapIcon = (
@@ -55,15 +52,18 @@ const MapSwitch = ({
     </svg>
   );
 
+  const baseBtnClasses =
+    "flex items-center justify-center w-1/2 h-10 rounded-4xl transition-colors text-white font-medium gap-2";
+
   return (
     <div
-      className={`flex items-center bg-base-200 p-1 rounded-full w-[200px] h-[48px] ${
+      className={`flex items-center bg-primary p-1 rounded-4xl w-full gap-1 h-12 ${
         className ?? ""
       }`}
     >
       <button
         type="button"
-        className={`${baseBtnClasses} w-[97px] h-[40px] ${
+        className={`${baseBtnClasses} ${
           currentValue === "list" ? "bg-accent" : "bg-transparent"
         }`}
         onClick={() => handleSwitch("list")}
@@ -73,7 +73,7 @@ const MapSwitch = ({
       </button>
       <button
         type="button"
-        className={`${baseBtnClasses} w-[97px] h-[40px] ${
+        className={`${baseBtnClasses} ${
           currentValue === "map" ? "bg-accent" : "bg-transparent"
         }`}
         onClick={() => handleSwitch("map")}

@@ -4,11 +4,12 @@ import useUserContext from "@/gl-context/UserContextProvider";
 import { useRouter } from "next/navigation";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { ApiLinks } from "@/gl-const/api-links";
-import { User } from "@/gl-types/user-types";
+import { User, UserBackend } from "@/gl-types/user-types";
 import toast from "react-hot-toast";
 import Button from "../button";
 import FormErrorWrap from "../FormError/formErrorWrap";
 import FormErrorParahraph from "../FormError/formErrorParagraph";
+import Themes from "@/gl-const/themes";
 
 type formProps = {
   login: string | null;
@@ -33,6 +34,8 @@ const LoginComponent = () => {
 
   const { User, UserDispatch } = useUserContext();
   const router = useRouter();
+  const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+  const theme = prefersDark ? Themes.glDark : Themes.glLight;
 
   // Funkcja automatycznego logowania
   const autoLogin = async (login: string, password: string) => {
@@ -49,14 +52,26 @@ const LoginComponent = () => {
 
       if (response.ok) {
         const data = await response.json();
-        const tempUser = data.detail.user as Omit<User, "languageIso2">;
+        const tempUser = data.detail.user as UserBackend;
         const access = data.detail.access;
         const refresh = data.detail.refresh;
-        
+
         localStorage.setItem("refresh", refresh);
         localStorage.setItem("access", access);
-        
-        const user: User = { ...tempUser, languageIso2: "en" };
+
+        const user: User = {
+          ...tempUser,
+          languageIso2: "en",
+          theme: theme,
+          is_active: false,
+          is_staff: false,
+          profilePicture: null,
+          accountVerified: null,
+          passwordLength: null,
+          authorities: null,
+          accountNonLocked: null,
+          token: null,
+        };
         UserDispatch({ type: "setUser", value: user });
         toast.success("Automatycznie zalogowano!");
         router.push("/home");
@@ -87,7 +102,7 @@ const LoginComponent = () => {
       setValue("login", rememberedLogin);
       setValue("password", rememberedPassword);
       setValue("remember", true);
-      
+
       // Automatyczne logowanie
       autoLogin(rememberedLogin, rememberedPassword);
     }
@@ -161,16 +176,16 @@ const LoginComponent = () => {
       const tempUser = data.detail.user as Omit<User, "languageIso2">;
       const access = data.detail.access;
       const refresh = data.detail.refresh;
-      
+
       // Zapisz dane remember me przed wyczyszczeniem localStorage
       const shouldRemember = getValues().remember;
       const loginValue = getValues().login;
       const passwordValue = getValues().password;
-      
+
       localStorage.clear();
       localStorage.setItem("refresh", refresh);
       localStorage.setItem("access", access);
-      
+
       // Zapisz dane remember me
       if (shouldRemember && loginValue && passwordValue) {
         localStorage.setItem("rememember", "true");
@@ -254,7 +269,7 @@ const LoginComponent = () => {
             type="checkbox"
             className="bg-primary"
             {...register("remember", {
-              onChange: handleRememberChange
+              onChange: handleRememberChange,
             })}
           />
           <p className="text-base-content">Remember me</p>

@@ -25,14 +25,11 @@ export const Separator = ({ text }: separatorProps) => {
 export const ParkingSpot = ({
   name,
   aviability,
-  visible = true,
   grayed = false,
   onClick = undefined,
 }: parkingSpotProps) => {
-  if (!visible) return null;
-
   const bgClass = grayed
-    ? "bg-gray-600"
+    ? "bg-gray-600 opacity-50"
     : aviability === "occupied"
     ? "bg-rose-800"
     : aviability === "available"
@@ -68,9 +65,5 @@ type wrapperProps = {
 };
 
 export const Wrapper = ({ children }: wrapperProps) => {
-  return (
-    <div className="flex flex-col gap-4 w-full max-w-[1100px] mx-auto">
-      {children}
-    </div>
-  );
+  return <div className="flex flex-col gap-4 m-4 w-full">{children}</div>;
 };
