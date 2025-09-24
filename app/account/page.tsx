@@ -88,7 +88,7 @@ export default function Home() {
 
   const fetchVehicles = async () => {
     try {
-      // Pobierz token z localStorage
+      
       const token = localStorage.getItem('access');
       if (!token) {
         console.log("No token found, cannot fetch vehicles");
@@ -107,7 +107,7 @@ export default function Home() {
       if (res.ok) {
         const data = await res.json();
         console.log("Vehicles data from backend:", data);
-        // Sprawdź strukturę odpowiedzi z backendu
+      
         setVehicles(data.vehicles || data || []);
       } else {
         console.log("Failed to fetch vehicles, status:", res.status);
@@ -172,7 +172,7 @@ export default function Home() {
       changedFields.push("Phone number");
     }
 
-    // Pobierz token z localStorage
+ 
     const token = localStorage.getItem('access');
     if (!token) {
       toast.error("Authentication required. Please log in again.", {
@@ -193,11 +193,11 @@ export default function Home() {
     if (response.ok) {
       const data = await response.json();
       
-      // Aktualizuj kontekst użytkownika
+     
       if (email.trim()) UserDispatch({ type: "setEmail", value: email });
       if (fullName.trim()) UserDispatch({ type: "setUsername", value: fullName });
       
-      // Wyczyść pola po udanej aktualizacji
+      
       setFullName("");
       setEmail("");
       setPhone("");
@@ -208,22 +208,22 @@ export default function Home() {
     } else {
       const errorData = await response.json();
       
-      // Sprawdź czy to błąd autentyfikacji
+    
       if (response.status === 401) {
         toast.error("Session expired. Please log in again.", {
           duration: 5000,
         });
-        localStorage.removeItem('access'); // Usuń nieprawidłowy token
+        localStorage.removeItem('access'); 
         return;
       }
       
-      // Obsługa różnych typów błędów z API
+   
       if (errorData.detail) {
         toast.error(errorData.detail, {
           duration: 5000,
         });
       } else {
-        // Obsługa błędów walidacji pól
+      
         const fieldErrors = [];
         if (errorData.email) fieldErrors.push(`Email: ${errorData.email[0]}`);
         if (errorData.full_name) fieldErrors.push(`Full name: ${errorData.full_name[0]}`);
@@ -250,70 +250,131 @@ export default function Home() {
   }
 };
   const handlePasswordSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    if (!currentPassword.trim()) {
-      toast.error("Current password is required.", {
-        duration: 5000,
-      });
-      return;
-    }
-    if (!newPassword.trim()) {
-      toast.error("New password is required.", {
-        duration: 5000,
-      });
-      return;
-    }
-    if (newPassword.length < 6) {
-      toast.error("New password must be at least 6 characters.", {
-        duration: 5000,
-      });
-      return;
-    }
-    if (newPassword !== confirmNewPassword) {
-      toast.error("New password and confirmation must match!", {
+  if (!currentPassword.trim()) {
+    toast.error("Current password is required.", {
+      duration: 5000,
+    });
+    return;
+  }
+  if (!newPassword.trim()) {
+    toast.error("New password is required.", {
+      duration: 5000,
+    });
+    return;
+  }
+  if (newPassword.length < 8) {
+    toast.error("New password must be at least 8 characters.", {
+      duration: 5000,
+    });
+    return;
+  }
+  if (newPassword !== confirmNewPassword) {
+    toast.error("New password and confirmation must match!", {
+      duration: 5000,
+    });
+    return;
+  }
+
+  setLoading(true);
+  try {
+   
+    const token = localStorage.getItem('access');
+    if (!token) {
+      toast.error("Authentication required. Please log in again.", {
         duration: 5000,
       });
       return;
     }
 
-    setLoading(true);
-    try {
-      const response = await fetch("/api/changePassword", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          currentPassword,
-          newPassword,
-          confirmNewPassword,
-        }),
-      });
+    console.log("Sending password change request..."); 
 
-      if (response.ok) {
-        toast.success("Password changed successfully!", {
+    const response = await fetch("http://localhost:8000/api/user/update/", {
+      method: "PUT",
+      headers: { 
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`
+      },
+      body: JSON.stringify({
+        old_password: currentPassword,
+        password: newPassword,
+        password2: confirmNewPassword,
+      }),
+    });
+
+    console.log("Response status:", response.status); 
+
+    if (response.ok) {
+      const data = await response.json();
+      console.log("Password change success:", data);
+
+      toast.success(data.detail || "Password changed successfully!", {
+        duration: 5000,
+      });
+      
+      
+      setCurrentPassword("");
+      setNewPassword("");
+      setConfirmNewPassword("");
+    } else {
+      const errorData = await response.json();
+      console.log("Password change error response:", errorData); 
+      
+      
+      if (response.status === 401) {
+        toast.error("Session expired. Please log in again.", {
           duration: 5000,
         });
-        setCurrentPassword("");
-        setNewPassword("");
-        setConfirmNewPassword("");
-      } else {
-        toast.error("Failed to change password. Try again later.", {
-          duration: 5000,
-        });
+        localStorage.removeItem('access');
+        return;
       }
-    } catch (error) {
-      toast.error("Unexpected error. Try again later.", {
-        duration: 5000,
-      });
-    } finally {
-      setLoading(false);
+      
+    
+      if (errorData.detail) {
+        toast.error(errorData.detail, {
+          duration: 5000,
+        });
+      } else {
+        
+        const fieldErrors = [];
+        if (errorData.old_password) {
+          const oldPasswordError = Array.isArray(errorData.old_password) ? errorData.old_password[0] : errorData.old_password;
+          fieldErrors.push(`Current password: ${oldPasswordError}`);
+        }
+        if (errorData.password) {
+          const passwordError = Array.isArray(errorData.password) ? errorData.password[0] : errorData.password;
+          fieldErrors.push(`New password: ${passwordError}`);
+        }
+        if (errorData.password2) {
+          const password2Error = Array.isArray(errorData.password2) ? errorData.password2[0] : errorData.password2;
+          fieldErrors.push(`Confirm password: ${password2Error}`);
+        }
+        
+        if (fieldErrors.length > 0) {
+          toast.error(fieldErrors.join(", "), {
+            duration: 5000,
+          });
+        } else {
+          toast.error("Failed to change password. Try again later.", {
+            duration: 5000,
+          });
+        }
+      }
     }
-  };
-
+  } catch (error) {
+    console.error("Password change error:", error);
+    toast.error("Network error. Please try again later.", {
+      duration: 5000,
+    });
+  } finally {
+    setLoading(false);
+  }
+};
   const handleDeleteAccount = async (e: React.FormEvent) => {
   e.preventDefault();
 
-  // Dodaj potwierdzenie przed usunięciem konta
+  
   const confirmed = window.confirm(
     "Are you sure you want to delete your account? This action is permanent and cannot be undone."
   );
@@ -324,7 +385,7 @@ export default function Home() {
 
   setLoading(true);
   try {
-    // Pobierz token z localStorage
+   
     const token = localStorage.getItem('access');
     if (!token) {
       toast.error("Authentication required. Please log in again.", {
@@ -346,14 +407,14 @@ export default function Home() {
     console.log("Delete account response status:", response.status);
 
     if (response.ok) {
-      // Nie próbuj czytać response.json() jeśli serwer nie zwraca danych
+     
       console.log("Account deleted successfully");
       
       toast.success("Your account has been permanently deleted.", {
         duration: 5000,
       });
       
-      // Wyloguj użytkownika i wyczyść dane RĘCZNIE zamiast używać logout()
+   
       UserDispatch({
         type: "setUser",
         value: {
@@ -375,11 +436,11 @@ export default function Home() {
         },
       });
       
-      // Wyczyść localStorage
+    
       localStorage.removeItem('access');
       localStorage.removeItem('refresh');
       
-      // Przekieruj na stronę główną
+     
       setTimeout(() => {
         router.push('/');
       }, 2000);
@@ -398,7 +459,7 @@ export default function Home() {
         console.log("Could not parse error response as JSON");
       }
       
-      // Sprawdź specyficzne kody błędów
+      
       if (response.status === 401) {
         toast.error("Session expired. Please log in again.", {
           duration: 5000,
@@ -418,7 +479,7 @@ export default function Home() {
         toast.error("Account not found. It may have been already deleted.", {
           duration: 5000,
         });
-        // Wyloguj nawet jeśli konto nie istnieje
+       
         localStorage.removeItem('access');
         router.push('/');
         return;
@@ -441,7 +502,7 @@ export default function Home() {
   const handleDeleteVehicle = async (vehicleId: number) => {
   setLoading(true);
   try {
-    // Pobierz token z localStorage
+  
     const token = localStorage.getItem('access');
     if (!token) {
       toast.error("Authentication required. Please log in again.", {
@@ -463,7 +524,7 @@ export default function Home() {
     console.log("Delete response status:", response.status);
 
     if (response.ok) {
-      // Usuń pojazd z lokalnego stanu
+   
       setVehicles((prev) =>
         prev.filter((v) => v.id !== vehicleId)
       );
@@ -474,7 +535,7 @@ export default function Home() {
       const errorData = await response.json();
       console.log("Delete vehicle error:", errorData);
       
-      // Sprawdź czy to błąd autentyfikacji
+    
       if (response.status === 401) {
         toast.error("Session expired. Please log in again.", {
           duration: 5000,
@@ -483,19 +544,19 @@ export default function Home() {
         return;
       }
       
-      // Sprawdź czy pojazd nie istnieje
+    
       if (response.status === 404) {
         toast.error("Vehicle not found. It may have been already deleted.", {
           duration: 5000,
         });
-        // Usuń z lokalnego stanu nawet jeśli backend zwraca 404
+   
         setVehicles((prev) =>
           prev.filter((v) => v.id !== vehicleId)
         );
         return;
       }
       
-      // Obsługa innych błędów
+     
       if (errorData.detail) {
         toast.error(errorData.detail, {
           duration: 5000,
@@ -537,7 +598,7 @@ const handleEditSave = async () => {
 
   setLoading(true);
   try {
-    // Pobierz token z localStorage
+ 
     const token = localStorage.getItem('access');
     if (!token) {
       toast.error("Authentication required. Please log in again.", {
@@ -546,7 +607,7 @@ const handleEditSave = async () => {
       return;
     }
 
-    // Użyj endpointu z ID pojazdu
+
     const response = await fetch(`http://localhost:8000/api/vehicles/${vehicles[editIdx!].id}/`, {
       method: "PUT",
       headers: { 
@@ -557,7 +618,7 @@ const handleEditSave = async () => {
         registration_number: editRegNum,
         brand: editBrand,
         model: vehicles[editIdx!].model,
-        year: vehicles[editIdx!].year, // Użyj "year" małymi literami
+        year: vehicles[editIdx!].year, 
         color: vehicles[editIdx!].color,
       }),
     });
@@ -566,7 +627,7 @@ const handleEditSave = async () => {
       const responseData = await response.json();
       console.log("Update vehicle response:", responseData);
       
-      // Aktualizuj pojazd w stanie
+     
       const updatedVehicle = {
         ...vehicles[editIdx!],
         registration_number: editRegNum,
@@ -586,7 +647,7 @@ const handleEditSave = async () => {
       const errorData = await response.json();
       console.log("Update vehicle error:", errorData);
       
-      // Sprawdź czy to błąd autentyfikacji
+     
       if (response.status === 401) {
         toast.error("Session expired. Please log in again.", {
           duration: 5000,
@@ -595,7 +656,7 @@ const handleEditSave = async () => {
         return;
       }
       
-      // Obsługa błędów z API
+    
       if (errorData.detail) {
         toast.error(errorData.detail, {
           duration: 5000,
