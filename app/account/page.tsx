@@ -11,6 +11,7 @@ import { Reservation } from "@/gl-types/reservation";
 import PageTemplate from "@/templates/PageTemplate";
 import Themes from "@/gl-const/themes";
 import Languages from "@/gl-const/languages";
+import { useRouter } from "next/navigation"; 
 
 const validateEmail = (email: string) =>
   /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -19,6 +20,8 @@ const validateFullName = (name: string) =>
 const validatePhone = (phone: string) =>
   /^\d{3}-\d{3}-\d{3}$/.test(phone.trim());
 export default function Home() {
+    const router = useRouter(); 
+
   const [loading, setLoading] = useState(false);
   const { User, UserDispatch } = useUserContext();
   const [email, setEmail] = useState("");
@@ -34,6 +37,9 @@ export default function Home() {
   const [editBrand, setEditBrand] = useState("");
   const [editRegNum, setEditRegNum] = useState("");
   const [reservations, setReservations] = useState<Reservation[]>([]);
+  const handleAddNewVehicle = () => {
+    router.push('/add-car'); 
+  };
   const handleFullNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFullName(e.target.value);
   };
@@ -66,61 +72,56 @@ export default function Home() {
   }, [User.email]);
 
   useEffect(() => {
-    const fetchReservations = async () => {
-      try {
-        const res = await fetch("/api/reservations");
-        if (res.ok) {
-          const data = await res.json();
-          setReservations(data.reservations);
-        } else {
-          setReservations([]);
-        }
-      } catch {
+  const fetchReservations = async () => {
+    try {
+      const res = await fetch("/api/reservations");
+      if (res.ok) {
+        const data = await res.json();
+        setReservations(data.reservations);
+      } else {
         setReservations([]);
       }
-    };
+    } catch {
+      setReservations([]);
+    }
+  };
 
-    const fetchVehicles = async () => {
-      try {
-        const res = await fetch("/api/vehicles");
-        if (res.ok) {
-          const data = await res.json();
-          setVehicles(data.vehicles);
-        } else {
-          setVehicles([
-            {
-              id: 1,
-              spot: 1,
-              registration_number: "KR12345",
-              brand: "Toyota",
-              model: "Corolla",
-              year: 2020,
-              color: "White",
-            },
-            // { registration_number: "WX54321", brand: "Ford Focus" },
-            //{ registration_number: "GD98765", brand: "Tesla Model 3" },
-          ]);
-        }
-      } catch {
-        setVehicles([
-          {
-            id: 1,
-            spot: 1,
-            registration_number: "KR12345",
-            brand: "Toyota",
-            model: "Corolla",
-            year: 2020,
-            color: "White",
-          },
-          //  { registration_number: "WX54321", brand: "Ford Focus" },
-          //  { registration_number: "GD98765", brand: "Tesla Model 3" },
-        ]);
+  const fetchVehicles = async () => {
+    try {
+      // Pobierz token z localStorage
+      const token = localStorage.getItem('access');
+      if (!token) {
+        console.log("No token found, cannot fetch vehicles");
+        setVehicles([]);
+        return;
       }
-    };
 
-    fetchReservations();
-    fetchVehicles();
-  }, []);
+      const res = await fetch("http://localhost:8000/api/vehicles/", {
+        method: "GET",
+        headers: {
+          "Authorization": `Bearer ${token}`,
+          "Content-Type": "application/json"
+        }
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        console.log("Vehicles data from backend:", data);
+        // Sprawdź strukturę odpowiedzi z backendu
+        setVehicles(data.vehicles || data || []);
+      } else {
+        console.log("Failed to fetch vehicles, status:", res.status);
+        setVehicles([]);
+      }
+    } catch (error) {
+      console.error("Error fetching vehicles:", error);
+      setVehicles([]);
+    }
+  };
+
+  fetchReservations();
+  fetchVehicles();
+}, []);
 
   const handleInfoSubmit = async (e: React.FormEvent) => {
   e.preventDefault();
@@ -666,6 +667,7 @@ export default function Home() {
               )}
               <div className="flex flex-col col-span-2 gap-y-2">
                 <button
+                 onClick={handleAddNewVehicle}
                   type="button"
                   className="border-2 border-dashed border-base-content rounded-[0.25rem] px-6 py-3 text-base-content flex items-center justify-center w-full"
                 >
