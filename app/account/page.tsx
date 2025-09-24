@@ -123,85 +123,131 @@ export default function Home() {
   }, []);
 
   const handleInfoSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    if (!fullName.trim() && !email.trim() && !phone.trim()) {
-      toast.success("No changes made.", {
+  if (!fullName.trim() && !email.trim() && !phone.trim()) {
+    toast.success("No changes made.", {
+      duration: 5000,
+    });
+    return;
+  }
+  
+  if (fullName.trim() && !validateFullName(fullName)) {
+    toast.error("Full name must be in format: 'John Doe'", {
+      duration: 5000,
+    });
+    return;
+  }
+  
+  if (email.trim() && !validateEmail(email)) {
+    toast.error("Invalid email format.", {
+      duration: 5000,
+    });
+    return;
+  }
+  
+  if (phone.trim() && !validatePhone(phone)) {
+    toast.error("Phone number must be in format: 123-456-789", {
+      duration: 5000,
+    });
+    return;
+  }
+
+  setLoading(true);
+  try {
+    const payload: any = {};
+    let changedFields: string[] = [];
+
+    if (email.trim()) {
+      payload.email = email;
+      changedFields.push("Email");
+    }
+    if (fullName.trim()) {
+      payload.full_name = fullName;
+      changedFields.push("Full name");
+    }
+    if (phone.trim()) {
+      payload.phone_number = phone;
+      changedFields.push("Phone number");
+    }
+
+    // Pobierz token z localStorage
+    const token = localStorage.getItem('access');
+    if (!token) {
+      toast.error("Authentication required. Please log in again.", {
         duration: 5000,
       });
-
-      return;
-    }
-    if (fullName.trim() && !validateFullName(fullName)) {
-      toast.error("Full name must be in format: 'John Doe'", {
-        duration: 5000,
-      });
-      return;
-    }
-    if (email.trim() && !validateEmail(email)) {
-      toast.error("Invalid email format.", {
-        duration: 5000,
-      });
-      return;
-    }
-    if (phone.trim() && !validatePhone(phone)) {
-      toast.error("Phone number must be in format: 123-456-789", {
-        duration: 5000,
-      });
       return;
     }
 
-    setLoading(true);
-    try {
-      const payload: any = {};
-      let changedFields: string[] = [];
+    const response = await fetch("http://localhost:8000/api/user/update/", {
+      method: "PUT",
+      headers: { 
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`
+      },
+      body: JSON.stringify(payload),
+    });
 
-      if (email.trim()) {
-        payload.email = email;
-        changedFields.push("Email");
+    if (response.ok) {
+      const data = await response.json();
+      
+      // Aktualizuj kontekst użytkownika
+      if (email.trim()) UserDispatch({ type: "setEmail", value: email });
+      if (fullName.trim()) UserDispatch({ type: "setUsername", value: fullName });
+      
+      // Wyczyść pola po udanej aktualizacji
+      setFullName("");
+      setEmail("");
+      setPhone("");
+      
+      toast.success(data.detail || `Updated: ${changedFields.join(", ")}`, {
+        duration: 5000,
+      });
+    } else {
+      const errorData = await response.json();
+      
+      // Sprawdź czy to błąd autentyfikacji
+      if (response.status === 401) {
+        toast.error("Session expired. Please log in again.", {
+          duration: 5000,
+        });
+        localStorage.removeItem('access'); // Usuń nieprawidłowy token
+        return;
       }
-      if (fullName.trim()) {
-        payload.fullName = fullName;
-        changedFields.push("Full name");
-      }
-      if (phone.trim()) {
-        payload.phone = phone;
-        changedFields.push("Phone number");
-      }
-
-      const response = await fetch("/api/updateInfo", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-
-      if (response.ok) {
-        if (email.trim()) UserDispatch({ type: "setEmail", value: email });
-        if (fullName.trim())
-          UserDispatch({ type: "setUsername", value: fullName });
-        if (changedFields.length > 0) {
-          toast.success(`Updated: ${changedFields.join(", ")}`, {
+      
+      // Obsługa różnych typów błędów z API
+      if (errorData.detail) {
+        toast.error(errorData.detail, {
+          duration: 5000,
+        });
+      } else {
+        // Obsługa błędów walidacji pól
+        const fieldErrors = [];
+        if (errorData.email) fieldErrors.push(`Email: ${errorData.email[0]}`);
+        if (errorData.full_name) fieldErrors.push(`Full name: ${errorData.full_name[0]}`);
+        if (errorData.phone_number) fieldErrors.push(`Phone: ${errorData.phone_number[0]}`);
+        
+        if (fieldErrors.length > 0) {
+          toast.error(fieldErrors.join(", "), {
             duration: 5000,
           });
         } else {
-          toast.success("No changes made.", {
+          toast.error("Failed to update information. Try again later.", {
             duration: 5000,
           });
         }
-      } else {
-        toast.error("Failed to update information. Try again later.", {
-          duration: 5000,
-        });
       }
-    } catch (error) {
-      toast.error("Unexpected error. Try again later.", {
-        duration: 5000,
-      });
-    } finally {
-      setLoading(false);
     }
-  };
-
+  } catch (error) {
+    console.error("Update error:", error);
+    toast.error("Unexpected error. Try again later.", {
+      duration: 5000,
+    });
+  } finally {
+    setLoading(false);
+  }
+};
   const handlePasswordSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
