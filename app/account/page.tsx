@@ -249,66 +249,142 @@ export default function Home() {
   }
 };
   const handlePasswordSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    if (!currentPassword.trim()) {
-      toast.error("Current password is required.", {
-        duration: 5000,
-      });
-      return;
-    }
-    if (!newPassword.trim()) {
-      toast.error("New password is required.", {
-        duration: 5000,
-      });
-      return;
-    }
-    if (newPassword.length < 6) {
-      toast.error("New password must be at least 6 characters.", {
-        duration: 5000,
-      });
-      return;
-    }
-    if (newPassword !== confirmNewPassword) {
-      toast.error("New password and confirmation must match!", {
+  if (!currentPassword.trim()) {
+    toast.error("Current password is required.", {
+      duration: 5000,
+    });
+    return;
+  }
+  if (!newPassword.trim()) {
+    toast.error("New password is required.", {
+      duration: 5000,
+    });
+    return;
+  }
+  if (newPassword.length < 8) {
+    toast.error("New password must be at least 8 characters.", {
+      duration: 5000,
+    });
+    return;
+  }
+  if (newPassword !== confirmNewPassword) {
+    toast.error("New password and confirmation must match!", {
+      duration: 5000,
+    });
+    return;
+  }
+
+  setLoading(true);
+  try {
+    // Pobierz token z localStorage
+    const token = localStorage.getItem('access');
+    if (!token) {
+      toast.error("Authentication required. Please log in again.", {
         duration: 5000,
       });
       return;
     }
 
-    setLoading(true);
-    try {
-      const response = await fetch("/api/changePassword", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          currentPassword,
-          newPassword,
-          confirmNewPassword,
-        }),
-      });
+    const response = await fetch("http://localhost:8000/api/user/update/", {
+      method: "PUT",
+      headers: { 
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`
+      },
+      body: JSON.stringify({
+        old_password: currentPassword,
+        password: newPassword,
+        password2: confirmNewPassword,
+      }),
+    });
 
-      if (response.ok) {
-        toast.success("Password changed successfully!", {
+    if (response.ok) {
+      const data = await response.json();
+      
+      toast.success(data.detail || "Password changed successfully!", {
+        duration: 5000,
+      });
+      
+      // Wyczyść pola po udanej zmianie
+      setCurrentPassword("");
+      setNewPassword("");
+      setConfirmNewPassword("");
+    } else {
+      const errorData = await response.json();
+      
+      // Sprawdź czy to błąd autentyfikacji
+      if (response.status === 401) {
+        toast.error("Session expired. Please log in again.", {
           duration: 5000,
         });
-        setCurrentPassword("");
-        setNewPassword("");
-        setConfirmNewPassword("");
-      } else {
-        toast.error("Failed to change password. Try again later.", {
-          duration: 5000,
-        });
+        localStorage.removeItem('access');
+        return;
       }
-    } catch (error) {
-      toast.error("Unexpected error. Try again later.", {
-        duration: 5000,
-      });
-    } finally {
-      setLoading(false);
+      
+      // Obsługa błędów zgodnie z dokumentacją UPDATE USER
+      if (errorData.detail) {
+        // Sprawdź czy detail to string czy obiekt z błędami pól
+        if (typeof errorData.detail === 'string') {
+          toast.error(errorData.detail, {
+            duration: 5000,
+          });
+        } else {
+          // detail może zawierać błędy pól (jak w register)
+          const fieldErrors = [];
+          if (errorData.detail.old_password) fieldErrors.push(`Current password: ${errorData.detail.old_password}`);
+          if (errorData.detail.password) fieldErrors.push(`New password: ${errorData.detail.password}`);
+          if (errorData.detail.password2) fieldErrors.push(`Confirm password: ${errorData.detail.password2}`);
+          
+          if (fieldErrors.length > 0) {
+            toast.error(fieldErrors.join(", "), {
+              duration: 5000,
+            });
+          } else {
+            toast.error("Failed to change password. Try again later.", {
+              duration: 5000,
+            });
+          }
+        }
+      } else {
+        // Obsługa błędów w formacie: "any_user_field_error": ["message"]
+        const fieldErrors = [];
+        
+        // Sprawdź błędy pól bezpośrednio w głównym obiekcie
+        if (errorData.old_password) {
+          const oldPasswordError = Array.isArray(errorData.old_password) ? errorData.old_password[0] : errorData.old_password;
+          fieldErrors.push(`Current password: ${oldPasswordError}`);
+        }
+        if (errorData.password) {
+          const passwordError = Array.isArray(errorData.password) ? errorData.password[0] : errorData.password;
+          fieldErrors.push(`New password: ${passwordError}`);
+        }
+        if (errorData.password2) {
+          const password2Error = Array.isArray(errorData.password2) ? errorData.password2[0] : errorData.password2;
+          fieldErrors.push(`Confirm password: ${password2Error}`);
+        }
+        
+        if (fieldErrors.length > 0) {
+          toast.error(fieldErrors.join(", "), {
+            duration: 5000,
+          });
+        } else {
+          toast.error("Failed to change password. Try again later.", {
+            duration: 5000,
+          });
+        }
+      }
     }
-  };
-
+  } catch (error) {
+    console.error("Password change error:", error);
+    toast.error("Unexpected error. Try again later.", {
+      duration: 5000,
+    });
+  } finally {
+    setLoading(false);
+  }
+};
   const handleDeleteAccount = async (e: React.FormEvent) => {
     e.preventDefault();
 
