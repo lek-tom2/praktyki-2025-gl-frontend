@@ -69,37 +69,47 @@ export default function Home() {
 
   useEffect(() => {
   const fetchReservations = async () => {
-    try {
-      // Pobierz token z localStorage
-      const token = localStorage.getItem('access');
-      if (!token) {
-        console.log("No token found, cannot fetch reservations");
-        setReservations([]);
-        return;
-      }
+  try {
+    const token = localStorage.getItem('access');
+    if (!token) {
+      console.log("No token found, cannot fetch reservations");
+      setReservations([]);
+      return;
+    }
 
-      const res = await fetch("http://localhost:8000/api/reservations/list/latest/", {
-        method: "GET",
-        headers: {
-          "Authorization": `Bearer ${token}`,
-          "Content-Type": "application/json"
-        }
+    const res = await fetch("http://localhost:8000/api/reservations/list/latest/", {
+      method: "GET",
+      headers: {
+        "Authorization": `Bearer ${token}`,
+        "Content-Type": "application/json"
+      }
+    });
+
+    if (res.ok) {
+      const data = await res.json();
+      console.log("Reservations data from backend:", data);
+      
+      let reservationsData = data.detail || data || [];
+      
+  
+      reservationsData = reservationsData.sort((a: any, b: any) => {
+        
+        return b.id - a.id;
+        
+        
       });
-
-      if (res.ok) {
-        const data = await res.json();
-        console.log("Reservations data from backend:", data);
-       
-        setReservations(data.detail || data || []);
-      } else {
-        console.log("Failed to fetch reservations, status:", res.status);
-        setReservations([]);
-      }
-    } catch (error) {
-      console.error("Error fetching reservations:", error);
+      
+      console.log("Sorted reservations:", reservationsData);
+      setReservations(reservationsData);
+    } else {
+      console.log("Failed to fetch reservations, status:", res.status);
       setReservations([]);
     }
-  };
+  } catch (error) {
+    console.error("Error fetching reservations:", error);
+    setReservations([]);
+  }
+};
 
   const fetchVehicles = async () => {
     try {
