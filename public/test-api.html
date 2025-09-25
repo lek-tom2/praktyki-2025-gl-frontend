@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>API Test</title>
+</head>
+<body>
+    <h1>API Endpoint Test</h1>
+    <div id="result"></div>
+    
+    <script>
+        async function testEndpoint() {
+            try {
+                console.log('Testing /api/employees/ endpoint...');
+                const response = await fetch('http://localhost:8000/api/employees/');
+                console.log('Response status:', response.status);
+                console.log('Response ok:', response.ok);
+                
+                const text = await response.text();
+                console.log('Response text:', text);
+                
+                document.getElementById('result').innerHTML = `
+                    <h2>Result:</h2>
+                    <p>Status: ${response.status}</p>
+                    <p>OK: ${response.ok}</p>
+                    <pre>${text}</pre>
+                `;
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('result').innerHTML = `
+                    <h2>Error:</h2>
+                    <p>${error.message}</p>
+                `;
+            }
+        }
+        
+        // Auto test on page load
+        testEndpoint();
+    </script>
+</body>
+</html>

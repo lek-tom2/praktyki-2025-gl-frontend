@@ -34,7 +34,9 @@ const LoginComponent = () => {
 
   const { User, UserDispatch } = useUserContext();
   const router = useRouter();
-  const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+  const prefersDark = typeof window !== 'undefined' 
+    ? window.matchMedia("(prefers-color-scheme: dark)").matches 
+    : false;
   const theme = prefersDark ? Themes.glDark : Themes.glLight;
 
   // Funkcja automatycznego logowania
@@ -63,8 +65,6 @@ const LoginComponent = () => {
           ...tempUser,
           languageIso2: "en",
           theme: theme,
-          is_active: false,
-          is_staff: false,
           profilePicture: null,
           accountVerified: null,
           passwordLength: null,
@@ -126,7 +126,7 @@ const LoginComponent = () => {
     setIsLoading(true);
     if (isAdminPage) {
       try {
-        const res = await fetch("/api/admin/login", {
+        const response = await fetch(ApiLinks.adminLogin, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -134,14 +134,57 @@ const LoginComponent = () => {
             password: data.password,
           }),
         });
-        if (!res.ok) throw new Error("Login failed");
-        toast.success("Logged in as admin!");
+        
+        if (!response.ok) {
+          const status = response.status;
+          if (status === 401) {
+            toast.error("Invalid admin credentials", { duration: 5000 });
+            setIsLoading(false);
+            return;
+          }
+          toast.error(`Admin login failed - Status: ${status}`, { duration: 5000 });
+          setIsLoading(false);
+          return;
+        }
+
+        const responseData = await response.json();
+        const tempUser = responseData.detail.user as UserBackend;
+        
+        // Sprawdź czy użytkownik ma uprawnienia administratora
+        if (!tempUser.is_staff) {
+          toast.error("Access denied. Admin privileges required.", { duration: 5000 });
+          setIsLoading(false);
+          return;
+        }
+
+        const access = responseData.detail.access;
+        const refresh = responseData.detail.refresh;
+
+        localStorage.clear();
+        localStorage.setItem("refresh", refresh);
+        localStorage.setItem("access", access);
+
+        const user: User = {
+          ...tempUser,
+          languageIso2: "en",
+          theme: theme,
+          is_active: true,
+          profilePicture: null,
+          accountVerified: null,
+          passwordLength: null,
+          authorities: null,
+          accountNonLocked: null,
+          token: null,
+        };
+
+        UserDispatch({ type: "setUser", value: user });
+        toast.success("Admin login successful!");
         setIsLoading(false);
         router.push("/admin/dashboard");
         return;
       } catch (err: any) {
         setIsLoading(false);
-        toast.error(err.message || "Login error");
+        toast.error("Admin login error: " + (err.message || "Unknown error"));
         return;
       }
     }
