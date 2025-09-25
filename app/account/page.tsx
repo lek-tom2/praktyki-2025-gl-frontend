@@ -28,7 +28,7 @@ export default function Home() {
 
   const [fullName, setFullName] = useState("");
   const [phone, setPhone] = useState("");
-  const [currentPassword, setCurrentPassword] = useState("");
+
   const [newPassword, setNewPassword] = useState("");
   const [confirmNewPassword, setConfirmNewPassword] = useState("");
 
@@ -52,11 +52,7 @@ export default function Home() {
     setPhone(e.target.value);
   };
 
-  const handleCurrentPasswordChange = (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    setCurrentPassword(e.target.value);
-  };
+  
 
   const handleNewPasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setNewPassword(e.target.value);
@@ -74,21 +70,39 @@ export default function Home() {
   useEffect(() => {
   const fetchReservations = async () => {
     try {
-      const res = await fetch("/api/reservations");
+      // Pobierz token z localStorage
+      const token = localStorage.getItem('access');
+      if (!token) {
+        console.log("No token found, cannot fetch reservations");
+        setReservations([]);
+        return;
+      }
+
+      const res = await fetch("http://localhost:8000/api/reservations/list/latest/", {
+        method: "GET",
+        headers: {
+          "Authorization": `Bearer ${token}`,
+          "Content-Type": "application/json"
+        }
+      });
+
       if (res.ok) {
         const data = await res.json();
-        setReservations(data.reservations);
+        console.log("Reservations data from backend:", data);
+       
+        setReservations(data.detail || data || []);
       } else {
+        console.log("Failed to fetch reservations, status:", res.status);
         setReservations([]);
       }
-    } catch {
+    } catch (error) {
+      console.error("Error fetching reservations:", error);
       setReservations([]);
     }
   };
 
   const fetchVehicles = async () => {
     try {
-      
       const token = localStorage.getItem('access');
       if (!token) {
         console.log("No token found, cannot fetch vehicles");
@@ -107,7 +121,6 @@ export default function Home() {
       if (res.ok) {
         const data = await res.json();
         console.log("Vehicles data from backend:", data);
-      
         setVehicles(data.vehicles || data || []);
       } else {
         console.log("Failed to fetch vehicles, status:", res.status);
@@ -252,12 +265,7 @@ export default function Home() {
   const handlePasswordSubmit = async (e: React.FormEvent) => {
   e.preventDefault();
 
-  if (!currentPassword.trim()) {
-    toast.error("Current password is required.", {
-      duration: 5000,
-    });
-    return;
-  }
+ 
   if (!newPassword.trim()) {
     toast.error("New password is required.", {
       duration: 5000,
@@ -297,7 +305,7 @@ export default function Home() {
         "Authorization": `Bearer ${token}`
       },
       body: JSON.stringify({
-        old_password: currentPassword,
+       
         password: newPassword,
         password2: confirmNewPassword,
       }),
@@ -314,7 +322,7 @@ export default function Home() {
       });
       
       
-      setCurrentPassword("");
+     
       setNewPassword("");
       setConfirmNewPassword("");
     } else {
@@ -338,10 +346,7 @@ export default function Home() {
       } else {
         
         const fieldErrors = [];
-        if (errorData.old_password) {
-          const oldPasswordError = Array.isArray(errorData.old_password) ? errorData.old_password[0] : errorData.old_password;
-          fieldErrors.push(`Current password: ${oldPasswordError}`);
-        }
+       
         if (errorData.password) {
           const passwordError = Array.isArray(errorData.password) ? errorData.password[0] : errorData.password;
           fieldErrors.push(`New password: ${passwordError}`);
@@ -791,19 +796,7 @@ const handleEditSave = async () => {
             </h2>
             <form onSubmit={handlePasswordSubmit}>
               <section className="grid grid-cols-2 gap-x-8 gap-y-4">
-                <div className="flex flex-col gap-y-2">
-                  <h4 className="text-sm text-base-content">
-                    Current Password
-                  </h4>
-                  <Input
-                    name="currentPassword"
-                    value={currentPassword}
-                    onChange={handleCurrentPasswordChange}
-                    type="password"
-                    className="w-full text-base-content bg-primary rounded-[0.25rem]"
-                    placeholder="Enter current password"
-                  />
-                </div>
+                
                 <div className="flex flex-col gap-y-2">
                   <h4 className="text-sm text-base-content">New Password</h4>
                   <Input
@@ -815,7 +808,7 @@ const handleEditSave = async () => {
                     placeholder="Enter new password"
                   />
                 </div>
-                <div className="flex flex-col col-span-2 gap-y-2">
+                <div className="flex flex-col col-span-1 gap-y-2">
                   <h4 className="text-sm text-base-content">
                     Confirm New Password
                   </h4>
@@ -998,13 +991,7 @@ const handleEditSave = async () => {
                   ))
                 )}
 
-                <div className="flex justify-end col-span-2">
-                  <Button
-                    type="submit"
-                    className=" text-base-content bg-accent rounded-sm h-10 w-50 "
-                    value="View all History"
-                  />
-                </div>
+                
               </section>
             </article>
           </nav>
