@@ -40,12 +40,14 @@ export default function HomePage() {
     name: spot.spot_number,
     aviability: mapToStatus(spot.status),
     aisle: spot.aisle as ParkingSpotPL2["aisle"],
+    id: spot.id,
   });
 
   const mapToPL3 = (spot: ParkingSpotBackend): ParkingSpotPL3 => ({
     name: spot.spot_number,
     aviability: mapToStatus(spot.status),
     aisle: spot.aisle as ParkingSpotPL3["aisle"],
+    id: spot.id,
   });
 
   const fetchParking = async () => {
@@ -72,6 +74,7 @@ export default function HomePage() {
       });
       if (!res.ok) throw new Error(`Error: ${res.status}`);
       const data = (await res.json()) as ParkingSpotBackend[];
+      console.log(data);
       setParkingListPrototype(data);
       toast.success("Parking spots loaded");
     } catch (err) {
@@ -98,7 +101,7 @@ export default function HomePage() {
     const access = localStorage.getItem("access");
     setAccess(access);
     fetchParking();
-    fetchReservations();
+    // fetchReservations();
   }, []);
 
   useEffect(() => {

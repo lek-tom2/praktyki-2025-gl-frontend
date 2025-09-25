@@ -1,4 +1,5 @@
 import { ParkingSpotPL2, ParkingSpotPL3 } from "@/gl-types/parkingSpot";
+import Link from "next/link";
 import { ReactNode } from "react";
 
 type separatorProps = {
@@ -12,6 +13,7 @@ type parkingSpotProps = Pick<
   visible?: boolean;
   grayed?: boolean;
   onClick?: () => void | unknown;
+  id: string;
 };
 
 export const Separator = ({ text }: separatorProps) => {
@@ -27,6 +29,7 @@ export const ParkingSpot = ({
   aviability,
   grayed = false,
   onClick = undefined,
+  id,
 }: parkingSpotProps) => {
   const bgClass = grayed
     ? "bg-gray-600 opacity-50"
@@ -39,12 +42,14 @@ export const ParkingSpot = ({
     : "bg-blue-500";
 
   return (
-    <div
-      onClick={onClick}
-      className={`${bgClass} text-[#eaefef] w-12 md:w-14 lg:w-16 flex-shrink-0 rounded-2xl aspect-square flex items-center justify-center cursor-pointer hover:scale-105 duration-300`}
-    >
-      {name}
-    </div>
+    <Link href={`/parking-spaces/${id}`} className="select-none">
+      <div
+        onClick={onClick}
+        className={`${bgClass} text-[#eaefef] w-12 md:w-14 lg:w-16 flex-shrink-0 rounded-2xl aspect-square flex items-center justify-center cursor-pointer hover:scale-105 duration-300`}
+      >
+        {name}
+      </div>
+    </Link>
   );
 };
 

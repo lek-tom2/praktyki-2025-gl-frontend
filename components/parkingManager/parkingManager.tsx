@@ -8,10 +8,6 @@ import MapSwitch from "../switch/mapSwitch";
 import Input from "../input/input";
 import LevelSwitch from "../switch/parkingLevelSwitch";
 import toast from "react-hot-toast";
-import { DateRange } from "react-date-range";
-import "react-date-range/dist/styles.css";
-import "react-date-range/dist/theme/default.css";
-import { addDays } from "date-fns";
 
 type ParkingManagerProps = {
   pl2: ParkingSpotPL2[];
@@ -109,49 +105,35 @@ const ParkingManager = ({
       </div>
 
       {/* Right-side control panel */}
-      <div className="w-1/4 flex flex-col gap-6 bg-secondary h-[90%] overflow-y-auto overflow-x-hidden p-6 rounded-xl shadow-lg justify-center">
+      <div className="w-1/4 flex flex-col gap-6 bg-base-200 h-[90%] overflow-y-auto overflow-x-hidden p-6 rounded-xl shadow-lg justify-center">
         {/* Check-in/out */}
+        <div className="flex flex-col gap-2 text-base-content">
+          <label  htmlFor="checkin">Check-in</label>
+          <Controller
+            name="checkIn"
+            control={control}
+            rules={{ required: true }}
+            render={({ field }) => (
+              <Input type="date" {...field} id="checkin" className="text-base-content w-full bg-primary" />
+            )}
+          />
+        </div>
+
         <div className="flex flex-col gap-2">
-          <label className="font-medium">Select Reservation Dates</label>
-          <div className="bg-primary rounded-lg shadow p-2 overflow-hidden">
-            <DateRange
-              ranges={[
-                {
-                  startDate: new Date(checkIn),
-                  endDate: new Date(checkOut),
-                  key: "selection",
-                },
-              ]}
-              onChange={(ranges) => {
-                const { startDate, endDate } = ranges.selection;
-
-                if (!startDate || !endDate) return;
-
-                // Prevent past dates
-                if (startDate < new Date()) {
-                  toast.error("You cannot book past dates!");
-                  return;
-                }
-
-                // Enforce max 3 days
-                const diffInMs = endDate.getTime() - startDate.getTime();
-                const diffInDays = diffInMs / (1000 * 60 * 60 * 24);
-                if (diffInDays > 3) {
-                  toast.error("Maximum reservation length is 3 days!");
-                  return;
-                }
-
-                setCheckIn(startDate.toISOString().split("T")[0]);
-                setCheckOut(endDate.toISOString().split("T")[0]);
-              }}
-              minDate={new Date()}
-              maxDate={addDays(new Date(), 30)}
-              moveRangeOnFirstSelection={false}
-              rangeColors={["#22c55e"]} // Tailwind green-500
-              showDateDisplay={false} // hides ugly header
-              direction="vertical" // fits better in side panel
-            />
-          </div>
+          <label htmlFor="checkout">Check-out</label>
+          <Controller
+            name="checkOut"
+            control={control}
+            rules={{
+              required: true,
+              validate: (value) =>
+                new Date(value) >= new Date(watchCheckIn) ||
+                "Check-out must be after check-in",
+            }}
+            render={({ field }) => (
+              <Input type="date" {...field} className="text-base-content w-full bg-primary" id="checkout" />
+            )}
+          />
         </div>
 
         {/* Parking Level */}
@@ -160,6 +142,7 @@ const ParkingManager = ({
           <LevelSwitch
             value={selectedParkingLevel}
             onChange={setSelectedParkingLevel}
+            
           />
         </div>
 
@@ -180,6 +163,7 @@ const ParkingManager = ({
             name="search"
             background="bg-primary"
             width="w-full"
+            className="w-full text-base-content bg-primary"
           />
         </div>
 
@@ -200,7 +184,7 @@ const ParkingManager = ({
         </div>
 
         <div className="flex flex-col gap-2">
-          <div className="text-sm mt-2">
+          <div className="text-sm mt-2 text-base-content">
             <p>Total spots: {parkingSpots.length}</p>
             <p>Available: {availableCount}</p>
             <p>Occupied: {occupiedCount}</p>
