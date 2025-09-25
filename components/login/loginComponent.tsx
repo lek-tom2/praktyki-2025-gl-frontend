@@ -65,8 +65,6 @@ const LoginComponent = () => {
           ...tempUser,
           languageIso2: "en",
           theme: theme,
-          is_active: false,
-          is_staff: false,
           profilePicture: null,
           accountVerified: null,
           passwordLength: null,

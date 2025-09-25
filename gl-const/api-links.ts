@@ -17,13 +17,15 @@ export const ApiLinks = {
   refresh: getUrl("/api/token/refresh/"),
   listParkingSpaces: getUrl("/api/parking/"),
   listReservations: getUrl("/api/reservations/list/"),
-  // Admin endpoints (corrected based on actual Django URLs)
-  listUsers: getUrl("/api/employees/"),  // Changed from /api/users/
-  listCars: getUrl("/api/vehicles/"),    // Changed from /api/cars/
-  updateUser: (id: number) => getUrl("/api/user/update/"), // Note: looks like it doesn't take ID in URL
-  deleteUser: (id: number) => getUrl("/api/user/delete/"), // Note: looks like it doesn't take ID in URL  
-  updateCar: (id: number) => getUrl(`/api/vehicles/${id}/`),
-  deleteCar: (id: number) => getUrl(`/api/vehicles/${id}/`),
+  // Admin endpoints - using Django's custom endpoints  
+  listUsers: getUrl("/api/employees/"),  
+  listCars: getUrl("/api/vehicles/"),    
+  // Use Django's custom endpoints for user operations
+  updateUser: (id: number) => getUrl("/api/user/update/"), // Django custom endpoint
+  deleteUser: (id: number) => getUrl("/api/user/delete/"), // Django custom endpoint
+  // RESTful endpoints for other resources
+  updateCar: (id: number) => getUrl(`/api/vehicles/${id}/`), 
+  deleteCar: (id: number) => getUrl(`/api/vehicles/${id}/`), 
   updateParkingSpot: (id: number) => getUrl(`/api/parking/${id}/`),
   deleteParkingSpot: (id: number) => getUrl(`/api/parking/${id}/`),
 } as const;
