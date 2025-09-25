@@ -108,13 +108,18 @@ const ParkingManager = ({
       <div className="w-1/4 flex flex-col gap-6 bg-base-200 h-[90%] overflow-y-auto overflow-x-hidden p-6 rounded-xl shadow-lg justify-center">
         {/* Check-in/out */}
         <div className="flex flex-col gap-2 text-base-content">
-          <label  htmlFor="checkin">Check-in</label>
+          <label htmlFor="checkin">Check-in</label>
           <Controller
             name="checkIn"
             control={control}
             rules={{ required: true }}
             render={({ field }) => (
-              <Input type="date" {...field} id="checkin" className="text-base-content w-full bg-primary" />
+              <Input
+                type="date"
+                {...field}
+                id="checkin"
+                className="text-base-content w-full bg-primary"
+              />
             )}
           />
         </div>
@@ -131,7 +136,12 @@ const ParkingManager = ({
                 "Check-out must be after check-in",
             }}
             render={({ field }) => (
-              <Input type="date" {...field} className="text-base-content w-full bg-primary" id="checkout" />
+              <Input
+                type="date"
+                {...field}
+                className="text-base-content w-full bg-primary"
+                id="checkout"
+              />
             )}
           />
         </div>
@@ -142,7 +152,6 @@ const ParkingManager = ({
           <LevelSwitch
             value={selectedParkingLevel}
             onChange={setSelectedParkingLevel}
-            
           />
         </div>
 
@@ -178,8 +187,8 @@ const ParkingManager = ({
             <option value="all">All</option>
             <option value="available">Available</option>
             <option value="occupied">Occupied</option>
-            <option value="reserved">Reserved</option>
-            <option value="yours">Yours</option>
+            {/* <option value="reserved">Reserved</option> */}
+            {/* <option value="yours">Yours</option> */}
           </select>
         </div>
 
