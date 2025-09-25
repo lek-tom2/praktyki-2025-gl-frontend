@@ -1,5 +1,6 @@
 "use client";
 
+
 import React, { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import LogoutButton from "../logoutButton/LogoutButton";
@@ -49,35 +50,41 @@ export default function IconWithPopup() {
           ref={popupRef}
           className="absolute right-0 mt-2 w-64 bg-secondary shadow-lg rounded-lg z-50"
         >
-          <ul className="flex flex-col gap-2 p-4">
-            <li
-              className="flex items-center gap-2 cursor-pointer hover:bg-gray-700 rounded p-1"
-              onClick={() => router.push("/account")}
-            >
-              <img src="/setting.png" alt="account" className="w-5 h-5" />
-              <span>Account Management</span>
-            </li>
-            <li className="flex items-center gap-2 cursor-pointer hover:bg-gray-700 rounded p-1">
-              <img src="/change.png" alt="switch" className="w-5 h-5" />
-              <span>Switch Accounts</span>
-            </li>
-            {/* <li className="flex items-center gap-2 cursor-pointer hover:bg-gray-700 rounded p-1"></li> */}
-            {/* <li className="flex items-center gap-2 cursor-pointer hover:bg-gray-700 rounded p-1">
-              <img src="/night-mode.png" alt="theme" className="w-5 h-5" />
-              <span>Change Theme</span>
-            </li> */}
-            <li
-              className="flex items-center gap-2 cursor-pointer hover:bg-gray-700 rounded p-1"
-              onClick={() => router.push("/my-reserved-parking-space")}
-            >
-              <img src="/booking.png" alt="reservations" className="w-5 h-5" />
-              <span>My Reservations</span>
-            </li>
-          </ul>
+          <div className="bg-secondary bg-opacity-25 shadow-lg text-white w-64 h-auto">
+            <ul className="flex flex-col gap-3 p-4">
+              <li
+                className="flex items-center gap-2 cursor-pointer hover:bg-gray-700 rounded p-1"
+                onClick={() => router.push("/account")}
+              >
+                <img src="/setting.png" alt="account" className="w-5 h-5" />
+                <span>Account Management</span>
+              </li>
+              <li className="flex items-center gap-2 cursor-pointer hover:bg-gray-700 rounded p-1">
+                <img src="/change.png" alt="switch" className="w-5 h-5" />
+                <span>Switch Accounts</span>
+              </li>
+              <li
+                className="flex items-center gap-2 cursor-pointer hover:bg-gray-700 rounded p-1"
+                onClick={() => router.push("/my-reserved-parking-space")}
+              >
+                <img src="/booking.png" alt="reservations" className="w-5 h-5" />
+                <span>My Reservations</span>
+              </li>
+            </ul>
 
-          <div className="flex flex-row gap-4 justify-center p-4 border-t border-gray-700">
-            <ThemeSwitcher />
-            <LogoutButton />
+            <div className="flex justify-center items-center gap-4 p-4 border-t border-gray-700">
+              <ThemeSwitcher />
+              <button
+                className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
+                onClick={() => {
+                  logout();
+                  router.push("/login-register");
+                }}
+              >
+                Logout
+              </button>
+            </div>
+
           </div>
         </div>
       )}
