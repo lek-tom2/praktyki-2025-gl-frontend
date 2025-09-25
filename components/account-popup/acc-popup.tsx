@@ -38,7 +38,7 @@ export default function IconWithPopup() {
         className="w-6 h-6 rounded-full overflow-hidden"
       >
         <img
-          src="/people.png"
+          src="/people2.png"
           alt="icon"
           className="w-full h-full object-cover"
         />
