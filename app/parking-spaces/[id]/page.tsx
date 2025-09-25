@@ -138,6 +138,9 @@ export default function ParkingSpaces() {
         if (!res.ok) throw new Error(`Error: ${res.status}`);
         const data = await res.json();
         console.log(data);
+        toast.success("Reservation created successfully", { duration: 5000 });
+        setOpen(false);
+        reset();
       } catch (err) {
         toast.error("Failed to create reservation");
         console.error(err);

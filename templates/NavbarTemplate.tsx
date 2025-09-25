@@ -25,13 +25,13 @@ const NavbarTemplate = () => {
         {/* Center links */}
         <ul className="flex flex-row gap-6 flex-1 justify-center">
           <li>
-            <Link href={"#"} className="hover:underline">
+            <Link href={"/home"} className="hover:underline">
               Find Parking
             </Link>
           </li>
           <li>
-            <Link href={"#"} className="hover:underline">
-              Contact
+            <Link href={"/my-reservations"} className="hover:underline">
+              My Reservations
             </Link>
           </li>
         </ul>
