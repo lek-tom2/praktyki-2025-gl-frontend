@@ -105,16 +105,16 @@ const ParkingManager = ({
       </div>
 
       {/* Right-side control panel */}
-      <div className="w-1/4 flex flex-col gap-6 bg-secondary h-[90%] overflow-y-auto overflow-x-hidden p-6 rounded-xl shadow-lg justify-center">
+      <div className="w-1/4 flex flex-col gap-6 bg-base-200 h-[90%] overflow-y-auto overflow-x-hidden p-6 rounded-xl shadow-lg justify-center">
         {/* Check-in/out */}
-        <div className="flex flex-col gap-2">
-          <label htmlFor="checkin">Check-in</label>
+        <div className="flex flex-col gap-2 text-base-content">
+          <label  htmlFor="checkin">Check-in</label>
           <Controller
             name="checkIn"
             control={control}
             rules={{ required: true }}
             render={({ field }) => (
-              <Input type="date" {...field} width="w-full" id="checkin" />
+              <Input type="date" {...field} id="checkin" className="text-base-content w-full bg-primary" />
             )}
           />
         </div>
@@ -131,7 +131,7 @@ const ParkingManager = ({
                 "Check-out must be after check-in",
             }}
             render={({ field }) => (
-              <Input type="date" {...field} width="w-full" id="checkout" />
+              <Input type="date" {...field} className="text-base-content w-full bg-primary" id="checkout" />
             )}
           />
         </div>
@@ -142,6 +142,7 @@ const ParkingManager = ({
           <LevelSwitch
             value={selectedParkingLevel}
             onChange={setSelectedParkingLevel}
+            
           />
         </div>
 
@@ -162,6 +163,7 @@ const ParkingManager = ({
             name="search"
             background="bg-primary"
             width="w-full"
+            className="w-full text-base-content bg-primary"
           />
         </div>
 
@@ -182,7 +184,7 @@ const ParkingManager = ({
         </div>
 
         <div className="flex flex-col gap-2">
-          <div className="text-sm mt-2">
+          <div className="text-sm mt-2 text-base-content">
             <p>Total spots: {parkingSpots.length}</p>
             <p>Available: {availableCount}</p>
             <p>Occupied: {occupiedCount}</p>

@@ -135,7 +135,7 @@ export default function ReservationDetailPage() {
   return (
     <PageTemplate>
       <div className="flex flex-col items-center w-full bg-primary text-base-content h-full p-6">
-        <div className="flex flex-col items-center justify-start w-1/2 h-full bg-secondary gap-6 rounded-2xl p-6">
+        <div className="flex flex-col items-center justify-start w-1/2 h-full bg-base-200 gap-6 rounded-2xl p-6">
           <h1 className="text-2xl font-bold mb-4 mt-8">Reservation Details</h1>
 
           {!editMode ? (
@@ -178,7 +178,7 @@ export default function ReservationDetailPage() {
           ) : (
             // ---------- EDIT MODE ----------
             <form
-              className="w-[90%] flex flex-col gap-4 bg-primary p-4 rounded-xl shadow-md"
+              className="w-[90%] flex flex-col gap-4 bg-base-200 p-4 rounded-xl shadow-md"
               onSubmit={handleSubmit(onSubmit)}
             >
               <p className="font-semibold text-lg">Spot #{reservation.spot}</p>
@@ -187,7 +187,7 @@ export default function ReservationDetailPage() {
                 <label>Start Date</label>
                 <Input
                   type="date"
-                  className="rounded-md bg-secondary w-full p-2 text-base-content"
+                  className="rounded-md bg-primary w-full p-2 text-base-content"
                   {...register("start_date", {
                     required: "Start date required",
                   })}
@@ -201,7 +201,7 @@ export default function ReservationDetailPage() {
                 <label>End Date</label>
                 <Input
                   type="date"
-                  className="rounded-md bg-secondary w-full p-2 text-base-content"
+                  className="rounded-md bg-primary w-full p-2 text-base-content"
                   {...register("end_date", { required: "End date required" })}
                 />
                 {errors.end_date && (
@@ -216,7 +216,7 @@ export default function ReservationDetailPage() {
                     required: "Vehicle is required",
                     valueAsNumber: true,
                   })}
-                  className="select text-base-content bg-secondary select-bordered w-full"
+                  className="select text-base-content bg-primary select-bordered w-full"
                   defaultValue={reservation.vehicle.id}
                 >
                   {vehicles.map((v) => (

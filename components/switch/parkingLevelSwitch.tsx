@@ -5,7 +5,7 @@ type LevelSwitchProps = {
 
 const LevelSwitch = ({ value, onChange }: LevelSwitchProps) => {
   const baseBtnClasses =
-    "flex items-center justify-center w-1/2 h-10 rounded-4xl transition-colors text-white font-medium";
+    "flex items-center justify-center w-1/2 h-10 rounded-4xl transition-colors text-base-content font-medium";
   return (
     <div className="flex items-center bg-primary p-1 rounded-4xl w-full gap-1 h-12 ">
       <button
