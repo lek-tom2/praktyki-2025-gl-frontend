@@ -53,7 +53,7 @@ const MapSwitch = ({
   );
 
   const baseBtnClasses =
-    "flex items-center justify-center w-1/2 h-10 rounded-4xl transition-colors text-white font-medium gap-2";
+    "flex items-center justify-center w-1/2 h-10 rounded-4xl transition-colors text-base-content font-medium gap-2";
 
   return (
     <div

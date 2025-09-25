@@ -45,7 +45,7 @@ export default function MyReservationsPage() {
   return (
     <PageTemplate>
       <div className="flex flex-col items-center w-full bg-primary text-base-content h-full p-6">
-        <div className="flex flex-col items-center justify-start w-1/2  h-full bg-secondary gap-6 rounded-2xl">
+        <div className="flex flex-col items-center justify-start w-1/2  h-full bg-base-200 gap-6 rounded-2xl">
           <h1 className="text-2xl font-bold mb-4 mt-16">My Reservations</h1>
           {loading ? (
             <p>Loading reservations...</p>

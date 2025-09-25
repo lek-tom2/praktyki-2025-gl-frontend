@@ -166,10 +166,10 @@ export default function ParkingSpaces() {
             <div>No imaga available</div>
           )}
         </div>
-        <div className="w-1/4 h-3/4 text-base-content bg-secondary flex-col m-12 rounded-3xl flex justify-center items-center">
+        <div className="w-1/4 h-3/4 text-base-content bg-base-200 flex-col m-12 rounded-3xl flex justify-center items-center">
           <h2 className=" font-bold m-6">Parking Spot Details</h2>
           {parkingSpotBackend ? (
-            <div className="bg-secondary p-4 rounded-xl shadow-lg">
+            <div className="bg-base-200 p-4 rounded-xl shadow-lg">
               <div className="mb-2">
                 <strong>Spot Number:</strong> {parkingSpotBackend.spot_number}
               </div>
@@ -291,7 +291,8 @@ export default function ParkingSpaces() {
               {...register("start_date", {
                 required: "Start date is required",
               })}
-              width="w-full"
+          
+              className="w-full text-base-content bg-primary"
             />
             <FormErrorParagraph errorObject={errors.start_date} />
           </label>
@@ -302,7 +303,7 @@ export default function ParkingSpaces() {
             <Input
               type="date"
               placeholder="End Date"
-              width="w-full"
+              className="w-full text-base-content bg-primary"
               {...register("end_date", { required: "End date is required" })}
             />
             <FormErrorParagraph errorObject={errors.end_date} />
